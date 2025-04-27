@@ -23,7 +23,7 @@ example :
 App : Trip
 - Method Endpoints :
   This is an example of what the endpoint library could look like
-  - GET, PUT, POST, DELETE - http:127.0.0.1:8000/api/v1/trip/<int:id>/
+  - GET, PUT, POST, DELETE - http:127.0.0.1:8000/api/v1/trip/:id/
 
 
 

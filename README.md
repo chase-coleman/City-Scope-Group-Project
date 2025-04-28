@@ -32,13 +32,13 @@ Stays
 - api/v1/stay/<int:id>/ - GET/PUT/DELETE/POST view a specific stay
 
 Activities
-- api/v1/activity/all/<int:trip_id>/      - GET - view all of a users stays
-- api/v1/activity/<int:id>/ - GET/PUT/DELETE/POST view a specific stay
+- api/v1/activity/all/<int:itinerary_id>/  - GET - view all of a users activites on a trip
+- api/v1/activity/<int:id>/           - GET/PUT/DELETE/POST view a specific activity
 
 Itinerary
-- api/v1/itinerary/all/<int:trip_id>/ - GET - view all of a trips itineraries
-- api/v1/itinerary/<int:id>/ - GET/PUT/DELETE/POST view a specific itinerary
+- api/v1/itinerary/all/<int:trip_id>/   - GET - view all of a trips itineraries
+- api/v1/itinerary/<int:id>/            - GET/PUT/DELETE/POST view a specific itinerary
 
 Trips
-- api/v1/trip/all/ - GET - view all of a users trips
-- api/v1/trip/<int:id>/ - GET/PUT/DELETE/POST view a specific trip
+- api/v1/trip/all/        - GET - view all of a users trips
+- api/v1/trip/<int:id>/   - GET/PUT/DELETE/POST view a specific trip

@@ -6,9 +6,9 @@ from .models import Activity
 from .serializers import Activity_Serializer
 
 class Activities(TokenReq):
-  def get(self, request, itinerary_id=None):
+  def get(self, request, itinerary_id):
     # NEED TO ADD ANOTHER CONSTRAINT TO THE FILTER TO ALLOW MATCHING ITINERARY_IDS to a Itinerary field
-    itinerary_activities = Activity.objects.filter(user=request.user)
+    itinerary_activities = Activity.objects.filter(user=request.user, itinerary_id=Activity.itinerary)
     serialized_activities = Activity_Serializer(itinerary_activities, many=True)
     return Response(serialized_activities.data, status=s.HTTP_200_OK)
   

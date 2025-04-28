@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'user_app',
     'stay_app',
     'itinerary_app',
+    'activity_app',
 ]
 
 MIDDLEWARE = [

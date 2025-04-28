@@ -1,8 +1,8 @@
 from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
-from models import Stay, Itinerary
+from .models import Stay, Itinerary
 
 class Stay_Serializer(ModelSerializer):
-    # itinerary = PrimaryKeyRelatedField(queryset=Itinerary.objects.all())
+    # Itineraries = PrimaryKeyRelatedField(queryset=Itinerary.objects.all())
 
     class Meta:
         model = Stay

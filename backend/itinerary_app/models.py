@@ -5,3 +5,6 @@ from django.db import models
 class Itinerary(models.Model):
   date = models.DateField()
   # trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="itinerary")
+
+  def __str__(self):
+    return f"{self.id}. Itinerary for date: {self.date}"

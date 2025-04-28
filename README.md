@@ -20,10 +20,10 @@
 
 ### Endpoints
 example : 
-App : Trip
-- Method Endpoints :
-  This is an example of what the endpoint library could look like
-  - GET, PUT, POST, DELETE - http:127.0.0.1:8000/api/v1/trip/:id/
-
-
+app : User
+  - api/v1/user/info/     - GET/PUT - user account info
+  - api/v1/user/signup/   - POST - create new user account
+  - api/v1/user/login/    - POST - user login
+  - api/v1/user/logout/   - POST - user logout
+  - api/v1/user/delete/   - DELETE - user account deletion
 

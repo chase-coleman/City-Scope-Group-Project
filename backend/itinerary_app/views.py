@@ -24,3 +24,13 @@ class Itinerary_View(APIView):
 
   def post(self, request, id=None):
     pass
+
+
+# Get all Itineries pertaining to a a trip
+class Itinerary_View_All(APIView):
+  def get(self, request, trip_id):
+    try:
+      users_itineraries = Itinerary.objects.filter(trip = trip_id).all()
+      
+    except:
+      return Response(f"Failed to retrieve all Itineraries pertaining to trip ID: {trip_id}")

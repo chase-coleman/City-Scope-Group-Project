@@ -27,3 +27,18 @@ app : User
   - api/v1/user/logout/   - POST - user logout
   - api/v1/user/delete/   - DELETE - user account deletion
 
+Stays
+- api/v1/stay/all/      - GET - view all of a users stays
+- api/v1/stay/<int:id>/ - GET/PUT/DELETE/POST view a specific stay
+
+Activities
+- api/v1/activity/all/<int:trip_id>/      - GET - view all of a users stays
+- api/v1/activity/<int:id>/ - GET/PUT/DELETE/POST view a specific stay
+
+Itinerary
+- api/v1/itinerary/all/<int:trip_id>/ - GET - view all of a trips itineraries
+- api/v1/itinerary/<int:id>/ - GET/PUT/DELETE/POST view a specific itinerary
+
+Trips
+- api/v1/trip/all/ - GET - view all of a users trips
+- api/v1/trip/<int:id>/ - GET/PUT/DELETE/POST view a specific trip

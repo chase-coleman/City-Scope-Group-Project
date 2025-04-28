@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'user_app',
 
 
-    'stays_app'
+    'stay_app'
 ]
 
 MIDDLEWARE = [

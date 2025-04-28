@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'stay_app',
     'itinerary_app',
     'activity_app',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [

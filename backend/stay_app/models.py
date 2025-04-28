@@ -16,6 +16,9 @@ class Stay(models.Model):
     def __rpr__(self):
         return f"{self.name}, {self.duration} days in {self.location}"
     
+    def str(self):
+        return f"{self.name}, {self.duration} days in {self.location}"
+    
     def change_stay_name(self, name):
         self.set_name = name
         self.save()

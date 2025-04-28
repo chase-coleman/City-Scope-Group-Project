@@ -32,9 +32,8 @@ Stays
 - api/v1/stay/<int:id>/ - GET/PUT/DELETE/POST view a specific stay
 
 Activities
-- api/v1/activity/all/<int:itinerary_id>/  - GET,POST - view all of a users activites on a trip, create new activity in that itinerary
-- api/v1/activity/<int:id>/                - GET/PUT/DELETE view a specific activity
-
+- api/v1/activity/all/<int:itinerary_id>/  - GET - view all of a users activites on a trip
+- api/v1/activity/<int:id>/           - GET/PUT/DELETE/POST view a specific activity
 
 Itinerary
 - api/v1/itinerary/all/<int:trip_id>/   - GET - view all of a trips itineraries

@@ -17,7 +17,7 @@ class TokenReq(APIView):
   permission_classes = [IsAuthenticated]
 
 # User Class Views
-class User(TokenReq):
+class User_View(TokenReq):
   def get(self, request):
     current_user = request.user
     # creating object to return to request origin
@@ -45,10 +45,18 @@ class SignUp(APIView):
     # if user provided no username, their provided email is set as the username
     data['username'] = request.data.get("username", request.data.get("email"))
     
+    is_superuser = data.get('is_superuser', False)
+
     serialized_data = UserInfoSerializer(data=data)
     if serialized_data.is_valid():
       # creating a new user instance with the valid data
       new_user = serialized_data.save()
+    
+      if is_superuser:
+        new_user.is_superuser = True
+        new_user.is_staff = True
+        new_user.save()
+
       token = Token.objects.create(user=new_user)
       return Response({"message": "Account successfully created", "token": token.key}, status=s.HTTP_201_CREATED)
     return Response(serialized_data.errors, status=s.HTTP_400_BAD_REQUEST)

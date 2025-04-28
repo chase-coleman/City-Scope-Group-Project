@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from user_app.views import TokenReq
 from user_app.models import User
 from rest_framework.response import Response
-from models import Stay
-from serializers import Stay_Serializer
+from .models import Stay
+from .serializers import Stay_Serializer
 from itinerary_app.models import Itinerary
 from rest_framework.status import (
     HTTP_200_OK,

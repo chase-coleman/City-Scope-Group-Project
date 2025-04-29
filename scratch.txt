@@ -1,0 +1,16 @@
+{
+   "name": "Rafting",
+   "location": "The River",
+   "address": "123 River Ave",
+   "itineraries": 1
+}
+
+
+{
+    "first_name": "chase",
+    "last_name": "coleman",
+    "email": "chase@gmail.com",
+    "username": "chase",
+    "password": "password"
+}
+f51083292cce15a4b5373a82ab4d621f5b398998

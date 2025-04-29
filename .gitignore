@@ -7,6 +7,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+**/__pycache__
+
+.env
+.venv/
+**/.env
+
 city_scope_proj/
 
 node_modules
@@ -24,3 +30,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+

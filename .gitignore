@@ -10,6 +10,8 @@ lerna-debug.log*
 **/__pycache__
 
 .env
+.venv/
+**/.env
 
 city_scope_proj/
 

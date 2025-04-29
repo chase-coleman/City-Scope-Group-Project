@@ -40,19 +40,21 @@ class All_Stays(TokenReq):
 # ---------------------
 #
 
-    def post(self, request, ininerary):
+    def post(self, request, itinerary):
         data = request.data.copy()
-        data["ininerary"] = ininerary
+        data["itinerary"] = itinerary
         serialized_stay = Stay_Serializer(data=data)
         if serialized_stay.is_valid():
             instance = serialized_stay.save()
             instance.refresh_from_db()
             return Response(
-                {"stay": Stay_Serializer(instance).data}, status=HTTP_201_CREATED
+                {"stay": Stay_Serializer(instance).data}
+                ,status=HTTP_201_CREATED
             )
-        return Response(Stay_Serializer.error, status=HTTP_400_BAD_REQUEST)
+        return Response(serialized_stay.errors, status=HTTP_400_BAD_REQUEST)
 
 class A_Stay(TokenReq):
+
 
     def get(self, request, stay):
         try:
@@ -84,3 +86,12 @@ class A_Stay(TokenReq):
             serialized_stay.save()
             return Response("Stay has been updated", status=HTTP_200_OK)
         return Response("The provided parameters were invalid and the stay was not updated")
+    
+    def delete(self, request, stay):
+        try:
+            to_delete = get_object_or_404(Stay, id = stay)
+        except:
+            return Response("That stay didn't exist", status = HTTP_400_BAD_REQUEST)
+        if to_delete:
+            to_delete.delete()
+            return Response("The stay was deleted", status=HTTP_200_OK)

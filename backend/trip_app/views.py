@@ -35,7 +35,8 @@ class TripDetailView(APIView):
             return None
     # details for a single trip 
     def get(self, request, pk):
-        trip = self.get_object(pk, request.user)
+        trip= Trip.objects.get(id=pk)
+        # trip = self.get_object(pk, request.user)
         if not trip:
             return Response({"error": "Trip not found"}, status=404)
         serializer = TripSerializer(trip)

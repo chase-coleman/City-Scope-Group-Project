@@ -4,6 +4,7 @@ from user_app.models import User
 from rest_framework.response import Response
 from .models import Stay
 from .serializers import Stay_Serializer
+from rest_framework.views import APIView
 from itinerary_app.models import Itinerary
 from rest_framework.status import (
     HTTP_200_OK,
@@ -23,16 +24,18 @@ class All_Stays(TokenReq):
 # ---------------------
 #
 
-    def get(Self, request, ininerary):
+    def get(self, request, itinerary):
         try:
-            stays = Stay.objects.get(User=request.user, Ininerary = ininerary)
-            serialized_stays = Stay_Serializer(stays, many=True)
-            return Response({"stays": serialized_stays.data}, status=HTTP_200_OK)
+
+            stays = Stay.objects.filter(itinerary=itinerary)
+            serialized_stays = Stay_Serializer(stays, many=True).data
+            return Response({"stays": serialized_stays}, status=HTTP_200_OK)
         except:
             return Response(
-                "User has no itenerary or itenerary belongs to another user or trip",
+                "User has no itinerary or itinerary belongs to another user or trip",
                 status=HTTP_400_BAD_REQUEST,
             )
+
 
 #
 # ---------------------
@@ -40,47 +43,48 @@ class All_Stays(TokenReq):
 # ---------------------
 #
 
-    def post(self, request, ininerary):
+    def post(self, request, itinerary):
         data = request.data.copy()
-        data["ininerary"] = ininerary
+        data["itinerary"] = itinerary
         serialized_stay = Stay_Serializer(data=data)
         if serialized_stay.is_valid():
             instance = serialized_stay.save()
             instance.refresh_from_db()
             return Response(
-                {"stay": Stay_Serializer(instance).data}, status=HTTP_201_CREATED
+                {"stay": Stay_Serializer(instance).data}
+                ,status=HTTP_201_CREATED
             )
-        return Response(Stay_Serializer.error, status=HTTP_400_BAD_REQUEST)
+        return Response(serialized_stay.errors, status=HTTP_400_BAD_REQUEST)
 
 class A_Stay(TokenReq):
-
     def get(self, request, stay):
         try:
-            grab_stay = get_object_or_404(request.user.trip.ininerary, id = stay)
+            grab_stay = Stay.objects.get(id=stay)
+            serialized_stay = Stay_Serializer(grab_stay).data
         except:
-            return Response("invalid stay or it belongs to another user")    
-        if grab_stay:
+            return Response("invalid stay")
+        if serialized_stay:
             return Response(
-                Stay_Serializer(stay).data, status=HTTP_200_OK
+                serialized_stay, status=HTTP_200_OK
             )
-        return Response("Invalid Stay or stay belongs to another user")
     
     def put(self, request, stay):
         data = request.data.copy()
         try:
-            stay = get_object_or_404(request.user.trip.ininerary.stay)
+            grab_stay = Stay.objects.get(id=stay)
         except:
-            return Response("Invalid Stay or the stay belongs to another user")
-        if data['name']:
-            stay.name = data['name']
-        if data['location']:
-            stay.location = data['location']
-        if data['duration']:
-            stay.duration = data['duration']
-        if data['link']:
-            stay.link = data['link']
-        serialized_stay = Stay_Serializer(stay)
+            return Response("01: Invalid Stay or the stay belongs to another user")
+        serialized_stay = Stay_Serializer(grab_stay, data=data, partial=True)
         if serialized_stay.is_valid():
             serialized_stay.save()
             return Response("Stay has been updated", status=HTTP_200_OK)
         return Response("The provided parameters were invalid and the stay was not updated")
+    
+    def delete(self, request, stay):
+        try:
+            to_delete = get_object_or_404(Stay, id = stay)
+        except:
+            return Response("That stay didn't exist", status = HTTP_400_BAD_REQUEST)
+        if to_delete:
+            to_delete.delete()
+            return Response("The stay was deleted", status=HTTP_200_OK)

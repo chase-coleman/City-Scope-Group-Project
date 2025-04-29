@@ -25,14 +25,21 @@ class Itinerary_View(APIView):
   def post(self, request, id=None):
     try:
       # The date the user inputs from the frontend in format YYYY-MM-DD
-      date = request.data.date
-      Itinerary.objects.create(date=date)
-      return Response(f"Itinerary created for the date: {date}", status=s.HTTP_200_OK)
+      date = request.data.get("date")
+      itinerary = Itinerary.objects.create(date=date)
+      return Response(f"Itinerary created for the date: {date} with ID: {itinerary.id}", status=s.HTTP_200_OK)
     except:
       return Response(f"Failed to create an itinerary for the date: {date}", status=s.HTTP_400_BAD_REQUEST)
   
   def put(self, request, id):
-    pass
+    try:
+      new_date = request.data.get("date")
+      itinerary = get_object_or_404(Itinerary, id=id)
+      itinerary.change_date(new_date)
+      return Response(f"Date changed to {new_date}", status=s.HTTP_200_OK)
+    except:
+      return Response(f"Failed to change date", status=s.HTTP_400_BAD_REQUEST)
+      
 
   def delete(self, request, id):
     try:

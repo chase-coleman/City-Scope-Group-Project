@@ -2,5 +2,5 @@ from django.urls import path
 from .views import A_Stay, All_Stays
 urlpatterns = [
     path('itinerary/<int:itinerary>/', All_Stays.as_view(),name='all-stays'),
-    path('stay/<int:stay>/',A_Stay.as_view(), name='a-stay'),
+    path('<int:stay>/',A_Stay.as_view(), name='stay'),
 ]

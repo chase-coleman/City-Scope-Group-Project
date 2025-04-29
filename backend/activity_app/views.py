@@ -8,14 +8,13 @@ from itinerary_app.models import Itinerary
 
 class Activities(TokenReq):
   def get(self, request, itinerary_id):
-    # NEED TO ADD ANOTHER CONSTRAINT TO THE FILTER TO ALLOW MATCHING ITINERARY_IDS to a Itinerary field
-    itinerary_activities = Activity.objects.filter(user=request.user, itineraries=itinerary_id)
+    itinerary_activities = Activity.objects.filter(itineraries=itinerary_id)
     serialized_activities = Activity_Serializer(itinerary_activities, many=True)
     return Response(serialized_activities.data, status=s.HTTP_200_OK)
   
   def post(self, request, itinerary_id):
     data = request.data.copy()
-    # set the itinerary_id to be associated with the actual itinerary instance
+    # have to set the itinerary_id to be associated with the actual itinerary instance
     itinerary = get_object_or_404(Itinerary, pk=itinerary_id)
     # create the model instance for new activity
     new_activity = Activity.objects.create(itineraries=itinerary, **data)
@@ -26,3 +25,8 @@ class Activities(TokenReq):
       return Response(serialized_activity.data, status=s.HTTP_201_CREATED)
     return Response(serialized_activity.errors, status=s.HTTP_400_BAD_REQUEST)
   
+class Single_Activity(TokenReq):
+  def get(self, request, id):
+    activity = get_object_or_404(Activity, id=id)
+    serialized_activity = Activity_Serializer(activity)
+    return Response(serialized_activity.data, status=s.HTTP_200_OK)

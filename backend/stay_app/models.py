@@ -11,7 +11,9 @@ class Stay(models.Model):
     duration = models.PositiveIntegerField(max_length=2, blank=False, null=False, default=3)
     link = models.CharField(max_length=255, null=True, blank=True, default = "")
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, related_name='stays')
-
+    image_thumb = models.CharField(null = True, blank=True)
+    image_main = models.CharField(null = True, blank=True)
+    location_id = models.CharField(null = True, blank=True)
 
     def __rpr__(self):
         return f"{self.name}, {self.duration} days in {self.location}"

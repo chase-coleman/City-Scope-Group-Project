@@ -12,3 +12,4 @@ class Activity(models.Model):
 
   def __str__(self):
     return f"Activity ID: {self.id}, Name: {self.name}, url: {self.url}"
+  

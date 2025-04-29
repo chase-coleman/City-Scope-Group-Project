@@ -8,9 +8,15 @@ pnpm-debug.log*
 lerna-debug.log*
 
 **/__pycache__
+<<<<<<< HEAD
+
+.env
+.venv/
+=======
 **.pyc
 .env
 .venv
+>>>>>>> e4638c44c47ef1de2d304ac02ec1c207916853f4
 **/.env
 
 city_scope_proj/

@@ -47,3 +47,8 @@ class Single_Activity(TokenReq):
     # if not, return errors
     return Response(serialized_activity.errors, status=s.HTTP_400_BAD_REQUEST)
   
+  def delete(self, request, id):
+    # grab the activity instance
+    activity = get_object_or_404(Activity, id=id)
+    activity.delete()
+    return Response(status=s.HTTP_204_NO_CONTENT)

@@ -8,3 +8,7 @@ class Itinerary(models.Model):
 
   def __str__(self):
     return f"{self.id}. Itinerary for date: {self.date}"
+  
+  def change_date(self, new_date):
+   self.date = new_date
+   self.save() 

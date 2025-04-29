@@ -6,17 +6,56 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Trip
 from .serializers import TripSerializer
 
-#  CRUD for trips
+# 
 class TripListCreateView(APIView):
     permission_classes = [IsAuthenticated]
     # list off all trips
     def get(self, request):
         trips = Trip.objects.filter(user=request.user)
-        serializer = TripSerializer
+        serializer = TripSerializer(trips, many=True)
         return Response(serializer.data)
     
 
     # create new trip
     def post(self,request):
-        serializers = TripSerializer(data=request.data)
+        serializer = TripSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user= request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+    
+    # read, update, delete trips
+class TripDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+    # get trip for a user
+    def get_object(self, pk, user):
+        try:
+            return Trip.objects.get(pk=pk, user=user)
+        except Trip.DoesNotExist:
+            return None
+    # details for a single trip 
+    def get(self, request, pk):
+        trip = self.get_object(pk, request.user)
+        if not trip:
+            return Response({"error": "Trip not found"}, status=404)
+        serializer = TripSerializer(trip)
+        return Response(serializer.data)
+    # update specific trip
+    def put(self, request, pk):
+        trip = self.get_object(pk, request.user)
+        if not trip:
+            return Response({"error": "Trip not found"}, status=404)
+        serializer = TripSerializer(trip, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+    # delete trip
+    def delete(self, request, pk):
+        trip = self.get_object(pk, request.user)
+        if not trip:
+            return Response({"error": "Trip not found"}, status=404)
+        trip.delete()
+        return Response(status=204)
+    
 # Create your views here.

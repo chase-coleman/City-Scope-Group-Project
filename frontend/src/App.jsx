@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { Outlet, useNavigate, useHref } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+
 import './App.css'
 import './index.css'
-import { NavComponent } from './components/Navbar';
-import { useNavigate, Outlet } from 'react-router-dom';
-// https://beta.heroui.com/docs/guide/routing  ^^^
+
+import { NavbarComponent } from './components/NavbarComponent';
 
 const App = () => {
 
@@ -16,9 +17,8 @@ const App = () => {
 
   return (
     <>
-       <NavComponent />
-       <Outlet context={{setLogError}} />
-       <h1>City Scope</h1>
+      <NavbarComponent />
+      <Outlet />
     </>
   );
 };

@@ -1,99 +1,97 @@
-import axios from 'axios'
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useOutletContext } from 'react-router-dom';
+import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
-export const api = axios.create({
-    baseURL: "http://127.0.0.1:8000/api/v1/user/signup/",
-  });
+export const user_api = axios.create({
+  baseURL: "http://127.0.0.1:8000/api/v1/user/",
+});
 
-  export const userRegistration = async (email, password, setLogError) => {
-    const regex = new RegExp("[a-zA-Z].+@[a-zA-Z].+\.[a-zA-Z].+");
-    if(!regex.test(email)) {
-      setLogError('Invalid email address')
-      return
-    }
-    try {
-    let response = await api.post("user/register/", {
-      email: username,
+export const userRegistration = async (
+  email,
+  firstName,
+  lastName,
+  password,
+  setLogError
+) => {
+  const regex = new RegExp("[a-zA-Z].+@[a-zA-Z].+.[a-zA-Z].+");
+  if (!regex.test(email)) {
+    setLogError("Invalid email address");
+    return;
+  }
+  try {
+    let response = await user_api.post("signup/", {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
       password: password,
     });
-    if(response.status == 226) {setLogError('Username already exists, try another')
-      return 
+    if (response.status == 226) {
+      setLogError("Username already exists, try another");
+      return;
     }
-    console.log(`${response.status} ${response['user']}`)
+    console.log(`${response.status} ${response["user"]}`);
     if (response.status === 201) {
-      const {user } = response.data
-      return userLogin(user, password, setLogError)
+      const { user } = response.data;
+      return userLogin(user, password, setLogError);
     }
-     
-  }
-  
-    catch (error) {
-    
-    setLogError(`registration failed, ${error}`)
+  } catch (error) {
+    setLogError(`registration failed, ${error}`);
     return null;
-  }  };
+  }
+};
 
-  export const userLogin = async(username, password, setLogError) => {
-
-    try {
-    let response = await api.post('user/login/', {
-        username: username,
-        password: password,
+export const userLogin = async (username, password, setLogError) => {
+  console.log(`${username} | ${password}`)
+  try {
+    let response = await user_api.post("login/", {
+      username: username,
+      password: password,
     });
+    console.log(response)
 
-        let {user, token} = response.data
-        let is_super = false
-        if (response.data['is_super']) { is_super = true}
-        localStorage.setItem('token', token);
-        api.defaults.headers.common["Authorization"] = `token ${token}`;
-        console.log(`Logged in ${user} ${response.status}`, token)
-        console.log('Full response data:', response.data);
-        return {"user":username,
-              "response":response.status,
-              'is_super':is_super
-        };
-
+    let { user, token } = response.data;
+    localStorage.setItem("Token", token);
+    user_api.defaults.headers.common["Authorization"] = `Token ${token}`;
+    console.log(`Logged in ${user} ${response.status}`, token);
+    console.log("Full response data:", response.data);
+    return { user: username, response: response.status};
   } catch (error) {
     console.error("Login error caught: ", error);
+    setLogError(`   Invalid username or password`);
+    return null;
+  }
+};
 
-    
-    setLogError(`   Invalid username or password`)
+export const userLogout = async () => {
+  const response = await user_api.post("user/logout/");
+  if (response.status == 204) {
+    localStorage.removeItem("token");
+    delete user_api.defaults.headers.common["Authorization"];
+    console.log("user logged out");
 
-    return null
+    return true;
+  }
+  console.log("error loggin user out");
+  return false;
+};
+
+export const confirmUser = async () => {
+
+  let token = localStorage.getItem("token");
+  if (token) {
+    user_api.defaults.headers.common["Authorization"] = `token ${token}`;
+    let response = await user_api.get("info/");
+    if(response.status == 401) {
+      return false
     }
-  };
-
-  export const userLogout = async() => {
-
-    const response = await api.post('user/logout/');
-    if(response.status == 204) {
-        localStorage.removeItem('token');
-        delete api.defaults.headers.common['Authorization'];
-        console.log('user logged out')
-
-        return true
+    console.log(response)
+    if (response.status == 200) {
+      const { username } = response.data;
+      console.log(
+        `user ${username} | ${response.status} | user verified}`
+      );
+      return { username: username};
     }
-    console.log('error loggin user out')
-    return false
-  };
-
-  export const confirmUser = async() => {
-
-    let token = localStorage.getItem('token');
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `token ${token}`
-      let response = await api.get('user/')
-      if (response.status == 200) {
-        const {username} = response.data
-        let is_super = false
-        if(response.data['site administrator']) {is_super = true}
-
-        console.log(`user ${username} | ${response.status} | user verified | super: ${is_super}`)
-        return {'username':username,
-          'is_super':is_super
-        }
-      }
-    }
-    return false;
-  };
+  }
+  return false;
+};

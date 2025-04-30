@@ -8,6 +8,7 @@ import {confirmUser} from './Utilities/LoginPageUtils'
 
 
 import ExplorePage from "./pages/ExplorePage";
+import TripsPage from "./pages/TripsPage";
 
 
 const router = createBrowserRouter([
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
     {
       path: '/explore',
       element: <ExplorePage />
+    },
+    {
+      path: '/trips',
+      element: <TripsPage />
     }
     ],
   },

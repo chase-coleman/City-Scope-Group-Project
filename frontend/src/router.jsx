@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
+
 import HomePage from "./pages/HomePage";
+import TripViewPage from "./pages/TripViewPage";
 
 const router = createBrowserRouter([
   {
@@ -10,6 +12,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "/tripview",
+        element: <TripViewPage />
       },
     ],
   },

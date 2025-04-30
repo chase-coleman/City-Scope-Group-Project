@@ -29,7 +29,7 @@ class User_View(TokenReq):
     # serialize the info to return to frontend
     serialized_user = UserInfoSerializer(user_info)
     return Response(serialized_user.data, status=s.HTTP_200_OK)
-  
+
   def put(self, request):
     data = request.data.copy()
     # pass the request's data into the serializer

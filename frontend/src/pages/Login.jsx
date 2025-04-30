@@ -3,7 +3,7 @@ import {useState} from 'react';
 import { Form, Button } from 'react-bootstrap'
 import { Container, Row, Col, Tab, Tabs, FloatingLabel } from 'react-bootstrap';
 import { useOutletContext, useNavigate } from 'react-router-dom'
-import { userLogin, confirmUser, userRegistration } from '../Utility/user_utilities'
+import { userLogin, confirmUser, userRegistration } from '../Utilities/LoginPageUtils'
 
 const Login = () => {
   const [email, setEmail] = useState("")
@@ -61,7 +61,7 @@ const navigate = useNavigate()
         <Form
             onSubmit={async (e) => {
               e.preventDefault();
-              const log = await userRegistration(username, password, setLogError);
+              const log = await userRegistration(email, firstName, lastName, password, setLogError);
               if (log?.response == 200 ) {
                 // setUser(log.user)
                 // navigate('/HomePage/');

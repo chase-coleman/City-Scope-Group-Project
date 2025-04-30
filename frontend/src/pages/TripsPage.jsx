@@ -1,7 +1,9 @@
 import React from 'react'
 
-export default function TripsPage() {
+const TripsPage = () => {
   return (
     <div>TripsPage</div>
-  )
-}
+  );
+};
+
+export default TripsPage

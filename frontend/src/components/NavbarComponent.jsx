@@ -12,8 +12,10 @@ export const NavbarComponent = () => {
       <Nav.Link as={Link} to="/login">| Login |</Nav.Link>
         <Nav.Link href="#features">Features</Nav.Link>
         <Nav.Link href="#pricing">Pricing</Nav.Link>
+
         <Nav.Link as={Link} to="/explore">Explore</Nav.Link>
         <Nav.Link as={Link} to="/trips">Trips</Nav.Link>
+
       </Nav>
     </Container>
   </Navbar>

@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework import status as s
 from .models import User
 from django.shortcuts import get_object_or_404
-from .serializers import UserInfoSerializer
+from .serializers import UserInfoSerializer, UserSignupSerializer
 
 # TO DO : add a 'trips' key/value pair inside the user_info dict being created in the User view + serializer for trips
 
@@ -49,11 +49,11 @@ class SignUp(APIView):
     
     is_superuser = data.get('is_superuser', False)
 
-    serialized_data = UserInfoSerializer(data=data)
+    serialized_data = UserSignupSerializer(data=data)
     if serialized_data.is_valid():
       # creating a new user instance with the valid data
       new_user = serialized_data.save()
-    
+
       if is_superuser:
         new_user.is_superuser = True
         new_user.is_staff = True

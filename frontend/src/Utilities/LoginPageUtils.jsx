@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useOutletContext } from "react-router-dom";
+
 
 export const user_api = axios.create({
   baseURL: "http://127.0.0.1:8000/api/v1/user/",
@@ -13,6 +13,7 @@ export const userRegistration = async (
   password,
   setLogError
 ) => {
+  console.log(`${email} ${password} ${firstName} ${lastName}`)
   const regex = new RegExp("[a-zA-Z].+@[a-zA-Z].+.[a-zA-Z].+");
   if (!regex.test(email)) {
     setLogError("Invalid email address");
@@ -25,6 +26,7 @@ export const userRegistration = async (
       email: email,
       password: password,
     });
+
     if (response.status == 226) {
       setLogError("Username already exists, try another");
       return;
@@ -32,7 +34,7 @@ export const userRegistration = async (
     console.log(`${response.status} ${response["user"]}`);
     if (response.status === 201) {
       const { user } = response.data;
-      return userLogin(user, password, setLogError);
+      return userLogin(email, password, setLogError);
     }
   } catch (error) {
     setLogError(`registration failed, ${error}`);
@@ -50,8 +52,8 @@ export const userLogin = async (username, password, setLogError) => {
     console.log(response)
 
     let { user, token } = response.data;
-    localStorage.setItem("Token", token);
-    user_api.defaults.headers.common["Authorization"] = `Token ${token}`;
+    localStorage.setItem("token", token);
+    user_api.defaults.headers.common["Authorization"] = `token ${token}`;
     console.log(`Logged in ${user} ${response.status}`, token);
     console.log("Full response data:", response.data);
     return { user: username, response: response.status};
@@ -82,14 +84,15 @@ export const confirmUser = async () => {
     user_api.defaults.headers.common["Authorization"] = `token ${token}`;
     let response = await user_api.get("info/");
     if(response.status == 401) {
+      console.log("Invalid user")
       return false
     }
-    console.log(response)
+    // console.log(response)
     if (response.status == 200) {
       const { username } = response.data;
-      console.log(
-        `user ${username} | ${response.status} | user verified}`
-      );
+      // console.log(
+      //   `user ${username} | ${response.status} | user verified}`
+      // );
       return { username: username};
     }
   }

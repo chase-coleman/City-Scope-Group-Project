@@ -9,6 +9,7 @@ from .models import User
 from django.shortcuts import get_object_or_404
 from .serializers import UserInfoSerializer, UserSignupSerializer
 
+
 # TO DO : add a 'trips' key/value pair inside the user_info dict being created in the User view + serializer for trips
 
 # any view inheriting this class is ensuring only logged in (authenticated) users can access it
@@ -51,6 +52,7 @@ class SignUp(APIView):
 
     serialized_data = UserSignupSerializer(data=data)
     if serialized_data.is_valid():
+      print(serialized_data)
       # creating a new user instance with the valid data
       new_user = serialized_data.save()
 

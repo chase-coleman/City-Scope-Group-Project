@@ -1,0 +1,15 @@
+#root {
+  height: 100% !important;
+  padding: 1px !important;
+  margin: 0;
+  /* background-color: red; */
+  background-image: url("/shubham-dhage--2eXWZkliWo-unsplash.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+.body {
+  height: 100vh;
+  
+}

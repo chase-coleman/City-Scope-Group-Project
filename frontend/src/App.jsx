@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import './App.css'
 import './index.css'
 import { Outlet } from 'react-router-dom';
@@ -9,13 +9,8 @@ import { useNavigate, useHref } from 'react-router-dom';
 
 
 const App = () => {
-  const navigate = useNavigate()
+  // google maps API key in the .env file
   const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-
-
-  useEffect(() => {
-    console.log(googleApiKey)
-  }, [])
 
   return (
     <>

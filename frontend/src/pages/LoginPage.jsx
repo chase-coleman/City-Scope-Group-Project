@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Container, Row, Col, Tab, Tabs, FloatingLabel } from "react-bootstrap";
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useOutletContext, useNavigate, useLoaderData } from "react-router-dom";
 import {
   userLogin,
   confirmUser,
@@ -17,6 +17,7 @@ const Login = () => {
   const [lastName, setLastName] = useState("");
   // const {user, setUser } = useOutletContext();
   const [logError, setLogError] = useState("");
+  const {user, setUser} = useOutletContext()
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,14 +44,10 @@ const Login = () => {
                 <Form
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    const log = await userLogin(
-                      username,
-                      password,
-                      setLogError
-                    );
-                    if (log?.response == 200) {
-                      // setUser(log.user)
-                      // navigate('/HomePage/');
+                    const login = await userLogin(username,password,setLogError);
+                    if (login?.response == 200) {
+                      setUser(await confirmUser())
+                      navigate('/explore/');
                     }
                   }}
                 >
@@ -81,21 +78,21 @@ const Login = () => {
                   <p style={{ color: "red" }}>{logError}</p>
                 </Form>
               </Tab>
-
+{/* ----------------------------------------------------------------------------- */}
               <Tab eventKey="register" title="Register">
                 <Form
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    const log = await userRegistration(
+                    const login = await userRegistration(
                       email,
                       firstName,
                       lastName,
                       password,
                       setLogError
                     );
-                    if (log?.response == 200) {
-                      // setUser(log.user)
-                      // navigate('/HomePage/');
+                    if (login?.response == 200) {
+                      setUser(await confirmUser())
+                      navigate('/explore/');
                     }
                   }}
                 >

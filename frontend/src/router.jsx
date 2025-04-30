@@ -4,6 +4,7 @@ import App from "./App";
 import HomePage from "./pages/HomePage";
 import Login from './pages/Login'
 import TripViewPage from "./pages/TripViewPage";
+import ExplorePage from "./pages/ExplorePage";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: '/tripview',
         element: <TripViewPage />
+      },
+      {
+        path: '/explore',
+        element: <ExplorePage />
       },
     ],
   },

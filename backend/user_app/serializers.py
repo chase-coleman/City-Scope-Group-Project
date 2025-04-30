@@ -6,5 +6,5 @@ class UserInfoSerializer(ModelSerializer):
   class Meta:
     model = User 
     # change field to what we want to display later
-    fields = '__all__'
+    fields = ['id', 'first_name', 'last_name', 'email', 'username']
   

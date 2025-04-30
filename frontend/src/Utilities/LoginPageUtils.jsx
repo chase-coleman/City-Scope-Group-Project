@@ -13,6 +13,7 @@ export const userRegistration = async (
   password,
   setLogError
 ) => {
+  console.log(`${email} ${password} ${firstName} ${lastName}`)
   const regex = new RegExp("[a-zA-Z].+@[a-zA-Z].+.[a-zA-Z].+");
   if (!regex.test(email)) {
     setLogError("Invalid email address");
@@ -25,6 +26,7 @@ export const userRegistration = async (
       email: email,
       password: password,
     });
+    print(response)
     if (response.status == 226) {
       setLogError("Username already exists, try another");
       return;

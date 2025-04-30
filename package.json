@@ -1,5 +1,9 @@
 {
   "dependencies": {
+<<<<<<< HEAD
+    "react-bootstrap": "^2.10.9"
+=======
     "@vis.gl/react-google-maps": "^1.5.2"
+>>>>>>> 438ace0327565e023e6525e0465652a61710df5a
   }
 }

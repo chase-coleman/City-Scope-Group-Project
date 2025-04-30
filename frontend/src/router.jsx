@@ -2,7 +2,7 @@ import { createBrowserRouter, useOutletContext } from "react-router-dom";
 import App from "./App";
 
 import HomePage from "./pages/HomePage";
-import Login from './pages/Login'
+import LoginPage from './pages/Login'
 import TripViewPage from "./pages/TripViewPage";
 import ExplorePage from "./pages/ExplorePage";
 import TripsPage from "./pages/TripsPage";
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/login',
-        element: <Login />,
+        element: <LoginPage />,
       },
       {
         path: '/tripview',

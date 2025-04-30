@@ -41,11 +41,13 @@ export const userRegistration = async (
 };
 
 export const userLogin = async (username, password, setLogError) => {
+  console.log(`${username} | ${password}`)
   try {
     let response = await user_api.post("login/", {
       username: username,
       password: password,
     });
+    console.log(response)
 
     let { user, token } = response.data;
     localStorage.setItem("Token", token);

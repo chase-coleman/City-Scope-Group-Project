@@ -135,11 +135,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Telling the project that this is the user model to be using
 AUTH_USER_MODEL = 'user_app.User'
 # DRF Configuration
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
-}

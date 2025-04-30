@@ -1,13 +1,29 @@
-const {heroui} = require("@heroui/react");
+<<<<<<< HEAD
+/** @type {import('tailwindcss').Config} */
+=======
+import { heroui } from "@heroui/react";
 
-module.exports = {
+>>>>>>> 53a75f1e616db67e823624b4cd81efe19626b198
+export default {
   content: [
-    "./src/**/*.{html,js,jsx,ts,tsx}", // Update this with the correct paths if needed
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+<<<<<<< HEAD
+=======
+    "./node_modules/@heroui/react/dist/**/*.{js,ts,jsx,tsx}" // Updated path to match package
+>>>>>>> 53a75f1e616db67e823624b4cd81efe19626b198
   ],
   theme: {
     extend: {},
   },
-  plugins: [require('@tailwindcss/line-clamp'), 
+  plugins: [
+<<<<<<< HEAD
+    require('@tailwindcss/line-clamp'),
+  ],
+};
+=======
+    require('@tailwindcss/line-clamp'), 
     heroui()
   ],
-}
+};
+>>>>>>> 53a75f1e616db67e823624b4cd81efe19626b198

@@ -1,3 +1,7 @@
+
+
+import { use, useEffect, useState } from 'react'
+
 import './App.css'
 import './index.css'
 import { NavComponent } from './components/Navbar';
@@ -5,9 +9,15 @@ import React, {useState} from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 // https://beta.heroui.com/docs/guide/routing  ^^^
 
+
 const App = () => {
+
   const navigate = useNavigate()
   const [logError, setLogError] = useState("") 
+
+  // google maps API key in the .env file
+  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+
 
   return (
     <>

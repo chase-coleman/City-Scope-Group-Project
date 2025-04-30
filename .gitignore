@@ -12,7 +12,7 @@ lerna-debug.log*
 .env
 .venv
 **/.env
-
+./frontend/.env
 city_scope_proj/
 
 node_modules

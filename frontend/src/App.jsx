@@ -1,10 +1,10 @@
 import { Outlet, useNavigate, useHref } from 'react-router-dom';
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import './App.css'
 import './index.css'
 
-import { NavComponent } from './components/NavbarComponent';
+import { NavbarComponent } from './components/NavbarComponent';
 
 const App = () => {
   // google maps API key in the .env file
@@ -12,7 +12,7 @@ const App = () => {
 
   return (
     <>
-      <NavComponent />
+      <NavbarComponent />
       <Outlet />
     </>
   );

@@ -1,3 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* https://tailwindcss.com/docs/upgrade-guide */
+/* tailwind v4 can now be imported in one statement, not 3 */
+@import "tailwindcss";
+/* @config "../../tailwind.config.js"; */
+@source "../node_modules/@heroui";

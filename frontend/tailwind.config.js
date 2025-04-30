@@ -1,13 +1,16 @@
-const {heroui} = require("@heroui/react");
+import { heroui } from "@heroui/react";
 
-module.exports = {
+export default {
   content: [
-    "./src/**/*.{html,js,jsx,ts,tsx}", // Update this with the correct paths if needed
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/react/dist/**/*.{js,ts,jsx,tsx}" // Updated path to match package
   ],
   theme: {
     extend: {},
   },
-  plugins: [require('@tailwindcss/line-clamp'), 
+  plugins: [
+    require('@tailwindcss/line-clamp'), 
     heroui()
   ],
-}
+};

@@ -1,5 +1,6 @@
 import { useState } from "react"
 
+import { Button } from "react-bootstrap"
 
 export default function TripViewPage() {
 
@@ -59,6 +60,7 @@ export default function TripViewPage() {
         </p>
         <p>
           Destination: big lungus
+          <Button>BUTTON</Button>
         </p>
       </div>
       <div className="w-full h-4/9 border-2">
@@ -73,7 +75,7 @@ export default function TripViewPage() {
           fake_itinerary
           ? fake_itinerary.map((ticket) => {
             return (
-              <div className="flex flex-colborder-2 w-48">
+              <div className="flex flex-colborder-2 w-48 rounded-lg">
                 {ticket.id}
               </div>
             )

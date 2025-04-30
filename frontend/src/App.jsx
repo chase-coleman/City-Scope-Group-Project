@@ -1,12 +1,10 @@
+import { Outlet, useNavigate, useHref } from 'react-router-dom';
 import { use, useEffect, useState } from 'react'
+
 import './App.css'
 import './index.css'
-import { Outlet } from 'react-router-dom';
-import { NavComponent } from './components/Navbar';
-import React from 'react';
-import { useNavigate, useHref } from 'react-router-dom';
-// https://beta.heroui.com/docs/guide/routing  ^^^
 
+import { NavComponent } from './components/NavbarComponent';
 
 const App = () => {
   // google maps API key in the .env file
@@ -14,9 +12,8 @@ const App = () => {
 
   return (
     <>
-       <NavComponent />
-        <Outlet />
-      <h1>City Scope</h1>
+      <NavComponent />
+      <Outlet />
     </>
   );
 };

@@ -5,6 +5,7 @@ import { useOutletContext } from "react-router-dom";
 import { userLogin } from "../Utilities/LoginPageUtils";
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
+
 const ExplorePage = () => {
 
 
@@ -32,4 +33,7 @@ const ExplorePage = () => {
   );
 };
 
+<script async
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&loading=async&libraries=places&callback=initMap">
+</script>
 export default ExplorePage;

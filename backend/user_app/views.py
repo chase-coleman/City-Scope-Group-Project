@@ -61,6 +61,8 @@ class SignUp(APIView):
 
       token = Token.objects.create(user=new_user)
       return Response({"message": "Account successfully created", "token": token.key}, status=s.HTTP_201_CREATED)
+    elif serialized_data.errors == "user with this email already exists.":
+      return Response(serialized_data.errors, status=s.HTTP_409_CONFLICT)
     return Response(serialized_data.errors, status=s.HTTP_400_BAD_REQUEST)
   
 

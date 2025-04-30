@@ -1,22 +1,20 @@
-import { useState } from 'react'
 import './App.css'
 import './index.css'
-import { Outlet } from 'react-router-dom';
 import { NavComponent } from './components/Navbar';
-import React from 'react';
-import { useNavigate, useHref } from 'react-router-dom';
+import React, {useState} from 'react';
+import { useNavigate, Outlet } from 'react-router-dom';
 // https://beta.heroui.com/docs/guide/routing  ^^^
 
 const App = () => {
   const navigate = useNavigate()
+  const [logError, setLogError] = useState("") 
 
   return (
     <>
        <NavComponent />
-        <Outlet />
-      <h1>City Scope</h1>
+       <Outlet context={{setLogError}} />
+       <h1>City Scope</h1>
     </>
   );
 };
-
 export default App;

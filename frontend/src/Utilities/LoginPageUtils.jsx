@@ -1,61 +1,75 @@
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
 
+// --------------- API instance for all user functions ----------------
 
 export const user_api = axios.create({
   baseURL: "http://127.0.0.1:8000/api/v1/user/",
 });
 
-export const userRegistration = async (
-  email,
-  firstName,
-  lastName,
-  password,
-  setLogError
-) => {
-  console.log(`${email} ${password} ${firstName} ${lastName}`)
-  const regex = new RegExp("[a-zA-Z].+@[a-zA-Z].+.[a-zA-Z].+");
+
+// --------------- User Registration function ----------------
+export const userRegistration = async (email, firstName, lastName, password, setLogError ) => {
+  if(firstName == "" || lastName == "" || password == "" || email == "") {
+    setLogError("I know four fields is a lot to ask but do it anyway")
+    return false
+  }
+  
+  const regex = new RegExp("[a-zA-Z].+@[a-zA-Z].+.[a-zA-Z].+");  //Verify Email is in a valid email format
   if (!regex.test(email)) {
     setLogError("Invalid email address");
     return;
   }
-  try {
+
     let response = await user_api.post("signup/", {
       first_name: firstName,
       last_name: lastName,
       email: email,
       password: password,
+    },
+    {
+      validateStatus: (status) => true, // Accept all status codes, because axios likes to throw 
+                                        // errors for most non "GTG status codes
     });
+    console.log(response.status)
 
-    if (response.status == 226) {
+    if (response.status == 409 || response.status == 226) {
       setLogError("Username already exists, try another");
       return;
-    }
-    console.log(`${response.status} ${response["user"]}`);
-    if (response.status === 201) {
+    } else if (response.status === 201) {
       const { user } = response.data;
       return userLogin(email, password, setLogError);
+    } else {
+      setLogError("Registration failed for an unknown reason")
     }
-  } catch (error) {
-    setLogError(`registration failed, ${error}`);
-    return null;
-  }
+    // console.log(`${response.status} ${response["user"]}`);
 };
 
+// --------------- User Login function ----------------
 export const userLogin = async (username, password, setLogError) => {
-  console.log(`${username} | ${password}`)
+  // console.log(`${username} | ${password}`)
+  if (username == "" || password == ""){
+    setLogError("Username and password are required")
+  return false
+  }
   try {
     let response = await user_api.post("login/", {
       username: username,
       password: password,
+    },
+    {
+      validateStatus: (status) => true,
     });
-    console.log(response)
+    if(response.status != 200) {
+      setLogError("Invalid user credentials")
+      return false
+    }
+    // console.log(response)
 
     let { user, token } = response.data;
     localStorage.setItem("token", token);
     user_api.defaults.headers.common["Authorization"] = `token ${token}`;
-    console.log(`Logged in ${user} ${response.status}`, token);
-    console.log("Full response data:", response.data);
+    // console.log(`Logged in ${user} ${response.status}`, token);
+    // console.log("Full response data:", response.data);
     return { user: username, response: response.status};
   } catch (error) {
     console.error("Login error caught: ", error);
@@ -64,6 +78,7 @@ export const userLogin = async (username, password, setLogError) => {
   }
 };
 
+// --------------- User logout function ----------------
 export const userLogout = async () => {
   const response = await user_api.post("user/logout/");
   if (response.status == 204) {
@@ -77,8 +92,8 @@ export const userLogout = async () => {
   return false;
 };
 
+// --------------- valid user check for navigation ----------------
 export const confirmUser = async () => {
-
   let token = localStorage.getItem("token");
   if (token) {
     user_api.defaults.headers.common["Authorization"] = `token ${token}`;

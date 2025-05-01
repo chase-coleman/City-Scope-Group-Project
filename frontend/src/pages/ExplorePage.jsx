@@ -21,15 +21,16 @@ const mapId = import.meta.env.VITE_MAP_ID_V1;
 export const ExploreContext = createContext({
   address: "",
   setAddress: () => {},
-  place: null, 
+  place: null,
   setPlace: () => {},
-})
+});
 
 const ExplorePage = () => {
   const position = { lat: 41.88167, lng: -87.62861 };
   const [open, setOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState(null);
+
 
 
   return (
@@ -40,7 +41,9 @@ const ExplorePage = () => {
         </div>
         <div className="right-side flex flex-col items-center bg-pink-500 w-[80%]">
           <div className="map-container bg-purple-200 w-[75%] h-[75%]">
-            <ExploreContext.Provider value={{address, setAddress, place, setPlace}}>
+            <ExploreContext.Provider
+              value={{ address, setAddress, place, setPlace }}
+            >
               <AutocompleteComponent />
             </ExploreContext.Provider>
             <APIProvider apiKey={googleApiKey}>

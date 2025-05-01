@@ -24,36 +24,37 @@ const AutocompleteComponent = () => {
   };
 
   const handleSelect = async (selectedAddress) => {
+    // set address state to obj of selected location
     setAddress(selectedAddress);
-
+    clearSuggestions();
     try {
       // geocoding api
-
-      const results = await getGeocode(selectedAddress);
-      console.log(results);
+      const results = await getGeocode({"address": selectedAddress.description});
       const latLng = getLatLng(results[0]);
+      console.log(latLng)
 
-      const placesDetails = {
-        name: results[0].formatted_address,
-        formatted_address: results[0].formatted_address,
-        place_id: results[0].place_id,
-        geometry: {
-          location: {
-            lat: latLng.lat,
-            lng: latLng.lng,
-          },
-        },
-      };
+      // const placesDetails = {
+      //   name: results[0].formatted_address,
+      //   formatted_address: results[0].formatted_address,
+      //   place_id: results[0].place_id,
+      //   geometry: {
+      //     location: {
+      //       lat: latLng.lat,
+      //       lng: latLng.lng,
+      //     },
+      //   },
+      // };
 
-      setPlace(placesDetails);
+      // setPlace(placesDetails);
     } catch (error) {}
   };
 
   return (
     <>
-      <div className="autocomplete-container">
+      <div className="autocomplete-container p-0">
         <div className="autocomplete-container">
           <input
+            className="autocomplete-input"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             disabled={!ready}
@@ -64,7 +65,7 @@ const AutocompleteComponent = () => {
               data.map((suggestion) => (
                 <div
                   key={suggestion.place_id}
-                  onClick={() => handleSelect(suggestion.description)}
+                  onClick={() => handleSelect(suggestion)}
                   className="suggestion-item"
                 >
                   {suggestion.description}
@@ -72,27 +73,6 @@ const AutocompleteComponent = () => {
               ))}
           </div>
         </div>
-
-        {place && (
-          <div className="place-info">
-            <h2>Address Details</h2>
-            <p>
-              <strong>Name:</strong> {place.name}
-            </p>
-            <p>
-              <strong>Formatted Address:</strong> {place.formatted_address}
-            </p>
-            <p>
-              <strong>Place ID:</strong> {place.place_id}
-            </p>
-            <p>
-              <strong>Latitude:</strong> {place.geometry.location.lat}
-            </p>
-            <p>
-              <strong>Longitude:</strong> {place.geometry.location.lng}
-            </p>
-          </div>
-        )}
       </div>
     </>
   );

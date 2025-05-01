@@ -27,6 +27,7 @@ const AutocompleteComponent = () => {
     // set address state to obj of selected location
     setAddress(selectedAddress);
     clearSuggestions();
+      // console.log(selectedAddress.description)
     try {
       // call the geoCode function from google maps to get a bunch of info from the selected
       // address that we need to get the latitute/longitude
@@ -35,10 +36,11 @@ const AutocompleteComponent = () => {
       // call the getLatLng function from google maps so we can change the map's view to that lat/long 
       // (the selected location)
       const latLng = getLatLng(results[0]);
-      
+
       // create an object from the results of getLatLng
       const placesDetails = {
-        name: results[0].formatted_address,
+        name: selectedAddress.description,
+        address: results[0].formatted_address,
         formatted_address: results[0].formatted_address,
         place_id: results[0].place_id,
         geometry: {
@@ -48,7 +50,6 @@ const AutocompleteComponent = () => {
           },
         },
       };
-
       setPlace(placesDetails);
     } catch (error) {
       console.error(error)

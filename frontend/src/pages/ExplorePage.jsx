@@ -33,15 +33,9 @@ const ExplorePage = () => {
   }, [place]) // might have to change this to watch lat/lng states instead
 
   const updateMapLocation =() => {
-    setLat(place.geometry.location.lat)
-    setLng(place.geometry.location.lng)
-  }
-
-  useEffect(() => {
-    
-    console.log(lat, lng)
-    
-  }, [lat, lng])
+    setLat(place.geometry.location.lat);
+    setLng(place.geometry.location.lng);
+  };
 
 
   return (
@@ -74,7 +68,7 @@ const ExplorePage = () => {
                   position={{"lat": lat, "lng": lng}}
                   onCloseClick={() => setOpen(false)}
                 >
-                  <span>Code Platoon HQ</span>
+                  <span>{place.name}</span>
                 </InfoWindow>
               )}
             </APIProvider>

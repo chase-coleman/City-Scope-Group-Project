@@ -2,13 +2,13 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from .models import Trip
 from .serializers import TripSerializer
+from user_app.views import TokenReq
+ 
+# Jack : I removed the isAuthenticated stuff from your two views, and inherited TokenReq from the user_app.views file
 
-# 
-class TripListCreateView(APIView):
-    permission_classes = [IsAuthenticated]
+class TripListCreateView(TokenReq):
     # list off all trips
     def get(self, request):
         trips = Trip.objects.filter(user=request.user)
@@ -25,8 +25,7 @@ class TripListCreateView(APIView):
         return Response(serializer.errors, status=400)
     
     # read, update, delete trips
-class TripDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+class TripDetailView(TokenReq):
     # get trip for a user
     def get_object(self, pk, user):
         try:

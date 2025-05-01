@@ -8,4 +8,5 @@ urlpatterns = [
     path('api/v1/stay/', include('stay_app.urls')),
     path('api/v1/trip/', include('trip_app.urls')),
     path('api/v1/activity/', include('activity_app.urls')), # directs django to the activity_app.urls
+    path('api/v1/loc/', include('trip_advisor_api.urls')),
 ]

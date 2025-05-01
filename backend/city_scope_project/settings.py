@@ -11,9 +11,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import dotenv_values, load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = dotenv_values(".env")
+load_dotenv()
+TA_KEY = os.getenv("TAKey", "")
 
 
 # Quick-start development settings - unsuitable for production
@@ -49,6 +55,7 @@ INSTALLED_APPS = [
     'activity_app',
     'trip_app',
     'rest_framework.authtoken',
+    'trip_advisor_api',
 ]
 
 MIDDLEWARE = [

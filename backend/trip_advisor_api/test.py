@@ -1,0 +1,131 @@
+test = {
+    "data": [
+        {
+            "location_id": "304289",
+            "name": "Hilton Tokyo",
+            "address_obj": {
+                "street1": "6-6-2",
+                "city": "Nishishinjuku",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "160-0023",
+                "address_string": "6-6-2, Nishishinjuku, Shinjuku 160-0023 Tokyo Prefecture",
+            },
+        },
+        {
+            "location_id": "307324",
+            "name": "Hyatt Regency Tokyo",
+            "address_obj": {
+                "street1": "2-7-2",
+                "street2": "",
+                "city": "Nishishinjuku",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "160-0023",
+                "address_string": "2-7-2, Nishishinjuku, Shinjuku 160-0023 Tokyo Prefecture",
+            },
+        },
+        {
+            "location_id": "310308",
+            "name": "The Tokyo Station Hotel",
+            "address_obj": {
+                "street1": "1-9-1",
+                "city": "Marunouchi",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "100-0005",
+                "address_string": "1-9-1, Marunouchi, Chiyoda 100-0005 Tokyo Prefecture",
+            },
+        },
+        {
+            "location_id": "10426242",
+            "name": "HOSHINOYA Tokyo",
+            "address_obj": {
+                "street1": "1-9-1",
+                "city": "Otemachi",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "100-0004",
+                "address_string": "1-9-1, Otemachi, Chiyoda 100-0004 Tokyo Prefecture",
+            },
+        },
+        {
+            "location_id": "571809",
+            "name": "Conrad Tokyo",
+            "address_obj": {
+                "street1": "1-9-1 Higashishimbashi",
+                "street2": "",
+                "city": "Minato",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "105-7337",
+                "address_string": "1-9-1 Higashishimbashi, Minato 105-7337 Tokyo Prefecture",
+            },
+        },
+        {
+            "location_id": "20210279",
+            "name": "OYO 11429 Hotel Tokyo Japan Comforts",
+            "address_obj": {
+                "street1": "Atithi Residency ,Ramakrishna Theare Road",
+                "street2": "Tokyo Japan Centre Building, Opposite Bharat Petroleum",
+                "city": "Hyderabad",
+                "state": "Telangana",
+                "country": "India",
+                "postalcode": "500001",
+                "address_string": "Atithi Residency ,Ramakrishna Theare Road Tokyo Japan Centre Building, Opposite Bharat Petroleum, Hyderabad 500001 India",
+            },
+        },
+        {
+            "location_id": "653033",
+            "name": "HOTEL METROPOLITAN TOKYO MARUNOUCHI",
+            "address_obj": {
+                "street1": "1-7-12",
+                "street2": "Sapia Tower 27th Floor",
+                "city": "Marunouchi",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "100-0005",
+                "address_string": "1-7-12 Sapia Tower 27th Floor, Marunouchi, Chiyoda 100-0005 Tokyo Prefecture",
+            },
+        },
+        {
+            "location_id": "585204",
+            "name": "Mandarin Oriental Tokyo",
+            "address_obj": {
+                "street1": "2-1-1 Nihonbashi Muromachi",
+                "street2": "",
+                "city": "Chuo",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "103-8328",
+                "address_string": "2-1-1 Nihonbashi Muromachi, Chuo 103-8328 Tokyo Prefecture",
+            },
+        },
+        {
+            "location_id": "17545078",
+            "name": "The Okura Tokyo",
+            "address_obj": {
+                "street1": "2-10-4",
+                "city": "Toranomon",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "105-0001",
+                "address_string": "2-10-4, Toranomon, Minato 105-0001 Tokyo Prefecture",
+            },
+        },
+        {
+            "location_id": "306610",
+            "name": "Grand Hyatt Tokyo",
+            "address_obj": {
+                "street1": "6-10-3",
+                "street2": "",
+                "city": "Roppongi",
+                "state": "Tokyo Prefecture",
+                "country": "Japan",
+                "postalcode": "106-0032",
+                "address_string": "6-10-3, Roppongi, Minato 106-0032 Tokyo Prefecture",
+            },
+        },
+    ]
+}
+print(test['data'][0]['location_id'])

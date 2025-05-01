@@ -4,7 +4,7 @@ const TAKey = import.meta.env.TRIP_ADVISOR_KEY
 // --------------- API instance for all user functions ----------------
 
 export const trip_Advisor_Api = axios.create({
-  baseURL: `https://api.content.tripadvisor.com/api/v1/location/search?key=${TAKey}&searchQuery=`,
+  baseURL: `http://127.0.0.1:8000/api/v1/loc/`,
 });
 
 const headers = {
@@ -12,25 +12,32 @@ const headers = {
     'Content-Type': 'application/json',
   };
 
-export const grabLocID = async(country, city, category) => {
+  export const grabLocID = async (city, country, category, setLogError) => {
     try {
-        let response
-        response = await trip_Advisor_Api.get(`${country}%20${city}&category=${category}&language=en`,
-        {
-            validateStatus: (status) => true,
+      const response = await trip_Advisor_Api.get('locID/', {
+        params: {
+          city: city,
+          country: country,
+          category: category,
         },
-        headers,
-        )
-        console.log(response)
-    if(response.location_id) {
-
-
+        headers: {
+            Accept: 'application/json',
+          },
+        validateStatus: (status) => true,
+      });
+  
+      console.log(response);
+  
+      if (response.data?.locinfo) {
+        console.log("Location info:", response.data.locinfo);
+      }
+  
+    } catch (error) {
+        console.error("Frontend error:", error);
+        setLogError("Failed to fetch location ID");
+        return false
     }
+  };
 
 
-}
-catch {
-    console.log("Error somewhere")
-}
-}
 

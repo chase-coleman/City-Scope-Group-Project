@@ -45,15 +45,13 @@ class User_View(TokenReq):
 class SignUp(APIView):
   def post(self, request):
     data = request.data.copy()
-    # if user provided no username, their provided email is set as the username
     data['username'] = request.data.get("username", request.data.get("email"))
-    
     is_superuser = data.get('is_superuser', False)
 
     serialized_data = UserSignupSerializer(data=data)
+    
     if serialized_data.is_valid():
-      print(serialized_data)
-      # creating a new user instance with the valid data
+
       new_user = serialized_data.save()
 
       if is_superuser:
@@ -63,6 +61,12 @@ class SignUp(APIView):
 
       token = Token.objects.create(user=new_user)
       return Response({"message": "Account successfully created", "token": token.key}, status=s.HTTP_201_CREATED)
+
+    # Check if email field has 'already exists' error
+    email_errors = serialized_data.errors.get("email", [])
+    if any("already exists" in str(error) for error in email_errors):
+      return Response(serialized_data.errors, status=s.HTTP_409_CONFLICT)
+    
     return Response(serialized_data.errors, status=s.HTTP_400_BAD_REQUEST)
   
 

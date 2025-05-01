@@ -1,12 +1,6 @@
 import React, { use, useEffect, useState, createContext } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  APIProvider,
-  Map,
-  AdvancedMarker,
-  Pin,
-  InfoWindow,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow, useMap, } from "@vis.gl/react-google-maps";
 import { useOutletContext } from "react-router-dom";
 import { userLogin } from "../Utilities/LoginPageUtils";
 import useOnclickOutside from "react-cool-onclickoutside";
@@ -25,12 +19,29 @@ export const ExploreContext = createContext({
   setPlace: () => {},
 });
 
+
 const ExplorePage = () => {
-  const position = { lat: 41.88167, lng: -87.62861 };
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // state var for viewing a pinned locations
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState(null);
+  const [lat, setLat] = useState(41.88167) // default = Code Platoon
+  const [lng, setLng] = useState(-87.62861) // default = Code Platoon
 
+  useEffect(() => {
+    if (!place) return;
+    updateMapLocation()
+  }, [place]) // might have to change this to watch lat/lng states instead
+
+  const updateMapLocation =() => {
+    setLat(place.geometry.location.lat)
+    setLng(place.geometry.location.lng)
+  }
+
+  useEffect(() => {
+    
+    console.log(lat, lng)
+    
+  }, [lat, lng])
 
 
   return (
@@ -48,19 +59,19 @@ const ExplorePage = () => {
             </ExploreContext.Provider>
             <APIProvider apiKey={googleApiKey}>
               <Map
-                defaultCenter={position}
+                center={{"lat": lat, "lng": lng}}
                 defaultZoom={12}
                 mapId={mapId}
                 gestureHandling={"greedy"}
                 disableDefaultUI={true}
               />
               <AdvancedMarker
-                position={position}
+                position={{"lat": lat, "lng": lng}}
                 onClick={() => setOpen(true)}
               ></AdvancedMarker>
               {open && (
                 <InfoWindow
-                  position={position}
+                  position={{"lat": lat, "lng": lng}}
                   onCloseClick={() => setOpen(false)}
                 >
                   <span>Code Platoon HQ</span>
@@ -75,3 +86,6 @@ const ExplorePage = () => {
 };
 
 export default ExplorePage;
+
+// docs for available filters :
+// https://developers.google.com/maps/documentation/javascript/place-autocomplete

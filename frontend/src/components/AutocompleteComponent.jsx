@@ -28,31 +28,38 @@ const AutocompleteComponent = () => {
     setAddress(selectedAddress);
     clearSuggestions();
     try {
-      // geocoding api
+      // call the geoCode function from google maps to get a bunch of info from the selected
+      // address that we need to get the latitute/longitude
       const results = await getGeocode({"address": selectedAddress.description});
+
+      // call the getLatLng function from google maps so we can change the map's view to that lat/long 
+      // (the selected location)
       const latLng = getLatLng(results[0]);
-      console.log(latLng)
+      
+      // create an object from the results of getLatLng
+      const placesDetails = {
+        name: results[0].formatted_address,
+        formatted_address: results[0].formatted_address,
+        place_id: results[0].place_id,
+        geometry: {
+          location: {
+            lat: latLng.lat,
+            lng: latLng.lng,
+          },
+        },
+      };
 
-      // const placesDetails = {
-      //   name: results[0].formatted_address,
-      //   formatted_address: results[0].formatted_address,
-      //   place_id: results[0].place_id,
-      //   geometry: {
-      //     location: {
-      //       lat: latLng.lat,
-      //       lng: latLng.lng,
-      //     },
-      //   },
-      // };
-
-      // setPlace(placesDetails);
-    } catch (error) {}
+      setPlace(placesDetails);
+    } catch (error) {
+      console.error(error)
+    }
   };
 
   return (
     <>
       <div className="autocomplete-container p-0">
         <div className="autocomplete-container">
+          {/* search input box */}
           <input
             className="autocomplete-input"
             value={value}
@@ -60,6 +67,7 @@ const AutocompleteComponent = () => {
             disabled={!ready}
             placeholder="Enter a location"
           />
+          {/* search results */}
           <div className="autocomplete-dropdown">
             {status === "OK" &&
               data.map((suggestion) => (

@@ -3,18 +3,30 @@ import { useOutletContext, useNavigate, useLoaderData } from "react-router-dom";
 import {grabLocID} from '../Utilities/TripAdvisorUtils'
 
 const HomePage = () => {
+  const [logError, setLogError] = useState("");
+
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        setLogError("");
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }, [logError]);
 
   return (
     <>
 
     <h1>Home Page</h1>
-    {/* <button
+
+
+    <button
     onClick = {
       () => {
-        grabLocID('japan', 'tokyo', 'hotels')
+        grabLocID('tokyo', 'japan', 'hotels', setLogError)
       }
     }
-    >click me</button> */}
+    >click me and look to your console</button>
+    <br />
+    {logError}
     </>
   )
 }

@@ -27,7 +27,7 @@ const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: '/tripview',
+        path: '/tripview/:trip_id',
         element: <TripViewPage />
       },
       {

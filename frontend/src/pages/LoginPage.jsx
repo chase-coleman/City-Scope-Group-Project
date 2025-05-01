@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Container, Row, Col, Tab, Tabs, FloatingLabel } from "react-bootstrap";
 import { useOutletContext, useNavigate, useLoaderData } from "react-router-dom";
@@ -10,6 +9,7 @@ import {
 } from "../Utilities/LoginPageUtils";
 
 const Login = () => {
+  //-----------USE STATES, OUTLET CONTEXT, AND USENAVIGATE DECLARATIONS ---------
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +20,30 @@ const Login = () => {
   const {user, setUser} = useOutletContext()
   const navigate = useNavigate();
 
+  //-----------HANDLING LOGIN AND REGISTARTION
+  const handleLogin = async () => {
+    const login = await userLogin(username,password,setLogError);
+    if (login?.response == 200) {
+      setUser(await confirmUser())
+      navigate('/explore/');
+    }
+  }
+
+  const handleRegistration = async() => {
+    const login = await userRegistration(
+      email,
+      firstName,
+      lastName,
+      password,
+      setLogError
+    );
+    if (login?.response == 200) {
+      setUser(await confirmUser())
+      navigate('/explore/');
+    }
+  }
+
+  //-----------USE EFFECT FOR ERROR MESSAGE DISPLAY TIMEOUT
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLogError("");
@@ -27,9 +51,9 @@ const Login = () => {
     return () => clearTimeout(timeout);
   }, [logError]);
 
-  return (
+return (
     <>
-    {/* LOGIN */}
+    {/* ---------------------LOGIN / REGISTRATION FORM CONTAINER---------------*/}
       <Container
         className="d-flex justify-content-center "
         style={{ minHeight: "100vh" }}
@@ -41,14 +65,13 @@ const Login = () => {
               className="mb-3 justify-content-center"
             >
               <Tab eventKey="login" title="Login">
+
+     {/* ----------------------LOGIN FORM--------------------- */}
+                
                 <Form
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    const login = await userLogin(username,password,setLogError);
-                    if (login?.response == 200) {
-                      setUser(await confirmUser())
-                      navigate('/explore/');
-                    }
+                    handleLogin()
                   }}
                 >
                   <FloatingLabel
@@ -78,22 +101,14 @@ const Login = () => {
                   <p style={{ color: "red" }}>{logError}</p>
                 </Form>
               </Tab>
-{/* ----------------------------------------------------------------------------- */}
+
+     {/* ----------------------REGISTRATION FORM FORM--------------------- */}
+
               <Tab eventKey="register" title="Register">
                 <Form
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    const login = await userRegistration(
-                      email,
-                      firstName,
-                      lastName,
-                      password,
-                      setLogError
-                    );
-                    if (login?.response == 200) {
-                      setUser(await confirmUser())
-                      navigate('/explore/');
-                    }
+                    handleRegistration()
                   }}
                 >
                   <FloatingLabel

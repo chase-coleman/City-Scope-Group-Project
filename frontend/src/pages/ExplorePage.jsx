@@ -1,12 +1,16 @@
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useState } from "react";
 import {createRoot} from 'react-dom/client';
-import {APIProvider, Map} from '@vis.gl/react-google-maps';
+import {APIProvider, Map, AdvancedMarker, Pin, InfoWindow} from '@vis.gl/react-google-maps';
 import { useOutletContext } from "react-router-dom";
 import { userLogin } from "../Utilities/LoginPageUtils";
-const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY // api key for google maps
+const mapId = import.meta.env.VITE_MAP_ID_V1 //ID for the map in google API 
 
+// TO DO : set state variables for a business that was clicked to store that business info and use in the InfoWindow
 
 const ExplorePage = () => {
+  const position = { lat: 41.88167, lng: -87.62861 }
+  const [open, setOpen] = useState(false)
 
 
   return (
@@ -20,11 +24,18 @@ const ExplorePage = () => {
           <div className="map-container bg-purple-200 w-[75%] h-[75%]">
           <APIProvider apiKey={googleApiKey}>
             <Map
-              defaultCenter={{ lat: 22.54992, lng: 0 }}
-              defaultZoom={3}
+              defaultCenter={ position }
+              defaultZoom={12}
+              mapId={mapId}
               gestureHandling={"greedy"}
               disableDefaultUI={true}
             />
+            <AdvancedMarker 
+            position={position}
+            onClick={() => setOpen(true)}
+            >
+            </AdvancedMarker>
+            {open && <InfoWindow position={position} onCloseClick={() => setOpen(false)}><span>Code Platoon HQ</span></InfoWindow>}
           </APIProvider>
           </div>
         </div>

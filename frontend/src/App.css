@@ -21,8 +21,10 @@
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  min-height: 100vh;
+  width: 100%;
+  min-height: 20%;
   box-sizing: border-box;
+  border: solid black 1px;
   overflow-y: auto; /* Enables scrolling if content exceeds viewport height */
 }
 
@@ -82,6 +84,7 @@
   border: 1px solid #ccc;
   width: 80%;
   max-width: 500px;
+  z-index: 50;
 }
 
 .suggestion-item {

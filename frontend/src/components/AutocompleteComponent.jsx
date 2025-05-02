@@ -1,23 +1,14 @@
+import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
 import React, { use, useEffect, useState, useContext } from "react";
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from "use-places-autocomplete";
-import "../App.css";
 import { ExploreContext } from "../pages/ExplorePage";
+import "../App.css";
 
 // https://www.youtube.com/watch?v=HslRpRQcH5M
 
 const AutocompleteComponent = () => {
-  const {
-    ready,
-    value,
-    suggestions: { status, data },
-    setValue,
-    clearSuggestions,
-  } = usePlacesAutocomplete();
-
+  const { ready, value, suggestions: { status, data }, setValue, clearSuggestions } = usePlacesAutocomplete();
   const { address, setAddress, place, setPlace } = useContext(ExploreContext)
+
 
   const handleChange = (address) => {
     setAddress(address);

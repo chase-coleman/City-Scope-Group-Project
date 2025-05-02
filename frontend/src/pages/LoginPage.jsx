@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Container, Row, Col, Tab, Tabs, FloatingLabel } from "react-bootstrap";
 import { useOutletContext, useNavigate, useLoaderData } from "react-router-dom";
-import {
-  userLogin,
-  confirmUser,
-  userRegistration,
-} from "../Utilities/LoginPageUtils";
+import {userLogin, confirmUser, userRegistration} from "../Utilities/LoginPageUtils";
 
 const Login = () => {
   //-----------USE STATES, OUTLET CONTEXT, AND USENAVIGATE DECLARATIONS ---------
@@ -20,12 +16,12 @@ const Login = () => {
   const {user, setUser} = useOutletContext()
   const navigate = useNavigate();
 
-  //-----------HANDLING LOGIN AND REGISTARTION
+  //-----------HANDLING LOGIN AND REGISTRATION IN UTILS FILE
   const handleLogin = async () => {
     const login = await userLogin(username,password,setLogError);
     if (login?.response == 200) {
       setUser(await confirmUser())
-      navigate('/explore/');
+      navigate('/explore');
     }
   }
 
@@ -39,7 +35,7 @@ const Login = () => {
     );
     if (login?.response == 200) {
       setUser(await confirmUser())
-      navigate('/explore/');
+      navigate('/explore');
     }
   }
 

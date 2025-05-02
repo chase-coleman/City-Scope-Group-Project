@@ -32,6 +32,7 @@ const ExplorePage = () => {
     updateMapLocation()
   }, [place]) // might have to change this to watch lat/lng states instead
 
+  // update the center location of the map
   const updateMapLocation =() => {
     setLat(place.geometry.location.lat);
     setLng(place.geometry.location.lng);

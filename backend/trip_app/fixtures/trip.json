@@ -1,0 +1,24 @@
+[
+  {
+    "model": "trip_app.trip",
+    "pk": 1,
+    "fields": {
+      "name": "Japan Trip!",
+      "city": "Osaka",
+      "country": "Japan",
+      "duration": 5,
+      "user": 1
+    }
+  },
+  {
+    "model": "trip_app.trip",
+    "pk": 2,
+    "fields": {
+      "name": "Japan Trip #2!",
+      "city": "Tokyo",
+      "country": "Japan",
+      "duration": 12,
+      "user": 1
+    }
+  }
+]

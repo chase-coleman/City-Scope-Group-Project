@@ -1,0 +1,44 @@
+[
+  {
+    "model": "stay_app.stay",
+    "pk": 1,
+    "fields": {
+      "name": "Hilton Tokyo",
+      "location": "japan",
+      "duration": 3,
+      "link": "https://www.tripadvisor.com/Hotel_Review-g14133673-d304289-Reviews-Hilton_Tokyo-Nishishinjuku_Shinjuku_Tokyo_Tokyo_Prefecture_Kanto.html?m=66827",
+      "itinerary": 1,
+      "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
+      "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
+      "location_id": 304289
+    }
+  },
+  {
+    "model": "stay_app.stay",
+    "pk": 2,
+    "fields": {
+      "name": "Hilton Tokyo",
+      "location": "japan",
+      "duration": 3,
+      "link": "https://www.tripadvisor.com/Hotel_Review-g14133673-d304289-Reviews-Hilton_Tokyo-Nishishinjuku_Shinjuku_Tokyo_Tokyo_Prefecture_Kanto.html?m=66827",
+      "itinerary": 1,
+      "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
+      "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
+      "location_id": 304289
+    }
+  },
+  {
+    "model": "stay_app.stay",
+    "pk": 3,
+    "fields": {
+      "name": "Hilton Tokyo",
+      "location": "japan",
+      "duration": 3,
+      "link": "https://www.tripadvisor.com/Hotel_Review-g14133673-d304289-Reviews-Hilton_Tokyo-Nishishinjuku_Shinjuku_Tokyo_Tokyo_Prefecture_Kanto.html?m=66827",
+      "itinerary": 1,
+      "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
+      "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
+      "location_id": 304289
+    }
+  }
+]

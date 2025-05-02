@@ -10,7 +10,7 @@ from os import getenv
 if 'TAKey' not in environ:
     load_dotenv()
 
-logging.basicConfig(level=print)
+# logging.basicConfig(level=print)
 def get_locID(city, country, category):
     key = getenv("TAKey")
     if not key:

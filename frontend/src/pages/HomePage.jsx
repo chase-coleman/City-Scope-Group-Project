@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext, useNavigate, useLoaderData } from "react-router-dom";
 import {grabLocID} from '../Utilities/TripAdvisorUtils'
+import sample from '../Utilities/sampleObject.json'
+import TripAdvisorComponent from "../components/tripAdvisorSearchComponent";
 
 const HomePage = () => {
   const [logError, setLogError] = useState("");
-
+  const [results,setResults] = useState(sample)
+console.log(results)
     useEffect(() => {
       const timeout = setTimeout(() => {
         setLogError("");
@@ -27,6 +30,8 @@ const HomePage = () => {
     >click me and look to your console</button>
     <br />
     {logError}
+    <TripAdvisorComponent locinfo = {results.locinfo} />
+
     </>
   )
 }

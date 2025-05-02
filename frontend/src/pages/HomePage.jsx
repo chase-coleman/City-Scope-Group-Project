@@ -7,13 +7,17 @@ import TripAdvisorComponent from "../components/tripAdvisorSearchComponent";
 const HomePage = () => {
   const [logError, setLogError] = useState("");
   const [results,setResults] = useState(sample)
-console.log(results)
+
+  console.log(results)
+
     useEffect(() => {
       const timeout = setTimeout(() => {
         setLogError("");
       }, 2000);
       return () => clearTimeout(timeout);
     }, [logError]);
+
+
 
   return (
     <>
@@ -22,12 +26,13 @@ console.log(results)
 
 
     <button
+    className="font-bold text-2xl text-fuchsia-700 border-2 bg-amber-300 pt-2 pb-2 m-2"
     onClick = {
       () => {
-        grabLocID('tokyo', 'japan', 'hotels', setLogError)
+        grabLocID('Seoul', 'South Korea', 'hotels', setLogError, setResults)
       }
     }
-    >click me and look to your console</button>
+    >Click me and look to your console, WILL SUBMIT REQUEST TO TRIP ADVISOR FOR HOTEL IS SEOUL!</button>
     <br />
     {logError}
     <TripAdvisorComponent locinfo = {results.locinfo} />

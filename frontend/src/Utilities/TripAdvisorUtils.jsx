@@ -12,7 +12,7 @@ const headers = {
     'Content-Type': 'application/json',
   };
 
-  export const grabLocID = async (city, country, category, setLogError) => {
+  export const grabLocID = async (city, country, category, setLogError, setResults) => {
     try {
       const response = await trip_Advisor_Api.get('locID/', {
         params: {
@@ -30,6 +30,8 @@ const headers = {
   
       if (response.data?.locinfo) {
         console.log("Location info:", response.data.locinfo);
+        setResults(response.data)
+
       }
   
     } catch (error) {

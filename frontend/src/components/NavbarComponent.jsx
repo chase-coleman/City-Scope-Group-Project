@@ -9,7 +9,7 @@ export const NavbarComponent = ({user}) => {
   return (
     <Navbar bg="dark" data-bs-theme="dark">
     <Container>
-      <Navbar.Brand as={Link} to="/">Navbar</Navbar.Brand>
+      <Navbar.Brand as={Link} to="/">City Scope</Navbar.Brand>
       <Nav className="me-auto">
       {user == false? (<Nav.Link as={Link} to="/login">| Login |</Nav.Link>):""}
         <Nav.Link as={Link} to="/explore">Explore</Nav.Link>

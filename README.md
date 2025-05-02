@@ -12,15 +12,10 @@
   - npm install
 
 ### Quick Note :
-- I have already created an app for User, named "user_app".
-- I have already created a database, named "city_scope_db".
-- I have already added both of those into the backend/city_scope_project/settings.py file - so no need for yall to do it.
-
 - I created an Endpoint library where I think we should put each endpoint for a specific request. Yes we could technically just click into the specific app's urls file to get an endpoint, but I think it would be good to have all of the server endpoints in one place.
 
 ### Endpoints
-example : 
-app : User
+User
   - api/v1/user/info/     - GET/PUT - user account info
   - api/v1/user/signup/   - POST - create new user account
   - api/v1/user/login/    - POST - user login
@@ -40,5 +35,5 @@ Itinerary
 - api/v1/itinerary/<int:id>/            - GET/PUT/DELETE/POST view a specific itinerary
 
 Trips
-- api/v1/trip/all/        - GET - view all of a users trips
+- api/v1/trip/        - GET - view all of a users trips
 - api/v1/trip/<int:id>/   - GET/PUT/DELETE/POST view a specific trip

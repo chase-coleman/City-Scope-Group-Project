@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+const token = localStorage.getItem("token")
 
 const TripsPage = () => {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   
-  
+
   useEffect(() => {
     const fetchTrips = async () => {
-      console.log("fetching trips!")
       try {
-        const response = await axios.get("http://localhost:8000/api/v1/trip/");
+        const response = await axios.get("http://localhost:8000/api/v1/trip/", 
+          {
+            headers: {
+              Authorization: `token ${token}` 
+            }
+          });
         setTrips(response.data);
         setLoading(false); // end loading on success
       } catch (err) {

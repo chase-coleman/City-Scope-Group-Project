@@ -30,7 +30,7 @@ const AutocompleteComponent = () => {
 
       // create an object from the results of getLatLng
       const placesDetails = {
-        name: selectedAddress.description,
+        name: selectedAddress.description.split(",")[0],
         address: results[0].formatted_address,
         formatted_address: results[0].formatted_address,
         place_id: results[0].place_id,
@@ -41,6 +41,7 @@ const AutocompleteComponent = () => {
           },
         },
       };
+      console.log(placesDetails)
       setPlace(placesDetails);
     } catch (error) {
       console.error(error)

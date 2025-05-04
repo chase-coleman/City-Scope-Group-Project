@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-const token = localStorage.getItem("token")
+
+const token = localStorage.getItem("token");
 
 const TripsPage = () => {
   const [trips, setTrips] = useState([]);
@@ -11,12 +12,11 @@ const TripsPage = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/v1/trip/", 
-          {
-            headers: {
-              Authorization: `token ${token}` 
-            }
-          });
+        const response = await axios.get("http://localhost:8000/api/v1/trip/", {
+          headers: {
+            Authorization: `token ${token}`,
+          },
+        });
         setTrips(response.data);
         setLoading(false); // end loading on success
       } catch (err) {
@@ -27,14 +27,18 @@ const TripsPage = () => {
     };
     fetchTrips();
   }, []);
-  
+
   if (loading) return <p>Loading trips...</p>;
   if (error) return <p>{error}</p>;
-  
-  
+
+  const handleNewTrip = () => {
+    console.log("creating new trip!");
+  };
+
   return (
     <div>
       <h1>All Trips</h1>
+      <button onClick={handleNewTrip}>Start new trip</button>
       {trips.length === 0 ? (
         <p>No trips available.</p>
       ) : (
@@ -42,7 +46,9 @@ const TripsPage = () => {
           {trips.map((trip) => (
             <li key={trip.id}>
               <h2>{trip.name}</h2>
-              <p>{trip.city}, {trip.country}</p>
+              <p>
+                {trip.city}, {trip.country}
+              </p>
               <p>Duration: {trip.duration} days</p>
             </li>
           ))}
@@ -50,6 +56,6 @@ const TripsPage = () => {
       )}
     </div>
   );
-}
+};
 
 export default TripsPage;

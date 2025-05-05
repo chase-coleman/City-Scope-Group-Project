@@ -1,15 +1,13 @@
 import { handleViewOnGoogle, handleViewWebsite } from "../Utilities/ExplorePageUtils"
-import React, { useEffect, useState, createContext, useContext } from "react";
+import React, { useEffect, useState, createContext, useNavigate, useContext } from "react";
 import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
-import useOnclickOutside from "react-cool-onclickoutside";
 import { userLogin } from "../Utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
-import { useOutletContext } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
-import { createRoot } from "react-dom/client";
 import { ExternalLink } from "lucide-react";
 import "../App.css";
+const token = localStorage.getItem("token");
 
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -123,6 +121,12 @@ export const ExplorePage = () => {
 
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails }) => {
+  const navigate = useNavigate()
+
+  const redirectToLogin = () => {
+    navigate("/login")
+  }
+  
   return (
     <>
       <Card
@@ -135,9 +139,15 @@ export const LocationCard = ({ placeDetails }) => {
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">
+            {/* if user is logged in, let them add to a trip, if not redirect them to the login page */}
+            {token ?
             <Button variant="success" size="sm">
               Add to trip
+            </Button> : 
+            <Button variant="success" size="sm" onClick={redirectToLogin}>
+              You have to login to add this to a trip!
             </Button>
+              }
             <div className="location-links flex flex-row gap-1 justify-center">
               <Button
                 onClick={() => handleViewOnGoogle(placeDetails)}

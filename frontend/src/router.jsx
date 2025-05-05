@@ -4,7 +4,7 @@ import App from "./App";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import TripViewPage from "./pages/TripViewPage";
-import ExplorePage from "./pages/ExplorePage";
+import { ExplorePage } from "./pages/ExplorePage";
 import TripsPage from "./pages/TripsPage";
 
 import { confirmUser } from './Utilities/LoginPageUtils'

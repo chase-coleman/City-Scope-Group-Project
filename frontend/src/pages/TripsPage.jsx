@@ -39,8 +39,6 @@ export const TripsPage = () => {
     setShowNewTripForm(false)
   }
 
-
-
   // make the axios call to create the trip in the backend
   const createTrip = async (newTrip) => {
     try {
@@ -53,9 +51,8 @@ export const TripsPage = () => {
           },
         }
       );
-      console.log(response);
       if (response.status === 201) {
-        fetchTrips();
+        fetchTrips(); // if trip creation is a success -> update the list of the user's trips
       }
     } catch (error) {
       console.error("Error:".error);
@@ -68,6 +65,7 @@ export const TripsPage = () => {
     <div>
       <h1>All Trips</h1>
       <button onClick={handleNewTrip}>Start new trip</button>
+      {/* map through the userTrips list and create a component for it */}
       {userTrips.length === 0 ? (
         <p>No Trips available.</p>
       ) : (
@@ -83,6 +81,7 @@ export const TripsPage = () => {
           ))}
         </ul>
       )}
+      {/* if use selects Start a New Trip, render this. will make into a modal */}
       {showNewTripForm ?
       <div className="new-trip-info border-2 w-[50%] h-[50vh]">
         <input

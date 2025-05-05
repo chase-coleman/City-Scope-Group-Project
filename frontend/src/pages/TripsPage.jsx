@@ -1,34 +1,26 @@
+import { useOutletContext } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const token = localStorage.getItem("token");
+
 
 const TripsPage = () => {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
 
+  // userTrips is now loaded upon login in App.jsx so whole app can access the trips
+  const { userTrips } = useOutletContext() 
+
+// use effect runs the loading text for 1 second before setting it to false
   useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/v1/trip/", {
-          headers: {
-            Authorization: `token ${token}`,
-          },
-        });
-        setTrips(response.data);
-        setLoading(false); // end loading on success
-      } catch (err) {
-        console.error("Error fetching trips:", err);
-        setError("Unable to load trips.");
-        setLoading(false); // end loading on error
-      }
-    };
-    fetchTrips();
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer)
   }, []);
 
-  if (loading) return <p>Loading trips...</p>;
+  if (loading) return <span>loading...</span>;
   if (error) return <p>{error}</p>;
 
   const handleNewTrip = () => {

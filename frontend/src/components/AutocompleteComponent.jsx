@@ -5,7 +5,8 @@ import "../App.css";
 
 // https://www.youtube.com/watch?v=HslRpRQcH5M
 
-const AutocompleteComponent = () => {
+// this component is used for the autocomplete portion on the explore page
+export const AutocompleteComponent = () => {
   const { ready, value, suggestions: { status, data }, setValue, clearSuggestions } = usePlacesAutocomplete();
   const { address, setAddress, place, setPlace } = useContext(ExploreContext)
 
@@ -79,4 +80,46 @@ const AutocompleteComponent = () => {
   );
 };
 
-export default AutocompleteComponent;
+
+// this component is used for the autocomplete portion on the trip creation page
+export const AutocompleteTripComponent = ({ setNewTripData }) => {
+  const { ready, value, suggestions: { status, data }, setValue, clearSuggestions } = usePlacesAutocomplete();
+
+
+  const handleSelect = async (selectedAddress) => {
+    setValue(selectedAddress.description, false) // false stops any other fetches
+    setNewTripData(prev => ({...prev, location: selectedAddress.description}))
+    clearSuggestions();
+  };
+
+
+  return (
+    <>
+      <div className="autocompletetrip-container p-0">
+        <div className="autocompletetrip-container">
+          {/* search input box */}
+          <input
+            className="autocompletetrip-input"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            disabled={!ready}
+            placeholder="Enter a location"
+          />
+          {/* search results */}
+          <div className="autocompletetrip-dropdown">
+            {status === "OK" &&
+              data.map((suggestion) => (
+                <div
+                  key={suggestion.place_id}
+                  onClick={() => handleSelect(suggestion)}
+                  className="suggestion-item"
+                >
+                  {suggestion.description}
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};

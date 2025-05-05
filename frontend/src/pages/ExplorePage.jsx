@@ -1,7 +1,7 @@
 import { handleViewOnGoogle, handleViewWebsite } from "../Utilities/ExplorePageUtils"
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
-import AutocompleteComponent from "../components/AutocompleteComponent";
+import { AutocompleteComponent } from "../components/AutocompleteComponent";
 import useOnclickOutside from "react-cool-onclickoutside";
 import { userLogin } from "../Utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";

@@ -5,19 +5,21 @@ import { Calendar } from 'primereact/calendar';
 import Button from 'react-bootstrap/Button';
 import axios from "axios";
 import "../App.css";
+import { getTripDuration } from "../Utilities/TripPageUtils";
 
 const TripsPage = () => {
+  const { userTrips, fetchTrips } = useOutletContext();
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [newTripData, setNewTripData] = useState({
     name: '',
     location:'',
-    duration: ''
+    dates: '',
   })
 
-  // userTrips is now loaded upon login in App.jsx so whole app can access the trips
-  const { userTrips, fetchTrips } = useOutletContext();
+  // duration: getTripDuration(newTripData.dates)
+
 
   // use effect runs the loading text for 1 second before setting it to false
   useEffect(() => {
@@ -66,9 +68,9 @@ const TripsPage = () => {
         setNewTripData={setNewTripData}/>
         </div>
         <div className="border-2">
-        <Calendar value={newTripData.duration} placeholder="Dates" selectionMode="range" 
+        <Calendar value={newTripData.dates} placeholder="Dates" selectionMode="range" 
         readOnlyInput hideOnRangeSelection 
-        onChange={(e) => setNewTripData(prev => ({...prev, duration: e.value}))}/>  
+        onChange={(e) => setNewTripData(prev => ({...prev, dates: e.value}))}/>  
         </div>
         <Button variant="primary" onClick={handleNewTrip}>Create Trip</Button>
       </div>

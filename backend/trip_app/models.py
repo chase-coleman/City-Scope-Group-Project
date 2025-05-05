@@ -9,6 +9,8 @@ class Trip(models.Model):
     city = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     duration = models.IntegerField()
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trips")
 
 

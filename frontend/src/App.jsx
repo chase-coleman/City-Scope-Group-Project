@@ -1,4 +1,5 @@
 import { Outlet, useNavigate, useHref, useLoaderData } from 'react-router-dom';
+import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 import { NavbarComponent } from './components/NavbarComponent';
 import { confirmUser } from './Utilities/LoginPageUtils';
 import { useEffect, useState } from 'react'
@@ -51,8 +52,10 @@ const App = () => {
     },[location.pathname]);
   return (
     <>
+      <PrimeReactProvider>
       <NavbarComponent user = {user}/>
       <Outlet context = {{setLogError, user, setUser, userTrips, fetchTrips}} />
+      </PrimeReactProvider>
     </>
   );
 };

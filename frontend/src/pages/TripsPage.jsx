@@ -1,7 +1,10 @@
+import { AutocompleteTripComponent } from "../components/AutocompleteComponent"
 import { useOutletContext } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { Calendar } from 'primereact/calendar';
+import Button from 'react-bootstrap/Button';
 import axios from "axios";
-import { AutocompleteTripComponent } from "../components/AutocompleteComponent"
+import "../App.css";
 
 const TripsPage = () => {
   const [trips, setTrips] = useState([]);
@@ -27,11 +30,9 @@ const TripsPage = () => {
   
   const handleNewTrip = () => {
     console.log("creating new trip!");
+    console.log(newTripData)
   };
 
-  useEffect(() => {
-    console.log(newTripData)
-  }, [newTripData])
 
   if (loading) return <span>loading...</span>;
   if (error) return <p>{error}</p>;
@@ -59,9 +60,17 @@ const TripsPage = () => {
         placeholder="Trip Name" value={newTripData.name}
         onChange={(e) => setNewTripData(prev => ({...prev, name:e.target.value}))}
         />
+        <div className="border-2">
         <AutocompleteTripComponent 
         value={newTripData.location}
-        setNewTripData={setNewTripData}/>        
+        setNewTripData={setNewTripData}/>
+        </div>
+        <div className="border-2">
+        <Calendar value={newTripData.duration} placeholder="Dates" selectionMode="range" 
+        readOnlyInput hideOnRangeSelection 
+        onChange={(e) => setNewTripData(prev => ({...prev, duration: e.value}))}/>  
+        </div>
+        <Button variant="primary" onClick={handleNewTrip}>Create Trip</Button>
       </div>
     </div>
   );

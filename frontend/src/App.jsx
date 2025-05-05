@@ -52,7 +52,7 @@ const App = () => {
   return (
     <>
       <NavbarComponent user = {user}/>
-      <Outlet context = {{setLogError, user, setUser, userTrips}} />
+      <Outlet context = {{setLogError, user, setUser, userTrips, fetchTrips}} />
     </>
   );
 };

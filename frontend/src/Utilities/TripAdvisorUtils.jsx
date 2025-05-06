@@ -32,7 +32,7 @@ const headers = {
     } else {
       console.log(`API calls used for this key : ${usedKey}, adding 7 for the calls`)
       await trip_Advisor_Api.put(`apiUsed/${TAKey}/`)
-      return
+      
     }
     try {
       const response = await trip_Advisor_Api.get('locID/', {

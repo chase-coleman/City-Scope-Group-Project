@@ -29,7 +29,7 @@ const HomePage = () => {
     className="font-bold text-2xl text-fuchsia-700 border-2 bg-amber-300 pt-2 pb-2 m-2"
     onClick = {
       () => {
-        grabLocID('Seoul', 'South Korea', 'hotels', setLogError, setResults)
+        grabLocID('Chicago', 'IL', 'attractions', setLogError, setResults)
       }
     }
     >Click me and look to your console, WILL SUBMIT REQUEST TO TRIP ADVISOR FOR HOTEL IS SEOUL!</button>

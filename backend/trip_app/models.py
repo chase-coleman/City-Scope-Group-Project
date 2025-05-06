@@ -15,5 +15,5 @@ class Trip(models.Model):
 
 
     def __str__(self):
-        return f"{self.name} - {self.city}, {self.country}"
+        return f"{self.id}. {self.name} - {self.city}, {self.country}"
 # Create your models here.

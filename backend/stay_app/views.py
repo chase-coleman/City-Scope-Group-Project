@@ -24,10 +24,10 @@ class All_Stays(TokenReq):
 # ---------------------
 #
 
-    def get(self, request, itinerary):
+    def get(self, request, trip_id):
         try:
 
-            stays = Stay.objects.filter(itinerary=itinerary)
+            stays = Stay.objects.filter(trip=trip_id)
             serialized_stays = Stay_Serializer(stays, many=True).data
             return Response({"stays": serialized_stays}, status=HTTP_200_OK)
         except:

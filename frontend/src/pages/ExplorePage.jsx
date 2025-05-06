@@ -133,6 +133,7 @@ export const LocationCard = ({ placeDetails }) => {
   
   const addToTrip = () => {
     console.log(placeDetails)
+    
   }
 
   return (

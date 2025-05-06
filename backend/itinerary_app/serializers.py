@@ -6,8 +6,8 @@ from stay_app.serializers import Stay_Serializer
 from activity_app.serializers import Activity_Serializer
 
 class Itinerary_Serializer(serializers.ModelSerializer):
-  stays = Stay_Serializer(many=True)
-  activities = Activity_Serializer(many=True)
+  stay = Stay_Serializer(allow_null=True, required=False)
+  activities = Activity_Serializer(many=True, allow_null=True, required=False)
 
   class Meta:
     model = Itinerary

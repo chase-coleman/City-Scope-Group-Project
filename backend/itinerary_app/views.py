@@ -55,7 +55,7 @@ class Itinerary_View(APIView):
 class Itinerary_View_All(APIView):
   def get(self, request, trip_id):
     try:
-      itineraries = Itinerary.objects.filter(id=trip_id).all()
+      itineraries = Itinerary.objects.filter(trip=trip_id).all()
       if not itineraries:
         return Response("No Itineraries found", status=s.HTTP_418_IM_A_TEAPOT)
       itineraries_ser = Itinerary_Serializer(itineraries, many=True).data

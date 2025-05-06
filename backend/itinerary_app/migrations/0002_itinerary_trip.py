@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='itinerary',
             name='trip',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='itinerary', to='trip_app.trip'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='itinerary', to='trip_app.trip'),
+            preserve_default=False,
         ),
     ]

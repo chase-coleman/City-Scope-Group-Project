@@ -11,7 +11,8 @@ if 'TAKey' not in environ:
     load_dotenv()
 
 # logging.basicConfig(level=print)
-def get_locID(city, country, category):
+def get_locID(city, country, category, name, address, latlong):
+    params = {key:value for key, value in {'city':city, 'country':country, 'category':category, 'name':name, 'address':address, 'latlong':latlong}.items() if value}
     key = getenv("TAKey")
     if not key:
         print("API key is missing.")

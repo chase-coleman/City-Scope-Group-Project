@@ -1,5 +1,5 @@
 import { AutocompleteTripComponent } from "../components/AutocompleteComponent";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Calendar } from "primereact/calendar";
 import Button from "react-bootstrap/Button";
@@ -9,6 +9,7 @@ import { formatTrip } from "../Utilities/TripPageUtils";
 const token = localStorage.getItem("token");
 
 export const TripsPage = () => {
+  const navigate = useNavigate()
   const { userTrips, fetchTrips } = useOutletContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -39,8 +40,6 @@ export const TripsPage = () => {
     setShowNewTripForm(false)
   }
 
-
-
   // make the axios call to create the trip in the backend
   const createTrip = async (newTrip) => {
     try {
@@ -53,14 +52,20 @@ export const TripsPage = () => {
           },
         }
       );
-      console.log(response);
       if (response.status === 201) {
-        fetchTrips();
+        fetchTrips(); // if trip creation is a success -> update the list of the user's trips
       }
     } catch (error) {
       console.error("Error:".error);
     }
   };
+
+  // navigate to the trip's view page
+  const visitTripPage = (trip) => {
+    navigate(`/tripview/${trip.id}`)
+  }
+
+
 
   if (loading) return <span>loading...</span>;
   if (error) return <p>{error}</p>;
@@ -68,6 +73,7 @@ export const TripsPage = () => {
     <div>
       <h1>All Trips</h1>
       <button onClick={handleNewTrip}>Start new trip</button>
+      {/* map through the userTrips list and create a component for it */}
       {userTrips.length === 0 ? (
         <p>No Trips available.</p>
       ) : (
@@ -78,11 +84,15 @@ export const TripsPage = () => {
               <p>
                 {trip.city}, {trip.country}
               </p>
+              <button className="border-2" onClick={() => visitTripPage(trip)}>
+                Edit Trip
+              </button>
               <p>Duration: {trip.duration} days</p>
             </li>
           ))}
         </ul>
       )}
+      {/* if use selects Start a New Trip, render this. will make into a modal */}
       {showNewTripForm ?
       <div className="new-trip-info border-2 w-[50%] h-[50vh]">
         <input

@@ -1,18 +1,24 @@
-import { handleViewOnGoogle, handleViewWebsite } from "../Utilities/ExplorePageUtils"
+import {
+  handleViewOnGoogle,
+  handleViewWebsite,
+  onCategoryChange,
+} from "../Utilities/ExplorePageUtils";
 import React, { useEffect, useState, createContext, useContext } from "react";
-import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
-import useOnclickOutside from "react-cool-onclickoutside";
+import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { grabLocID } from "../Utilities/TripAdvisorUtils";
 import { userLogin } from "../Utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
-import { createRoot } from "react-dom/client";
+import { Checkbox } from "primereact/checkbox";
 import { ExternalLink } from "lucide-react";
 import "../App.css";
 
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+// logged in user's token
+const token = localStorage.getItem("token");
 
 // setting context to pass to any component rendered on this page
 // don't need to include function params when passing thru context
@@ -27,12 +33,18 @@ export const ExploreContext = createContext({
   handleViewWebsite: () => {},
 });
 
-
 export const ExplorePage = () => {
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
   const [placeDetails, setPlaceDetails] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState([]);
+
+  const categoryFilters = [
+    { name: "Restaurants", key: "R" },
+    { name: "Attractions", key: "A" },
+    { name: "Hotels", key: "H" },
+  ];
 
   useEffect(() => {
     if (!place) return;
@@ -44,11 +56,6 @@ export const ExplorePage = () => {
     setLat(place.geometry.location.lat);
     setLng(place.geometry.location.lng);
   };
-
-  useEffect(() => {
-    if (!placeDetails) return;
-    console.log(placeDetails);
-  }, [placeDetails]);
 
   const getPlaceDetails = (e, map) => {
     const placeId = e.placeId;
@@ -85,12 +92,38 @@ export const ExplorePage = () => {
     );
   };
 
+  useEffect(() => {
+    if (selectedFilters.length < 1) return;
+    console.log(selectedFilters);
+  }, [selectedFilters]);
+
 
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] bg-red-500 flex">
         <div className="left-side bg-blue-500 w-[20%]">
           <h1>Filters</h1>
+          <div className="card flex justify-center">
+            <div className="flex flex-column gap-1">
+              {categoryFilters.map((category) => (
+                <div key={category.key} className="flex items-center">
+                  <Checkbox
+                    inputId={category.id}
+                    name="category"
+                    value={category.key}
+                    // onCategoryChange is in the ExplorePageUtils file
+                    onChange={(e) => onCategoryChange(e, category, selectedFilters, setSelectedFilters)}
+                    checked={selectedFilters.some(
+                      (item) => item.key === category.key
+                    )}
+                  />
+                  <label htmlFor={category.key} className="ml-2">
+                    {category.name}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
         <div className="right-side relative flex flex-col items-center bg-pink-500 w-[80%]">
           <div className="map-container bg-purple-200 w-[75%] h-[75%]">
@@ -112,9 +145,7 @@ export const ExplorePage = () => {
             </APIProvider>
           </div>
           {/* render the selected location's basic info on the card component below */}
-          {placeDetails ? 
-          <LocationCard 
-          placeDetails={placeDetails} /> : null}
+          {placeDetails ? <LocationCard placeDetails={placeDetails} /> : null}
         </div>
       </div>
     </>
@@ -123,6 +154,16 @@ export const ExplorePage = () => {
 
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails }) => {
+  const navigate = useNavigate();
+
+  const redirectToLogin = () => {
+    navigate("/login");
+  };
+
+  const addToTrip = () => {
+    console.log(placeDetails);
+  };
+
   return (
     <>
       <Card
@@ -135,9 +176,16 @@ export const LocationCard = ({ placeDetails }) => {
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">
-            <Button variant="success" size="sm">
-              Add to trip
-            </Button>
+            {/* if user is logged in, let them add to a trip, if not redirect them to the login page */}
+            {token ? (
+              <Button variant="success" size="sm" onClick={addToTrip}>
+                Add to trip
+              </Button>
+            ) : (
+              <Button variant="success" size="sm" onClick={redirectToLogin}>
+                You have to login to add this to a trip!
+              </Button>
+            )}
             <div className="location-links flex flex-row gap-1 justify-center">
               <Button
                 onClick={() => handleViewOnGoogle(placeDetails)}

@@ -1,15 +1,13 @@
 from django.db import models
 from django.core import validators as v
-from itinerary_app.models import Itinerary
-from itinerary_app.models import Itinerary
-
+from trip_app.models import Trip
 
 class Stay(models.Model):
     name = models.CharField(max_length = 120, blank=False, null = False, default='name')
     location = models.CharField(max_length= 120, blank=False, null=False, default='location')
-    duration = models.PositiveIntegerField(max_length=2, blank=False, null=False, default=3)
+    duration = models.PositiveIntegerField(blank=False, null=False, default=3)
     link = models.CharField(max_length=255, null=True, blank=True, default = "")
-    itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, related_name='stays')
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='stay')
     image_thumb = models.CharField(null = True, blank=True)
     image_main = models.CharField(null = True, blank=True)
     location_id = models.CharField(null = True, blank=True)

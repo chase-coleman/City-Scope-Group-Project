@@ -1,7 +1,7 @@
 from django.db import models
 from django.core import validators as v
 from itinerary_app.models import Itinerary
-from itinerary_app.models import Itinerary
+
 
 
 class Stay(models.Model):

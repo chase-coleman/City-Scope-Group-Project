@@ -1,5 +1,5 @@
 import { AutocompleteTripComponent } from "../components/AutocompleteComponent";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Calendar } from "primereact/calendar";
 import Button from "react-bootstrap/Button";
@@ -9,6 +9,7 @@ import { formatTrip } from "../Utilities/TripPageUtils";
 const token = localStorage.getItem("token");
 
 export const TripsPage = () => {
+  const navigate = useNavigate()
   const { userTrips, fetchTrips } = useOutletContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -59,6 +60,13 @@ export const TripsPage = () => {
     }
   };
 
+  // navigate to the trip's view page
+  const visitTripPage = (trip) => {
+    navigate(`/tripview/${trip.id}`)
+  }
+
+
+
   if (loading) return <span>loading...</span>;
   if (error) return <p>{error}</p>;
   return (
@@ -76,6 +84,9 @@ export const TripsPage = () => {
               <p>
                 {trip.city}, {trip.country}
               </p>
+              <button className="border-2" onClick={() => visitTripPage(trip)}>
+                Edit Trip
+              </button>
               <p>Duration: {trip.duration} days</p>
             </li>
           ))}

@@ -3,7 +3,8 @@
     "model": "itinerary_app.itinerary",
     "pk": 1,
     "fields": {
-      "date": "2025-05-23"
+      "date": "2025-05-23",
+      "trip": 4
     }
   },
   {

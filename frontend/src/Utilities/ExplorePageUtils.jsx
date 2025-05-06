@@ -34,3 +34,17 @@ export const handleViewWebsite = (placeDetails) => {
     console.error("There was an issue redirecting. Please search the location website manually.");
   }
 };
+
+
+export const onCategoryChange = (e, category, selectedFilters, setSelectedFilters) => {
+  let _currentFilters = [...selectedFilters]; // retrieve the current selectedFilters
+  if (e.checked) {
+    _currentFilters.push(category); // add the newly checked category to the current selected filters
+    setSelectedFilters(_currentFilters); // set the state
+  } else { // if we're unselecting a filter, remove it 
+    _currentFilters = _currentFilters.filter(
+      (cat) => cat.key !== category.key 
+    );
+    setSelectedFilters(_currentFilters);
+  }
+};

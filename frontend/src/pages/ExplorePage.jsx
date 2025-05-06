@@ -1,6 +1,7 @@
 import {
   handleViewOnGoogle,
   handleViewWebsite,
+  onCategoryChange,
 } from "../Utilities/ExplorePageUtils";
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
@@ -92,23 +93,10 @@ export const ExplorePage = () => {
   };
 
   useEffect(() => {
-    // if (selectedFilters.length < 1) return;
+    if (selectedFilters.length < 1) return;
     console.log(selectedFilters);
   }, [selectedFilters]);
 
-  const onCategoryChange = (e, category) => {
-    let _selectedFilters = [...selectedFilters];
-    if (e.checked) {
-      _selectedFilters.push(category);
-      setSelectedFilters(_selectedFilters);
-    } else {
-      console.log("unchecking");
-      _selectedFilters = _selectedFilters.filter(
-        (cat) => cat.key !== category.key
-      );
-      setSelectedFilters(_selectedFilters);
-    }
-  };
 
   return (
     <>
@@ -123,7 +111,8 @@ export const ExplorePage = () => {
                     inputId={category.id}
                     name="category"
                     value={category.key}
-                    onChange={(e) => onCategoryChange(e, category)}
+                    // onCategoryChange is in the ExplorePageUtils file
+                    onChange={(e) => onCategoryChange(e, category, selectedFilters, setSelectedFilters)}
                     checked={selectedFilters.some(
                       (item) => item.key === category.key
                     )}

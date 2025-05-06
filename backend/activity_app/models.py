@@ -10,7 +10,7 @@ class Activity(models.Model):
   address = models.CharField(max_length=100, null=True, blank=True)
   url = models.URLField(null=True, blank=True)
   itineraries = models.ForeignKey(Itinerary, on_delete=models.CASCADE, related_name="activities", null=True, blank=True)
-  trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="activities", null=False, default=1)
+  trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="activities")
   image_thumb = models.CharField(null=True, blank=True)
   image_main = models.CharField(null=True, blank=True)
   location_id = models.CharField(null=True, blank=True)

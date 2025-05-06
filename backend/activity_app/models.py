@@ -14,6 +14,7 @@ class Activity(models.Model):
   image_thumb = models.CharField(null=True, blank=True)
   image_main = models.CharField(null=True, blank=True)
   location_id = models.CharField(null=True, blank=True)
+  category = models.CharField(null=True, blank=True)
 
   def __str__(self):
     return f"Activity ID: {self.id}, Name: {self.name}, url: {self.url}"

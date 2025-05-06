@@ -1,16 +1,18 @@
 import { handleViewOnGoogle, handleViewWebsite } from "../Utilities/ExplorePageUtils"
-import React, { useEffect, useState, createContext, useNavigate, useContext } from "react";
-import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
+import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
+import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { grabLocID } from "../Utilities/TripAdvisorUtils";
 import { userLogin } from "../Utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
+import { useNavigate } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 import { ExternalLink } from "lucide-react";
 import "../App.css";
-const token = localStorage.getItem("token");
 
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const token = localStorage.getItem("token");
 
 // setting context to pass to any component rendered on this page
 // don't need to include function params when passing thru context
@@ -43,10 +45,10 @@ export const ExplorePage = () => {
     setLng(place.geometry.location.lng);
   };
 
-  useEffect(() => {
-    if (!placeDetails) return;
-    console.log(placeDetails);
-  }, [placeDetails]);
+  // useEffect(() => {
+  //   if (!placeDetails) return;
+  //   console.log(placeDetails);
+  // }, [placeDetails]);
 
   const getPlaceDetails = (e, map) => {
     const placeId = e.placeId;
@@ -112,7 +114,8 @@ export const ExplorePage = () => {
           {/* render the selected location's basic info on the card component below */}
           {placeDetails ? 
           <LocationCard 
-          placeDetails={placeDetails} /> : null}
+          placeDetails={placeDetails} 
+          /> : null}
         </div>
       </div>
     </>
@@ -123,10 +126,15 @@ export const ExplorePage = () => {
 export const LocationCard = ({ placeDetails }) => {
   const navigate = useNavigate()
 
+
   const redirectToLogin = () => {
     navigate("/login")
   }
   
+  const addToTrip = () => {
+    console.log(placeDetails)
+  }
+
   return (
     <>
       <Card
@@ -141,7 +149,7 @@ export const LocationCard = ({ placeDetails }) => {
           <div className="flex flex-col gap-1">
             {/* if user is logged in, let them add to a trip, if not redirect them to the login page */}
             {token ?
-            <Button variant="success" size="sm">
+            <Button variant="success" size="sm" onClick={addToTrip}>
               Add to trip
             </Button> : 
             <Button variant="success" size="sm" onClick={redirectToLogin}>

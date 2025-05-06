@@ -7,6 +7,9 @@
       "location": "Paris, France",
       "address": "Champ de Mars, 5 Avenue Anatole France, 75007 Paris, France",
       "url": "https://www.toureiffel.paris/en",
+      "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
+      "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
+      "category": "restaurant",
       "trip": 1
     }
   },
@@ -18,6 +21,9 @@
       "location": "Paris, France",
       "address": "Rue de Rivoli, 75001 Paris, France",
       "url": "https://www.louvre.fr/en",
+      "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
+      "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
+      "category": "attraction",
       "trip": 1
     }
   }

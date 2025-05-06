@@ -7,11 +7,13 @@ import { userLogin } from "../Utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
 import { useNavigate } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
+import { Checkbox } from "primereact/checkbox"
 import { ExternalLink } from "lucide-react";
 import "../App.css";
 
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+// logged in user's token
 const token = localStorage.getItem("token");
 
 // setting context to pass to any component rendered on this page
@@ -33,6 +35,13 @@ export const ExplorePage = () => {
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
   const [placeDetails, setPlaceDetails] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState([])
+
+  const categoryFilters = [
+    { name: 'Restaurants', key:'R' },
+    { name: 'Attractions', key: 'A'},
+    { name: 'Hotels', key: 'H'}
+  ]
 
   useEffect(() => {
     if (!place) return;
@@ -44,11 +53,6 @@ export const ExplorePage = () => {
     setLat(place.geometry.location.lat);
     setLng(place.geometry.location.lng);
   };
-
-  // useEffect(() => {
-  //   if (!placeDetails) return;
-  //   console.log(placeDetails);
-  // }, [placeDetails]);
 
   const getPlaceDetails = (e, map) => {
     const placeId = e.placeId;
@@ -85,12 +89,41 @@ export const ExplorePage = () => {
     );
   };
 
+  useEffect(() => {
+    // if (selectedFilters.length < 1) return;
+    console.log(selectedFilters)
+  }, [selectedFilters])
+
+
+  const onCategoryChange = (e) => {
+    let _selectedFilters = [...selectedFilters];
+    if (e.checked){
+      _selectedFilters.push(e.value)
+      setSelectedFilters(_selectedFilters)
+    } else {
+      console.log("unchecking")
+      _selectedFilters = _selectedFilters.filter(cat => cat.name !== e.value.name)
+      setSelectedFilters(_selectedFilters)
+    }
+  }
+
 
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] bg-red-500 flex">
         <div className="left-side bg-blue-500 w-[20%]">
           <h1>Filters</h1>
+          <div className="card flex justify-center">
+          <div className="flex flex-column gap-1">
+            {categoryFilters.map((category) => (
+              <div key={category.key} className="flex items-center">
+                <Checkbox inputId={category.id} name="category" value={category} onChange={(e) => onCategoryChange(e)} checked={selectedFilters.some((item) => item.key === category.key)}/>
+                  <label htmlFor={category.key} className="ml-2">{category.name}</label>
+              </div>
+            ))
+            }
+          </div>
+          </div>
         </div>
         <div className="right-side relative flex flex-col items-center bg-pink-500 w-[80%]">
           <div className="map-container bg-purple-200 w-[75%] h-[75%]">
@@ -133,7 +166,7 @@ export const LocationCard = ({ placeDetails }) => {
   
   const addToTrip = () => {
     console.log(placeDetails)
-    
+
   }
 
   return (

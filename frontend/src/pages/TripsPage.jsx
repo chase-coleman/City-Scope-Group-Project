@@ -5,7 +5,7 @@ import { Calendar } from "primereact/calendar";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import "../App.css";
-import { formatTrip } from "../Utilities/TripPageUtils";
+import { formatTrip } from "../utilities/TripPageUtils";
 
 const token = localStorage.getItem("token");
 

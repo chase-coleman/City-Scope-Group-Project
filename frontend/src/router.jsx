@@ -7,7 +7,7 @@ import TripViewPage from "./pages/TripViewPage";
 import { ExplorePage } from "./pages/ExplorePage";
 import  { TripsPage } from "./pages/TripsPage";
 
-import { confirmUser } from './Utilities/LoginPageUtils'
+import { confirmUser } from './utilities/LoginPageUtils'
 
 
 

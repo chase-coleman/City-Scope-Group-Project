@@ -1,11 +1,19 @@
-import { handleViewOnGoogle, handleViewWebsite, onCategoryChange } from "../Utilities/ExplorePageUtils";
+import {
+  handleViewOnGoogle, // redirects to google
+  handleViewWebsite, // redirects to the locations website
+  onCategoryChange, // handles changing of checked filters for the map
+  lodgingSet, // list of place types under lodging
+  touristAttractionSet, // list of attraction types under tourist attractions
+  activitySet, // list of activity types
+  restaurantSet // list of restaurant types
+} from "../utilities/ExplorePageUtils";
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
+import { useNavigate, useParams, useOutletContext } from "react-router-dom";
 import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
-import { grabLocID } from "../Utilities/TripAdvisorUtils";
-import { userLogin } from "../Utilities/LoginPageUtils";
+import { grabLocID } from "../utilities/TripAdvisorUtils"
+import { userLogin } from "../utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
-import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
 import { ExternalLink } from "lucide-react";
@@ -37,7 +45,6 @@ export const ExplorePage = () => {
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
   const [placeDetails, setPlaceDetails] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState([]);
-  const { trip_id } = useParams()
   const categoryFilters = [
     { name: "Restaurants", key: "R" },
     { name: "Attractions", key: "A" },
@@ -48,7 +55,6 @@ export const ExplorePage = () => {
     if (!place) return;
     updateMapLocation();
   }, [place]); // might have to change this to watch lat/lng states instead
-
 
   // update the center location of the map
   const updateMapLocation = () => {
@@ -175,14 +181,35 @@ export const ExplorePage = () => {
 
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
+  const { results, setLogError, setResults } = useOutletContext()
   const navigate = useNavigate();
+  const { trip_id } = useParams();
 
   const redirectToLogin = () => {
     navigate("/login");
   };
 
+  useEffect(() => {
+    console.log(results)
+  }, [results])
+
   const addToTrip = () => {
-    console.log(placeDetails);
+    let category = ""
+    if (lodgingSet.has(placeDetails.types[0])){
+        console.log("lodging!")
+        category = "lodging"
+    } else if (touristAttractionSet.has(placeDetails.types[0]) || activitySet.has(placeDetails.types[0])){
+        console.log("tourist attraction!")
+        category = "attraction"
+    } else if (restaurantSet.has(placeDetails.types[0])){
+        console.log("restaurant!")
+        category = "restaurant"
+    }
+    // console.log(category)
+    // console.log(placeDetails);
+    // console.log(placeDetails.name)
+    
+    grabLocID(placeDetails.name, category, setLogError, setResults, 3)
   };
 
   return (
@@ -199,12 +226,15 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">
-            {/* if user is logged in, let them add to a trip, if not redirect them to the login page */}
+            {/* token - is user logged in? trip_id - is user editing a specific trip? */}
             {token ? (
-              <button className="border-2" onClick={addToTrip}>
-                Add to trip
-              </button>
+              trip_id ? (
+                <button className="border-2" onClick={addToTrip}>
+                  Add to trip
+                </button>
+              ) : null
             ) : (
+              // if token is null (not logged in)
               <button className="border-2" onClick={redirectToLogin}>
                 You have to login to add this to a trip!
               </button>

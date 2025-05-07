@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import { Nav, Button, Dropdown } from "react-bootstrap";
 import Navbar from 'react-bootstrap/Navbar';
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import {userLogout} from '../Utilities/LoginPageUtils'
+import {userLogout} from '../utilities/LoginPageUtils'
 
 
 

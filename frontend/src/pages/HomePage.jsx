@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext, useNavigate, useLoaderData } from "react-router-dom";
-import {grabLocID} from '../Utilities/TripAdvisorUtils'
-import sample from '../Utilities/sampleObject.json'
+import {grabLocID} from '../utilities/TripAdvisorUtils'
+import sample from '../utilities/sampleObject.json'
 import TripAdvisorComponent from "../components/tripAdvisorSearchComponent";
 
 const HomePage = () => {
   const [logError, setLogError] = useState("");
-  const [results,setResults] = useState(sample)
+  const [results,setResults] = useState(sample);
 
   console.log(results)
 

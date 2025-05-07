@@ -10,44 +10,54 @@ from os import getenv
 if 'TAKey' not in environ:
     load_dotenv()
 
-# logging.basicConfig(level=print)
-def get_locID(city, country, category):
-    key = getenv("TAKey")
-    if not key:
-        print("API key is missing.")
-        return {"error": "The key was not provided or was invalid"}
 
+def get_locID(searchQuery, category, key, results, address=None, latlong=None):
+
+    parameters = {"searchQuery": f"{searchQuery}", 'category':category}
+    if address:
+        parameters['address'] = address
+    if latlong:
+        parameters['latlong'] = latlong
+    parameters['key'] = key
+
+    
     base_url = "https://api.content.tripadvisor.com/api/v1/location/search"
-    params = {
-        "key": key,
-        "searchQuery": f"{city}, {country}",
-        "category": category,
-        "language": "en"
-    }
+    
     headers = {
         "accept": "application/json"
     }
 
     try:
-        response = requests.get(base_url, params=params, headers=headers, timeout=10)
-        results = response.json()
+        response = requests.get(base_url, params=parameters, headers=headers, timeout=10)
 
-        loc_ids = [item['location_id'] for item in results.get('data', [])[:3]]
+        if response.status_code != 200:
+            print(f"Error grabbing response")
+            return {"error":f"API returned status code {response.status_code}"}
+        
+        returned = response.json()
+
+        if 'data' not in returned or not returned['data']:
+            print("None of the target data was available")
+            return {"error": "No valid locations matching the search"}
+        # print(f"results {results}")
+        # print(len(returned['data']))
+        loc_ids = [item['location_id'] for item in returned.get('data', [])[10-int(results):10:]]
         print(f"Found location IDs: {loc_ids}")
         
         combined_data = {}
         for loc_id in loc_ids:
             try:
                 print(f"Fetching details for location {loc_id}")
-                details = get_details(loc_id)
+                details = get_details(loc_id, key)
                 print(f"Fetching photos for location {loc_id}")
-                photos = get_photos(loc_id)
+                photos = get_photos(loc_id, key)
 
                 if isinstance(details, dict) and isinstance(photos, dict):
                     combined_data[loc_id] = {
                         'details': details,
                         'photos': photos,
                     }
+
             except Exception as e:
                 print(f"Error fetching data for location {loc_id}: {e}")
 
@@ -60,8 +70,8 @@ def get_locID(city, country, category):
         print(f"Unexpected error: {e}")
         return {"error": "There was an error with your request"}
 
-def get_details(loc_id):
-    key = getenv("TAKey")
+def get_details(loc_id, key):
+    
     if not key:
         print("API key is missing.")
         return {"error": "The key was not provided or was invalid"}
@@ -86,8 +96,8 @@ def get_details(loc_id):
         print(f"Unexpected error for location {loc_id}: {e}")
         return {"error": "There was an error"}
 
-def get_photos(loc_id):
-    key = getenv("TAKey")
+def get_photos(loc_id, key):
+
     if not key:
         print("API key is missing.")
         return {"error": "The key was not provided or it was invalid"}

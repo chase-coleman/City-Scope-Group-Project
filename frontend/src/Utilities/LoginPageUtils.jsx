@@ -80,7 +80,10 @@ export const userLogin = async (username, password, setLogError) => {
 
 // --------------- User logout function ----------------
 export const userLogout = async () => {
-  const response = await user_api.post("user/logout/");
+  const response = await user_api.post("logout/");
+  console.log(response['data'])
+  console.log(response.status == 204)
+  console.log(response.status)
   if (response.status == 204) {
     localStorage.removeItem("token");
     delete user_api.defaults.headers.common["Authorization"];

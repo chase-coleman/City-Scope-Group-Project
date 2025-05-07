@@ -1,11 +1,16 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
+import { Nav, Button, Dropdown } from "react-bootstrap";
 import Navbar from 'react-bootstrap/Navbar';
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import {userLogout} from '../Utilities/LoginPageUtils'
+
+
 
 export const NavbarComponent = ({user}) => {
   const context = useOutletContext()
+  const [isOpen,setIsOpen] = useState(false)
+
   return (
     <Navbar bg="dark" data-bs-theme="dark">
     <Container>
@@ -15,6 +20,30 @@ export const NavbarComponent = ({user}) => {
         <Nav.Link as={Link} to="/explore">Explore</Nav.Link>
         <Nav.Link as={Link} to="/trips">Trips</Nav.Link>
       </Nav>
+      {user && (
+      <Dropdown align="end">
+        <Dropdown.Toggle
+          variant="link"
+          className="text-gray-900 no-underline shadow-none"
+        >
+          {/* Replace this with an image later */}
+          <span className="text-4xl">🗺️</span>
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          {user && (
+            <Dropdown.Item onClick = {() => {setIsOpen(true)}}>
+              Manage Account
+            </Dropdown.Item>
+          )}
+
+          <Dropdown.Item><Button variant="outline-danger" onClick={userLogout}>
+                {`Log Out\n${user.username}`}
+              </Button></Dropdown.Item>
+
+        </Dropdown.Menu>
+      </Dropdown>
+    )}
     </Container>
   </Navbar>
   );

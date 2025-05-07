@@ -19,7 +19,6 @@ export const AutocompleteComponent = () => {
     // set address state to obj of selected location
     setAddress(selectedAddress);
     clearSuggestions();
-      // console.log(selectedAddress.description)
     try {
       // call the geoCode function from google maps to get a bunch of info from the selected
       // address that we need to get the latitute/longitude
@@ -43,6 +42,7 @@ export const AutocompleteComponent = () => {
         },
       };
       setPlace(placesDetails);
+      setValue('')
     } catch (error) {
       console.error(error)
     }

@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Map, useMap, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { ExploreContext } from "../pages/ExplorePage";
 
 // get mapId from .env
@@ -7,36 +7,52 @@ const mapId = import.meta.env.VITE_MAP_ID_V1;
 
 const MapComponent = () => {
   const { coords, getPlaceDetails } = useContext(ExploreContext);
+  const map = useMap();
   const mapRef = useRef(null);
+  const previousCoordsRef = useRef(coords);
 
   const handleMapLoad = (map) => {
     mapRef.current = map;
     if (coords) {
-      map.setCenter(coords); // Set the initial center
+      map.setCenter(coords);
     }
   };
 
+  // Reset recentering when coords change via autocomplete
   useEffect(() => {
+    if (coords && 
+        (!previousCoordsRef.current || 
+        coords.lat !== previousCoordsRef.current.lat || 
+        coords.lng !== previousCoordsRef.current.lng)) {
+      previousCoordsRef.current = coords;
+    }
+  }, [coords]);
+
+  // Apply the center change when needed
+  useEffect(() => {
+    console.log(coords)
     if (mapRef.current && coords) {
-      mapRef.current.setCenter(coords); // Update the map center when coords change
+      mapRef.current.setCenter(coords);
     }
   }, [coords]);
 
   return (
-    <div className="h-[100%] w-[100%]">
+    <>
       <Map
-        defaultCenter={coords || { lat: 0, lng: 0 }} // Initial center
-        defaultZoom={12} // Set initial zoom level
-        mapId={mapId} // the styling id for the map
+      // unique key per coord change forces the map component to re-render
+       key={`${coords?.lat ?? 0}-${coords?.lng ?? 0}`} 
+        defaultCenter={coords || { lat: 0, lng: 0 }}
+        defaultZoom={12}
+        mapId={mapId}
         gestureHandling={"greedy"}
         options={{ draggable: true }}
         disableDefaultUI={false}
         onLoad={handleMapLoad}
-        onClick={(e) => getPlaceDetails(e.detail, mapRef.current)} // Get clicked location details
+        onClick={(e) => getPlaceDetails(e.detail, map)} // Using map from useMap() here
       >
-        <AdvancedMarker position={coords} />
+        {coords && <AdvancedMarker position={coords} />}
       </Map>
-    </div>
+    </>
   );
 };
 

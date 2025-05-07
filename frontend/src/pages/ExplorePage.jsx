@@ -1,15 +1,11 @@
-import {
-  handleViewOnGoogle,
-  handleViewWebsite,
-  onCategoryChange,
-} from "../Utilities/ExplorePageUtils";
+import { handleViewOnGoogle, handleViewWebsite, onCategoryChange } from "../Utilities/ExplorePageUtils";
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
 import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { grabLocID } from "../Utilities/TripAdvisorUtils";
 import { userLogin } from "../Utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
 import { ExternalLink } from "lucide-react";
@@ -41,7 +37,7 @@ export const ExplorePage = () => {
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
   const [placeDetails, setPlaceDetails] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState([]);
-
+  const { trip_id } = useParams()
   const categoryFilters = [
     { name: "Restaurants", key: "R" },
     { name: "Attractions", key: "A" },
@@ -52,6 +48,7 @@ export const ExplorePage = () => {
     if (!place) return;
     updateMapLocation();
   }, [place]); // might have to change this to watch lat/lng states instead
+
 
   // update the center location of the map
   const updateMapLocation = () => {

@@ -35,6 +35,10 @@ const router = createBrowserRouter([
         element: <ExplorePage />
       },
       {
+        path: "/explore/:trip_id",
+        element: <ExplorePage />
+      },
+      {
         path: '/trips',
         element: <TripsPage />
       }

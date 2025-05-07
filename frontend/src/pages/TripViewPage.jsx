@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import ItineraryTicketComponent from "../components/ItineraryTicketComponent"
 
 export default function TripViewPage() {
-
+  const navigate = useNavigate()
   const { trip_id } = useParams()
 
   const [selected, setSelected] = useState(null)
@@ -81,6 +81,11 @@ export default function TripViewPage() {
     fetchStays()
   }, [])
 
+  // redirects a user to the explore page for that trip
+  const handleRedirect = () => {
+    navigate(`/explore/${trip_id}`, { replace: true });
+  }
+
   return (
     <div className="flex flex-col h-dvh items-center justify-center p-4 mb-0">
       {
@@ -89,6 +94,7 @@ export default function TripViewPage() {
           ? <p>{error}</p>
           : <p>Loading.......</p>
         : <>
+              <button  className="border-2" onClick={handleRedirect}>explore</button>
             <div className="h-1/9">
               <p>
                 Trip Name: Chugnus trip

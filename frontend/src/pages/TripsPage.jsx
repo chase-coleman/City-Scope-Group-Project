@@ -43,6 +43,7 @@ export const TripsPage = () => {
 
   // make the axios call to create the trip in the backend
   const createTrip = async (newTrip) => {
+    console.log(token)
     try {
       const response = await axios.post(
         "http://localhost:8000/api/v1/trip/",

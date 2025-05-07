@@ -30,7 +30,6 @@ const MapComponent = () => {
 
   // Apply the center change when needed
   useEffect(() => {
-    console.log(coords)
     if (mapRef.current && coords) {
       mapRef.current.setCenter(coords);
     }

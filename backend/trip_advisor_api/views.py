@@ -72,7 +72,7 @@ class API_Usage(APIView):
     def put(self, request, api_key):
         apis = API.objects.filter(api_key = api_key)[0]
         print(apis.key_used)
-        apis.key_used += 7
+        apis.key_used += 1
         apis.save()
         return Response({
             "key_useage":apis.key_used

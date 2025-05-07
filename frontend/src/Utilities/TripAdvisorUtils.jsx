@@ -24,14 +24,14 @@ const headers = {
 
 
   export const grabLocID = async (searchQuery, category, setLogError, setResults, results=3, latlong=null, address = null) => {
-    const usedCalls =await grabKeyUse(TAKey)
+    let usedCalls =await grabKeyUse(TAKey)
     try{
     if (usedCalls >= 4990) {
       alert(`API key is at ${usedKey} out of 5,000; get a new key`)
       return
     } else {
-      console.log(`API calls used for this key ${usedCalls}: adding 7 for the calls`)
-      await trip_Advisor_Api.put(`apiUsed/${TAKey}/`)
+      // console.log(`API calls used for this key ${usedCalls}: adding 7 for the calls`)
+      // await trip_Advisor_Api.put(`apiUsed/${TAKey}/`)
      
     }
 
@@ -62,6 +62,8 @@ const response = await trip_Advisor_Api.get('locID', {
 
   if (response.status === 200 && response.data?.locinfo) {
     console.log("location info", response.data.locinfo);
+    usedCalls =await grabKeyUse(TAKey)
+    console.log(`new calls total ${usedCalls}`)
     setResults(response.data)
     return true
   } else {

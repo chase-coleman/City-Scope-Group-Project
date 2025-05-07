@@ -35,6 +35,16 @@ class User_View(TokenReq):
 
   def put(self, request):
     data = request.data.copy()
+    if 'password' in data:
+      if not data['password']:
+        return Response({
+          "error":"Password cannot be blank"
+        }, status=s.HTTP_400_BAD_REQUEST)
+      request.user.set_password(data['password'])
+      request.user.save()
+      return Response({
+        'message':"Password has been changed"
+      }, status=s.HTTP_200_OK)
     # pass the request's data into the serializer
     serialized = UserInfoSerializer(request.user, data=data, partial=True)
     if serialized.is_valid():
@@ -93,11 +103,17 @@ class Login(APIView):
 
 class Logout(TokenReq):
   def post(self, request):
-    # delete the user's auth token if it exists
-    if hasattr(request.user, "auth_token"):
-      request.user.auth_token.delete()
-      logout(request)
-      return Response({"message":"user has been logged out"}, status=s.HTTP_200_OK)
+    request.user.auth_token.delete()
+    logout(request)
+    return Response({
+      "You've been logged out"},status=s.HTTP_204_NO_CONTENT
+    )
+  # def post(self, request):
+  #   # delete the user's auth token if it exists
+  #   if hasattr(request.user, "auth_token"):
+  #     request.user.auth_token.delete()
+  #     logout(request)
+  #     return Response({"message":"user has been logged out"}, status=s.HTTP_200_OK)
   
 class DeleteAccount(TokenReq):
   def delete(self, request):

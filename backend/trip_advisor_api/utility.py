@@ -29,6 +29,8 @@ def get_locID(searchQuery, category, key, results, address=None, latlong=None):
 
     try:
         response = requests.get(base_url, params=parameters, headers=headers, timeout=10)
+        requests.put(f"http://127.0.0.1:8000/api/v1/loc/apiUsed/{key}/")
+        print("adding 1 to api calls used")
 
         if response.status_code != 200:
             print(f"Error grabbing response")
@@ -41,16 +43,20 @@ def get_locID(searchQuery, category, key, results, address=None, latlong=None):
             return {"error": "No valid locations matching the search"}
         # print(f"results {results}")
         # print(len(returned['data']))
-        loc_ids = [item['location_id'] for item in returned.get('data', [])[10-int(results):10:]]
+        loc_ids = [item['location_id'] for item in returned.get('data', [])[0:int(results)]]
         print(f"Found location IDs: {loc_ids}")
         
         combined_data = {}
         for loc_id in loc_ids:
             try:
                 print(f"Fetching details for location {loc_id}")
+                requests.put(f"http://127.0.0.1:8000/api/v1/loc/apiUsed/{key}/")
+                print(f"adding 1 to api calls used to grab details for {loc_id}")
                 details = get_details(loc_id, key)
                 print(f"Fetching photos for location {loc_id}")
                 photos = get_photos(loc_id, key)
+                requests.put(f"http://127.0.0.1:8000/api/v1/loc/apiUsed/{key}/")
+                print(f"adding 1 to api calls used to grab photos for {loc_id}")
 
                 if isinstance(details, dict) and isinstance(photos, dict):
                     combined_data[loc_id] = {

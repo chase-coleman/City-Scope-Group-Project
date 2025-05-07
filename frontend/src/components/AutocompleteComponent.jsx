@@ -42,7 +42,6 @@ export const AutocompleteComponent = () => {
           },
         },
       };
-      console.log(placesDetails)
       setPlace(placesDetails);
     } catch (error) {
       console.error(error)

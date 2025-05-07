@@ -19,6 +19,8 @@ import "../App.css";
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 // logged in user's token
 const token = localStorage.getItem("token");
+// get mapId from .env
+const mapId = import.meta.env.VITE_MAP_ID_V1;
 
 // setting context to pass to any component rendered on this page
 // don't need to include function params when passing thru context
@@ -53,13 +55,18 @@ export const ExplorePage = () => {
 
   // update the center location of the map
   const updateMapLocation = () => {
-    setLat(place.geometry.location.lat);
-    setLng(place.geometry.location.lng);
+    setCoords({ lat: place.geometry.location.lat, lng: place.geometry.location.lng})
   };
+
+
 
   const getPlaceDetails = (e, map) => {
     const placeId = e.placeId;
 
+    if (!map){
+      console.warn("PlacesService container is null");
+      return;
+    }
     // using 'map' as an instance of google.maps.Map as
     // a link to PlacesServices to display it on the map
     // the google.maps.places.PlacesService is a JS class
@@ -126,7 +133,7 @@ export const ExplorePage = () => {
           </div>
         </div>
         <div className="right-side relative flex flex-col items-center bg-pink-500 w-[80%]">
-          <div className="map-container bg-purple-200 w-[75%] h-[75%]">
+          <div className="right-container bg-purple-200 w-[75%] h-[95%] flex flex-col">
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider
                 value={{
@@ -138,10 +145,14 @@ export const ExplorePage = () => {
                   getPlaceDetails,
                 }}
               >
+               <div className="autocomplete-container border-2 p-1">
                 <AutocompleteComponent />
+                </div>
+                <div className="map-container border-2 h-[80%] w-full">
                 <MapComponent />
+                </div>
+              {/* <AdvancedMarker position={coords}></AdvancedMarker> */}
               </ExploreContext.Provider>
-              <AdvancedMarker position={coords}></AdvancedMarker>
             </APIProvider>
           </div>
           {/* render the selected location's basic info on the card component below */}

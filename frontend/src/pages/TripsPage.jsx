@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import "../App.css";
 import { formatTrip } from "../Utilities/TripPageUtils";
+
 const token = localStorage.getItem("token");
 
 export const TripsPage = () => {

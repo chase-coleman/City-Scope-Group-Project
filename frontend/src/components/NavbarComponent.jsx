@@ -2,16 +2,27 @@ import React, {useState, useEffect} from "react";
 import Container from 'react-bootstrap/Container';
 import { Nav, Button, Dropdown } from "react-bootstrap";
 import Navbar from 'react-bootstrap/Navbar';
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext} from "react-router-dom";
 import {userLogout} from '../Utilities/LoginPageUtils'
+import ManageAccount from "./ManageAccount";
 
 
+export const NavbarComponent = ({user, setUser}) => {
 
-export const NavbarComponent = ({user}) => {
+  const handleLogout = async () => {
+    setUser(false);
+    const worked = await userLogout();
+    if (worked==true) {
+      navigate("/");
+      
+    }
+  };
+
+  const navigate = useNavigate();
   const context = useOutletContext()
   const [isOpen,setIsOpen] = useState(false)
 
-  return (
+  return (<>
     <Navbar bg="dark" data-bs-theme="dark">
     <Container>
       <Navbar.Brand as={Link} to="/">City Scope</Navbar.Brand>
@@ -32,12 +43,22 @@ export const NavbarComponent = ({user}) => {
 
         <Dropdown.Menu>
           {user && (
-            <Dropdown.Item onClick = {() => {setIsOpen(true)}}>
+            <Dropdown.Item onClick ={ (() => {
+              setIsOpen(true)
+              
+            })}
+            
+            >
               Manage Account
             </Dropdown.Item>
           )}
 
-          <Dropdown.Item><Button variant="outline-danger" onClick={userLogout}>
+          <Dropdown.Item><Button variant="outline-danger"
+          onClick={() => {
+            handleLogout()
+          }
+          }
+            >
                 {`Log Out\n${user.username}`}
               </Button></Dropdown.Item>
 
@@ -45,6 +66,13 @@ export const NavbarComponent = ({user}) => {
       </Dropdown>
     )}
     </Container>
+
   </Navbar>
+      <ManageAccount
+      user = {user}
+      isOpen = {isOpen}
+      setIsOpen = {setIsOpen}
+      />
+      </>
   );
 };

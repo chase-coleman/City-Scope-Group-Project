@@ -16,7 +16,7 @@ class Itinerary_View(APIView):
 
   def get(self, request, id):
     try:
-      itinerary = get_object_or_404(Itinerary, id=id)
+      itinerary = get_object_or_404(Itinerary, id=id, trip__user=request.user)
       itinerary_ser = Itinerary_Serializer(itinerary).data
       return Response(itinerary_ser, status=s.HTTP_201_CREATED)
     except:
@@ -32,9 +32,23 @@ class Itinerary_View(APIView):
       return Response(f"Failed to create an itinerary for the date: {date}", status=s.HTTP_400_BAD_REQUEST)
   
   def put(self, request, id):
+
+    itinerary = get_object_or_404(Itinerary, id=id, trip__user=request.user)
+    payload = request.data
+    try:
+      if(payload.get("type") == "stay"):
+        # Can also be null for removing stay from itinerary
+        new_stay_id = payload.get("new_stay_id")
+        itinerary.stay_id = new_stay_id
+        itinerary.save()
+        return Response(f"Saved new stay to itinierary", status=s.HTTP_200_OK)
+    except:
+      return Response(f"Failed to change stay ID", status=s.HTTP_400_BAD_REQUEST)
+    # try:
+    #   if(payload.get("type") == "activities"):
+        
     try:
       new_date = request.data.get("date")
-      itinerary = get_object_or_404(Itinerary, id=id)
       itinerary.change_date(new_date)
       return Response(f"Date changed to {new_date}", status=s.HTTP_200_OK)
     except:
@@ -43,7 +57,7 @@ class Itinerary_View(APIView):
 
   def delete(self, request, id):
     try:
-      itinerary = get_object_or_404(Itinerary, id=id)
+      itinerary = get_object_or_404(Itinerary, id=id, trip__user=request.user)
       itinerary.delete()
       return Response(f"Itinerary of ID: {id} deleted succesfully", status=s.HTTP_204_NO_CONTENT)
     except: 
@@ -55,7 +69,7 @@ class Itinerary_View(APIView):
 class Itinerary_View_All(APIView):
   def get(self, request, trip_id):
     try:
-      itineraries = Itinerary.objects.filter(trip=trip_id).all()
+      itineraries = Itinerary.objects.filter(trip=trip_id, trip__user=request.user).all()
       if not itineraries:
         return Response("No Itineraries found", status=s.HTTP_418_IM_A_TEAPOT)
       itineraries_ser = Itinerary_Serializer(itineraries, many=True).data

@@ -55,15 +55,16 @@ export const ExplorePage = () => {
 
   // update the center location of the map
   const updateMapLocation = () => {
-    setCoords({ lat: place.geometry.location.lat, lng: place.geometry.location.lng})
+    setCoords({
+      lat: place.geometry.location.lat,
+      lng: place.geometry.location.lng,
+    });
   };
-
-
 
   const getPlaceDetails = (e, map) => {
     const placeId = e.placeId;
 
-    if (!map){
+    if (!map) {
       console.warn("PlacesService container is null");
       return;
     }
@@ -104,7 +105,6 @@ export const ExplorePage = () => {
     console.log(selectedFilters);
   }, [selectedFilters]);
 
-
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] bg-red-500 flex">
@@ -119,7 +119,14 @@ export const ExplorePage = () => {
                     name="category"
                     value={category.key}
                     // onCategoryChange is in the ExplorePageUtils file
-                    onChange={(e) => onCategoryChange(e, category, selectedFilters, setSelectedFilters)}
+                    onChange={(e) =>
+                      onCategoryChange(
+                        e,
+                        category,
+                        selectedFilters,
+                        setSelectedFilters
+                      )
+                    }
                     checked={selectedFilters.some(
                       (item) => item.key === category.key
                     )}
@@ -145,18 +152,24 @@ export const ExplorePage = () => {
                   getPlaceDetails,
                 }}
               >
-               <div className="autocomplete-container border-2 p-1">
-                <AutocompleteComponent />
+                <div className="autocomplete-container w-[100%] h-[30%] border-2 bg-blue-500 p-1">
+                  {placeDetails ? (
+                    <LocationCard
+                      placeDetails={placeDetails}
+                      setPlaceDetails={setPlaceDetails}
+                    />
+                  ) : (
+                    <AutocompleteComponent />
+                  )}
                 </div>
                 <div className="map-container border-2 h-[80%] w-full">
-                <MapComponent />
+                  <MapComponent />
                 </div>
-              {/* <AdvancedMarker position={coords}></AdvancedMarker> */}
+                {/* <AdvancedMarker position={coords}></AdvancedMarker> */}
               </ExploreContext.Provider>
             </APIProvider>
           </div>
           {/* render the selected location's basic info on the card component below */}
-          {placeDetails ? <LocationCard placeDetails={placeDetails} /> : null}
         </div>
       </div>
     </>
@@ -164,7 +177,7 @@ export const ExplorePage = () => {
 };
 
 // card to be displayed if a user select's a location on the map.
-export const LocationCard = ({ placeDetails }) => {
+export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   const navigate = useNavigate();
 
   const redirectToLogin = () => {
@@ -177,43 +190,45 @@ export const LocationCard = ({ placeDetails }) => {
 
   return (
     <>
-      <Card
-        style={{ width: "18rem" }}
-        className="absolute bottom-1/3 left-1/4 transform -translate-x-1/2 -translate-y-1/2 z-50"
-      >
+      <Card style={{ width: "18rem" }} className="border-2 !w-[100%] !h-[100%]">
         <Card.Body>
-          <Card.Title>{placeDetails.name}</Card.Title>
+          <div className="flex flex-row justify-between items-center">
+            <Card.Title>{placeDetails.name}</Card.Title>
+            <Button size="sm" onClick={() => setPlaceDetails(null)}>
+              X
+            </Button>
+          </div>
           <Card.Subtitle className="mb-2 text-muted !text-[.75em]">
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">
             {/* if user is logged in, let them add to a trip, if not redirect them to the login page */}
             {token ? (
-              <Button variant="success" size="sm" onClick={addToTrip}>
+              <button className="border-2" onClick={addToTrip}>
                 Add to trip
-              </Button>
+              </button>
             ) : (
-              <Button variant="success" size="sm" onClick={redirectToLogin}>
+              <button className="border-2" onClick={redirectToLogin}>
                 You have to login to add this to a trip!
-              </Button>
+              </button>
             )}
             <div className="location-links flex flex-row gap-1 justify-center">
-              <Button
+              <button
                 onClick={() => handleViewOnGoogle(placeDetails)}
-                className="!text-[0.75em] w-[35%] flex items-center gap-1 justify-center]"
+                className="!text-[0.75em] border-2 w-[35%] flex items-center gap-1 justify-center"
                 variant="primary"
                 size="sm"
               >
                 Google <ExternalLink size={10} />
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={() => handleViewWebsite(placeDetails)}
-                className="!text-[0.75em] w-[35%] flex items-center gap-1 justify-center"
+                className="!text-[0.75em] border-2 w-[35%] flex items-center gap-1 justify-center"
                 variant="primary"
                 size="sm"
               >
                 Website <ExternalLink size={10} />
-              </Button>
+              </button>
             </div>
           </div>
         </Card.Body>

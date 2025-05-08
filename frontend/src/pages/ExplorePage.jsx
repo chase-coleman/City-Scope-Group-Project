@@ -2,22 +2,25 @@ import {
   handleViewOnGoogle, // redirects to google
   handleViewWebsite, // redirects to the locations website
   onCategoryChange, // handles changing of checked filters for the map
+  formatStayData, // formats data for backend
+  formatActivityData, // formats data for backend
   lodgingSet, // list of place types under lodging
   touristAttractionSet, // list of attraction types under tourist attractions
   activitySet, // list of activity types
-  restaurantSet // list of restaurant types
+  restaurantSet, // list of restaurant types
 } from "../utilities/ExplorePageUtils";
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
 import { useNavigate, useParams, useOutletContext } from "react-router-dom";
 import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
-import { grabLocID } from "../utilities/TripAdvisorUtils"
+import { grabLocID } from "../utilities/TripAdvisorUtils";
 import { userLogin } from "../utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
 import { Button, Card } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
 import { ExternalLink } from "lucide-react";
 import "../App.css";
+import axios from "axios";
 
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -54,7 +57,7 @@ export const ExplorePage = () => {
   useEffect(() => {
     if (!place) return;
     updateMapLocation();
-  }, [place]); // might have to change this to watch lat/lng states instead
+  }, [place]);
 
   // update the center location of the map
   const updateMapLocation = () => {
@@ -181,62 +184,79 @@ export const ExplorePage = () => {
 
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
-  const { results, setLogError, setResults } = useOutletContext()
-  const navigate = useNavigate();
+  const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
-  const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null)
+  const navigate = useNavigate();
 
+  
+  // STATE VARIABLES
+  const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
+  const [activityObj, setActivityObj] = useState(null); // the activity formatted for backend
+  const [noMatchType, setNoMatchType] = useState("") // used to update the activity "category" from Google's category types to our backend category types (attraction/restaurant)
+  const [stayObj, setStayObj] = useState(null); // the stay formatted for backend
+
+  // if they're not logged in, can't add location to a trip
   const redirectToLogin = () => {
     navigate("/login");
   };
 
+  // once there is a trip advisor object that matches the selected Google location, run this useEffect
   useEffect(() => {
     if (results.length < 1) return;
-    getTripAdvisorMatch(placeDetails.name)
-  }, [results])
+    getTripAdvisorMatch(placeDetails.name);
+  }, [results]);
 
+  // 
   const addToTrip = () => {
-    let category = ""
-    if (lodgingSet.has(placeDetails.types[0])){
-        console.log("lodging!")
-        category = "lodging"
-    } else if (touristAttractionSet.has(placeDetails.types[0]) || activitySet.has(placeDetails.types[0])){
-        console.log("tourist attraction!")
-        category = "attraction"
-    } else if (restaurantSet.has(placeDetails.types[0])){
-        console.log("restaurant!")
-        category = "restaurant"
+    let category = "";
+    // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !! 
+    if (lodgingSet.has(placeDetails.types[0])) {
+      category = "lodging";
+      setNoMatchType("hotel");
+    } else if (
+      touristAttractionSet.has(placeDetails.types[0]) || activitySet.has(placeDetails.types[0])) {
+      category = "attraction";
+      setNoMatchType("attraction");
+    } else if (restaurantSet.has(placeDetails.types[0])) {
+      category = "restaurant";
+      setNoMatchType("restaurant");
     }
-    grabLocID(placeDetails.name, category, setLogError, setResults, 3)
-    // getTripAdvisorMatch(placeDetails.name)
+    // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
+    grabLocID(placeDetails.name, category, setLogError, setResults, 3);
   };
 
+
+  // recursively iterating through the new results from trip advisor
   const getTripAdvisorMatch = (locationName) => {
-    const matchingLoc = findByName(results, locationName); // initial recursion call
-    // obj = results state variable.
-    // locationName = the selected map location's name
-    function findByName(obj, locationName) {
-      // if obj is truthy and is type object
-      if (obj && typeof obj === 'object') {
-        // loop through each object entry in results
-        if (obj.name === locationName) return obj;
+    
+    function findByName(obj, locationName) { 
+      // obj is the object containing the details and photos (both their own objects aka NESTED)
+      if (obj && typeof obj === "object") {
+        // checking of the details has a matching name
+        if (obj.details && obj.details.name === locationName) {
+          return obj;
+        }
+  
         for (const [key, value] of Object.entries(obj)) {
-          // if the current obj iteration key = name, & value = locationName
-          if (key === 'name' && value === locationName) {
-            // console.log(key, value)
-            return obj; // Found the matching location
+          if (key === "name" && value === locationName) {
+            return obj;
           }
-          // recursion
           const found = findByName(value, locationName);
           if (found) return found;
         }
       }
-      return null; // if no matching name is found, return null
+      return null;
     }
   
-    // simple visual confirmation of finding the location
+    // Loop through each top-level value in `results` (since it's an object)
+    let matchingLoc = null;
+    for (const obj of Object.values(results)) {
+      matchingLoc = findByName(obj, locationName);
+      if (matchingLoc) break; // Stop at the first match
+    }
+  
     if (matchingLoc) {
-      setTripAdvisorMatch(matchingLoc)
+      setTripAdvisorMatch(matchingLoc);
     } else {
       console.log("No match found for:", locationName);
     }
@@ -244,11 +264,22 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     return matchingLoc;
   };
 
+  // both formatStayData and formatActivityData are in the ExplorePageUtils file
   useEffect(() => {
     if (!tripAdvisorMatch) return;
-    console.log("Match:", tripAdvisorMatch)
-  }, [tripAdvisorMatch])
+    if (tripAdvisorMatch.details.category.name === "hotel"){
+      const stay = formatStayData(tripAdvisorMatch, placeDetails, trip_id)
+      setStayObj(stay)
+    } else { 
+      // if its an attraction or restaurant
+      const activity = formatActivityData(tripAdvisorMatch, placeDetails, noMatchType, trip_id)
+      setActivityObj(activity)
+    }
+  }, [tripAdvisorMatch]);
 
+  const saveActivity = async () => {
+    const response = await axios.post()
+  }
 
   return (
     <>

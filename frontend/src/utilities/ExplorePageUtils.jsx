@@ -35,7 +35,7 @@ export const handleViewWebsite = (placeDetails) => {
   }
 };
 
-
+// handling the change of selected filters for the google map
 export const onCategoryChange = (e, category, selectedFilters, setSelectedFilters) => {
   let _currentFilters = [...selectedFilters]; // retrieve the current selectedFilters
   if (e.checked) {
@@ -49,7 +49,44 @@ export const onCategoryChange = (e, category, selectedFilters, setSelectedFilter
   }
 };
 
+// formatting data for the backend
+export const formatStayData = (tripAdvisorMatch, placeDetails, trip_id) => {
+  const stayData = {
+    "name": tripAdvisorMatch?.details?.name || placeDetails.name,
+    "location": `${tripAdvisorMatch?.details?.address_obj.city}, ${tripAdvisorMatch?.details?.address_obj.country}`
+     || `${placeDetails.address_components[3].long_name}, ${placeDetails.address_components[6].long_name}`,
+    "link": tripAdvisorMatch?.details?.web_url || placeDetails.website,
+    "trip": trip_id,
+    "image_thumb": tripAdvisorMatch?.photos?.data[0].images.thumbnail.url || null, 
+    "image_main": tripAdvisorMatch?.photos?.data[0].images.large.url || null,
+    "location_id": tripAdvisorMatch?.details?.location_id || null
+  }
+  return stayData
+};
 
+// formatting data for the backend
+export const formatActivityData = (tripAdvisorMatch, placeDetails, noMatchType, trip_id) => {
+  const activityData = {
+    "name": tripAdvisorMatch?.details?.name || placeDetails.name,
+    "location": `${tripAdvisorMatch?.details?.address_obj.city}, ${tripAdvisorMatch?.details?.address_obj.country}`
+     || `${placeDetails.address_components[3].long_name}, ${placeDetails.address_components[6].long_name}`,
+    "address": tripAdvisorMatch?.details?.address_obj.address_string || placeDetails.formatted_address,
+    "category": tripAdvisorMatch?.details?.category.name || noMatchType,
+     "link": tripAdvisorMatch?.details?.web_url || placeDetails.website,
+    "trip": trip_id,
+    "image_thumb": tripAdvisorMatch?.photos?.data[0].images.thumbnail.url || null, 
+    "image_main": tripAdvisorMatch?.photos?.data[0].images.large.url || null,
+    "location_id": tripAdvisorMatch?.details?.location_id || null
+  }
+  return activityData;
+};
+
+
+
+
+
+// sets used to simplify the google maps location "types" to fit into 
+// Trip Advisor's Api "categories"
 export const lodgingSet = new Set([
   "lodging", "campground", "rv_park"
 ]);
@@ -57,7 +94,7 @@ export const lodgingSet = new Set([
 export const touristAttractionSet = new Set([
   "amusement_park", "aquarium", "art_gallery", "museum", "zoo", 
   "stadium", "park", "casino", "church", "hindu_temple", 
-  "mosque", "synagogue"
+  "mosque", "synagogue", "tourist_attraction"
 ]);
 
 export const activitySet = new Set([

@@ -2,18 +2,28 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 
 import ItineraryTicketComponent from "../components/ItineraryTicketComponent"
+import PotluckPlacardComponent from "../components/PotluckPlacardComponent"
 
 export default function TripViewPage() {
 
   const { trip_id } = useParams()
 
+  // Which itinerary is currently selected(yellow border for now)
   const [selected, setSelected] = useState(null)
   // All itinieraries for a specific trip
   const [itineraries, setItineraries] = useState(null)
-  // All stays user chose to add to top bar
+  // All stays user chose to add to potluck
   const [stays, setStays] = useState(null)
+  // All restaurants user chose to add to potluck
+  const [restaurants, setRestaurants] = useState([])
+  // All activities user chose to add to potluck
+  const [activities, setActivities] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  // Mini error is for activities and stay removers to notify useres if they failed to remove a stay or activity
+  const [miniError, setMiniError] = useState(null)
+  // Mini note is for activities and stay adders
+  const [miniNote, setMiniNote] = useState(null)
 
   async function fetchItineraries() {
     setIsLoading(true)
@@ -27,58 +37,172 @@ export default function TripViewPage() {
       setIsLoading(false)
       setError(`Had troubles fetching trip itineraries`)
     }
-    const data = await response.json()
+    let data = await response.json()
+    // Add a uuid to each activity for React Key
+    data = data.map((item) => {
+      return {
+          ...item,
+          activities: item.activities.map((activity) => ({
+              ...activity,
+              uuid: crypto.randomUUID()
+          }))
+      }
+    })
+    // Sort itinerary days by date lowest => highest
+    data = data.sort((a, b) => a.date.localeCompare(b.date))
     setIsLoading(false)
+    setItineraries(data)
     console.log(data)
   }
 
-  async function fetchStays() {
+  async function fetchAll() {
+    setIsLoading(true)
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/stay/itinerary/${trip_id}/`, {
+        headers: {
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }
+      })
+      const data = await response.json()
+      setStays(data.stays)
+    } catch(err) {
+      setError(err)
+      setIsLoading(false)
+      console.log("failed to fetch stays for itinerary")
+    }
 
-    const response = await fetch(`http://localhost:8000/api/v1/stay/itinerary/${trip_id}/`, {
-      headers: {
-        "Authorization": `Token ${localStorage.getItem("token")}`
-      }
-    })
-    const data = await response.json()
-    setStays(data.stays)
-
-    // const stay1 = {
-    //   "name": "Hilton Tokyo",
-    //   "location": "japan",
-    //   "duration": 3,
-    //   "link": "https://www.tripadvisor.com/Hotel_Review-g14133673-d304289-Reviews-Hilton_Tokyo-Nishishinjuku_Shinjuku_Tokyo_Tokyo_Prefecture_Kanto.html?m=66827",
-    //   "itinerary": 1,
-    //   "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
-    //   "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
-    //   "location_id": 304289
-    // }
-    // const stay2 = {
-    //   "name": "Hilton Tokyo 2",
-    //   "location": "japan",
-    //   "duration": 3,
-    //   "link": "https://www.tripadvisor.com/Hotel_Review-g14133673-d304289-Reviews-Hilton_Tokyo-Nishishinjuku_Shinjuku_Tokyo_Tokyo_Prefecture_Kanto.html?m=66827",
-    //   "itinerary": 1,
-    //   "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
-    //   "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
-    //   "location_id": 304289
-    // }
-    // const stay3 = {
-    //   "name": "Hilton Tokyo3",
-    //   "location": "japan",
-    //   "duration": 3,
-    //   "link": "https://www.tripadvisor.com/Hotel_Review-g14133673-d304289-Reviews-Hilton_Tokyo-Nishishinjuku_Shinjuku_Tokyo_Tokyo_Prefecture_Kanto.html?m=66827",
-    //   "itinerary": 1,
-    //   "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
-    //   "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
-    //   "location_id": 304289
-    // }
-    // setStays([stay1, stay2, stay3])
+    try {
+      const response2 = await fetch(`http://localhost:8000/api/v1/activity/all/${trip_id}/`, {
+        headers: {
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }
+      })
+      const data2 = await response2.json()
+      console.log(data2)
+  
+      setRestaurants([])
+      setActivities([])
+  
+      // Decipher activity category for usestate
+      data2.forEach((item) => {
+        if(item.category === "restaurants") {
+          setRestaurants((prev) => [...prev, item])
+        } else if(item.category === "attractions") {
+          setActivities((prev) => [...prev, item])
+        }
+      })
+    } catch(err) {
+      setError(err)
+      setIsLoading(false)
+      console.log("Failed to grab restaurants and activities from acitvity api")
+    }
 
   }
 
+  // Setter function to add stuff to currently selected itinerary date
+  async function setterSelector(currentSelectedObj) {
+    if(selected === currentSelectedObj) {
+      setSelected(null)
+    } else if(!selected) {
+      setSelected(currentSelectedObj)
+    } else if(selected) {
+      setSelected(currentSelectedObj)
+    } 
+  }
+
+
+  
+  // Setter function to update currently selected itinerary's stay(hotel)
+  async function stayAdder(stayObject) {
+    setMiniError(null)
+    setMiniNote(null)
+    if(!selected && stayObject) {
+      setMiniError("Please select an itinerary in order to update your stay")
+      return
+    }
+    let temp = [...itineraries]
+    let adjusted 
+    temp.forEach((item) => {
+      if(item.id === selected.id) {
+        item.stay = stayObject
+        adjusted = item.id
+      }
+    })
+  
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${adjusted}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          "type": "stay",
+          "new_stay_id": stayObject.id
+        })
+      })
+      if(!response.ok){
+        throw new Error("Failed to update Stay")
+      }
+      setMiniNote("Successfully changed/added stay to itinerary")
+      setItineraries(temp)
+    } catch(err) {
+      setMiniError(err.message)
+      console.log(err)
+    }
+
+  }
+
+  async function activityAdder(activityObject) {
+    // activityObject is the object referring to itself when called inside a potluckcomponent card for restaurants or actvities//
+    setMiniError(null)
+    setMiniNote(null)
+    if(!selected && activityObject) {
+      setMiniError("Please select an itinerary in order add this item")
+      return
+    }
+
+    // activities are serialized, and they need to be reduced to only an array full of the activity's ID
+    let arrayIdMap = selected.activities.map((item) => item.id)
+    arrayIdMap.push(activityObject.id)
+    try{
+      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${selected.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          "type": "activities",
+          "new_activity_array": arrayIdMap
+        })
+      })
+      if(!response.ok) {
+        throw new Error("Failed to add activity to itinerary")
+      }
+      // temp is all itineraries, but with the selected itinerary being modified with the new activity being added along with a random uuid
+      let temp = itineraries.map((itin) => {
+        if(itin.id === selected.id) {
+          itin.activities.push({...activityObject, uuid:crypto.randomUUID()})
+          return itin
+        } else {
+          return itin
+        }
+      })
+      console.log(itineraries)
+      setItineraries(temp)
+      setMiniNote("Activity added to itinerary")
+    } catch(err) {
+      setMiniError(err.message)
+    }
+
+
+  }
+
+
   useEffect(() => {
     fetchItineraries()
-    fetchStays()
+    fetchAll()
   }, [])
 
   return (
@@ -86,54 +210,87 @@ export default function TripViewPage() {
       {
         error || isLoading
         ? error
-          ? <p>{error}</p>
-          : <p>Loading.......</p>
+          ? <div>{error}</div>
+          : <div>Loading.......</div>
         : <>
-            <div className="h-1/9">
-              <p>
+            <div className="flex flex-col items-center justify-center h-1/9">
+              <div className="mb-0">
                 Trip Name: Chugnus trip
-              </p>
-              <p>
+              </div>
+              <div className="mb-0">
                 Destination: big lungus
-              </p>
+              </div>
+              {
+                miniError
+                ? <div className="text-red-300 mb-0">{miniError}</div>
+                : null
+              }
+              {
+                miniNote
+                ? <div className="text-green-300 mb-0">{miniNote}</div>
+                : null
+              }
             </div>
             <div className="flex items-center justify-center w-full h-4/9 border-2">
-              <div className="flex flex-col items-center h-full w-full border-2 ">
-                <p>
+
+              <div className="flex flex-col items-center h-full w-full border-2 overflow-y-auto">
+                <div className="">
                   Stays
-                </p>
+                </div>
                 {
                   stays
                   ? stays.map((stay) => {
                     return (
-                      <div className="flex items-center justify-center">
-                        <div className="flex items-center justify-center h-36 relative">
-                          <img src={stay.image_main} className="overflow-hidden h-20 w-20" />
-                          <div className="flex flex-col">
-                            <p>{stay.name}</p>
-                            <p>{stay.location}</p>
-                            <a href={stay.link}>Link to place</a>
-                          </div>
-                        </div>
+                      <PotluckPlacardComponent activityObject={stay} key={stay.id} stayAdder={stayAdder}/>
+                    )
+                  })
+                  : <div>No stays added, add some by exploring the explore page</div>
+                }
+              </div>
+
+              <div className="flex flex-col items-center h-full w-full border-2 overflow-y-auto">
+                <div>
+                  Resturants/Food
+                </div>
+                {
+                  restaurants
+                  ? restaurants.map((restaurant) => {
+                    return (
+                      <PotluckPlacardComponent activityObject={restaurant} activityAdder={activityAdder} key={restaurant.uuid}/>
+                    )
+                  })
+                  : <div>No restaurants added, add some by exploring the explore page</div>
+                }
+              </div>
+
+              <div className="flex flex-col items-center h-full w-full border-2 overflow-y-auto">
+                <div>
+                  Activities
+                </div>
+                {
+                  activities
+                  ? activities.map((activity) => {
+                    return (
+                      <PotluckPlacardComponent activityObject={activity} activityAdder={activityAdder} key={activity.uuid}/>
+                    )
+                  })
+                  : <div>No activities added, add some by exploring the explore page</div>
+                }
+              </div>
+
+            </div>
+            <div className="flex gap-2 w-full h-4/9 border-1 p-4 overflow-x-auto">
+                {
+                  itineraries
+                  ? itineraries.map((item) => {
+                    return (
+                      <div className={`border-2 ${selected===item ? "border-yellow-200" : ""}`} onClick={() => setterSelector(item)} key={item.id}>
+                        <ItineraryTicketComponent ticket={item} itineraries={itineraries} setItineraries={setItineraries} setMiniError={setMiniError} setMiniNote={setMiniNote}/>
                       </div>
                     )
                   })
-                  : <p>No stays added, add some by exploring the explore page</p>
+                  : <div>No itineries/days</div>
                 }
-              </div>
-              <div className="flex flex-col items-center h-full w-full border-2 ">
-                <p>
-                  POI
-                </p>
-              </div>
-              <div className="flex flex-col items-center h-full w-full border-2 ">
-                <p>
-                  Activities
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2 w-full h-4/9 border-1 p-4">
-                itniery stuff
             </div>
           </>
       }

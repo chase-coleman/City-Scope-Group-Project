@@ -205,13 +205,42 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
         console.log("restaurant!")
         category = "restaurant"
     }
-    // console.log(category)
-    // console.log(placeDetails);
-    // console.log(placeDetails.name)
-    
     grabLocID(placeDetails.name, category, setLogError, setResults, 3)
+    // getTripAdvisorMatch(placeDetails.name)
   };
 
+  const getTripAdvisorMatch = (locationName) => {
+    const matchingLoc = findByName(results, locationName);
+    // obj = results state variable.
+    // locationName = the selected map location's name
+    function findByName(obj, locationName) {
+      // if obj is truthy and is type object
+      if (obj && typeof obj === 'object') {
+        // loop through each object entry in results
+        for (const [key, value] of Object.entries(obj)) {
+          // if the current obj iteration key = name, & value = locationName
+          if (key === 'name' && value === locationName) {
+            return obj; // Found the matching location
+          }
+          // recursion
+          const found = findByName(value, locationName);
+          if (found) return found;
+        }
+      }
+      return null; // if no matching name is found, return null
+    }
+  
+    // simple visual confirmation of finding the location
+    if (matchingLoc) {
+      console.log("Found match:", matchingLoc);
+    } else {
+      console.log("No match found for:", locationName);
+    }
+  
+    return matchingLoc;
+  };
+
+  
   return (
     <>
       <Card style={{ width: "18rem" }} className="border-2 !w-[100%] !h-[100%]">

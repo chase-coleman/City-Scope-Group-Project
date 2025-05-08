@@ -210,7 +210,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   };
 
   const getTripAdvisorMatch = (locationName) => {
-    const matchingLoc = findByName(results, locationName);
+    const matchingLoc = findByName(results, locationName); // initial recursion call
     // obj = results state variable.
     // locationName = the selected map location's name
     function findByName(obj, locationName) {
@@ -240,7 +240,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     return matchingLoc;
   };
 
-  
+
   return (
     <>
       <Card style={{ width: "18rem" }} className="border-2 !w-[100%] !h-[100%]">

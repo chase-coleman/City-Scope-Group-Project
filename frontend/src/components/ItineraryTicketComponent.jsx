@@ -36,6 +36,55 @@ export default function ItineraryTicketComponent({ ticket, itineraries, setItine
     }
   }
 
+  async function activityRemover(activityObject) {
+    setMiniError(null)
+    setMiniNote(null)
+
+    console.log("ticket", ticket)
+    console.log("activityObject", activityObject)
+    // new array of activities without the designated activity that needs to be removed
+    const adjustedArray = ticket.activities.filter((activity) => {
+      if(activity.uuid !== activityObject.uuid) {
+        return activity
+      }
+    })
+    const payloadArray = adjustedArray.map((activity) => {
+      return activity.id
+    })
+    console.log(payloadArray)
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${ticket.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          "type": "activities",
+          "new_activity_array": payloadArray
+        })
+      })
+      if(!response.ok) {
+        throw new Error("Failed to remove activity from itinerary")
+      }
+
+      let temp = itineraries.map((itin) => {
+        if(itin.id === ticket.id) {
+          itin.activities = adjustedArray
+          return itin
+        } else {
+          return itin
+        }
+      })
+      setItineraries(temp)
+
+    } catch(err) {
+      setMiniError("Failed to remove activity from itinerary")
+      console.log(err.message)
+    }
+
+  }
   return (
     <div className="flex flex-col border-2 h-full items-center w-48 rounded-lg overflow-y-auto">
       <div>{ticket.date}</div>
@@ -43,7 +92,7 @@ export default function ItineraryTicketComponent({ ticket, itineraries, setItine
         ticket.stay
         ? <div>
             {ticket.stay.name}
-            <button onClick={(e) => {e.stopPropagation(), stayRemover()}}className="text-red-500">X</button>
+            <button onClick={(e) => {e.stopPropagation(), stayRemover()}} className="text-red-500">X</button>
           </div>
         : <div>Choose a stay</div>
       }
@@ -52,8 +101,9 @@ export default function ItineraryTicketComponent({ ticket, itineraries, setItine
         ticket.activities
         ? ticket.activities.map((item) => {
           return (
-            <div>
+            <div key={item.uuid}>
               {item.name}
+              <button onClick={(e) => {e.stopPropagation(), activityRemover(item)}} className="text-red-500">X</button>
             </div>
           )
         })

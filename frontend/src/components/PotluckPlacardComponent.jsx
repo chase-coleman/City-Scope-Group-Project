@@ -1,6 +1,7 @@
 import React from 'react'
 
 export default function PotluckPlacardComponent({ activityObject, stayAdder, activityAdder }) {
+
   return (
     <>
       <div className="flex items-center justify-center border-2 w-full p-2">
@@ -14,8 +15,8 @@ export default function PotluckPlacardComponent({ activityObject, stayAdder, act
           <div className="text-center">
             {
               stayAdder
-              ? <button onClick={() => stayAdder(activityObject)}>add to iti</button>
-              : <button onClick={() => activityAdder()}>add to acitvi</button>
+              ? <button onClick={() => stayAdder(activityObject)} className='border-2 rounded-md'>add to Itinerary</button>
+              : <button onClick={() => activityAdder(activityObject)} className='border-2 rounded-md'>add to Itinerary</button>
             }
           </div>
         </div>

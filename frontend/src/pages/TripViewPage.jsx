@@ -38,6 +38,16 @@ export default function TripViewPage() {
       setError(`Had troubles fetching trip itineraries`)
     }
     let data = await response.json()
+    // Add a uuid to each activity for React Key
+    data = data.map((item) => {
+      return {
+          ...item,
+          activities: item.activities.map((activity) => ({
+              ...activity,
+              uuid: crypto.randomUUID()
+          }))
+      }
+    })
     // Sort itinerary days by date lowest => highest
     data = data.sort((a, b) => a.date.localeCompare(b.date))
     setIsLoading(false)
@@ -143,9 +153,52 @@ export default function TripViewPage() {
 
   }
 
-  async function activityAdder() {
-    null
+  async function activityAdder(activityObject) {
+    // activityObject is the object referring to itself when called inside a potluckcomponent card for restaurants or actvities//
+    setMiniError(null)
+    setMiniNote(null)
+    if(!selected && activityObject) {
+      setMiniError("Please select an itinerary in order add this item")
+      return
+    }
+
+    // activities are serialized, and they need to be reduced to only an array full of the activity's ID
+    let arrayIdMap = selected.activities.map((item) => item.id)
+    arrayIdMap.push(activityObject.id)
+    try{
+      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${selected.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          "type": "activities",
+          "new_activity_array": arrayIdMap
+        })
+      })
+      if(!response.ok) {
+        throw new Error("Failed to add activity to itinerary")
+      }
+      // temp is all itineraries, but with the selected itinerary being modified with the new activity being added along with a random uuid
+      let temp = itineraries.map((itin) => {
+        if(itin.id === selected.id) {
+          itin.activities.push({...activityObject, uuid:crypto.randomUUID()})
+          return itin
+        } else {
+          return itin
+        }
+      })
+      console.log(itineraries)
+      setItineraries(temp)
+      setMiniNote("Activity added to itinerary")
+    } catch(err) {
+      setMiniError(err.message)
+    }
+
+
   }
+
 
   useEffect(() => {
     fetchItineraries()
@@ -203,7 +256,7 @@ export default function TripViewPage() {
                   restaurants
                   ? restaurants.map((restaurant) => {
                     return (
-                      <PotluckPlacardComponent activityObject={restaurant} activityAdder={activityAdder} key={restaurant.id}/>
+                      <PotluckPlacardComponent activityObject={restaurant} activityAdder={activityAdder} key={restaurant.uuid}/>
                     )
                   })
                   : <div>No restaurants added, add some by exploring the explore page</div>
@@ -218,7 +271,7 @@ export default function TripViewPage() {
                   activities
                   ? activities.map((activity) => {
                     return (
-                      <PotluckPlacardComponent activityObject={activity} activityAdder={activityAdder} key={activity.id}/>
+                      <PotluckPlacardComponent activityObject={activity} activityAdder={activityAdder} key={activity.uuid}/>
                     )
                   })
                   : <div>No activities added, add some by exploring the explore page</div>

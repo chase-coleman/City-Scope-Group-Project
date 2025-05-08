@@ -32,7 +32,7 @@ class Itinerary_View(APIView):
       return Response(f"Failed to create an itinerary for the date: {date}", status=s.HTTP_400_BAD_REQUEST)
   
   def put(self, request, id):
-
+    # id is the itinerary id
     itinerary = get_object_or_404(Itinerary, id=id, trip__user=request.user)
     payload = request.data
     try:
@@ -44,9 +44,16 @@ class Itinerary_View(APIView):
         return Response(f"Saved new stay to itinierary", status=s.HTTP_200_OK)
     except:
       return Response(f"Failed to change stay ID", status=s.HTTP_400_BAD_REQUEST)
-    # try:
-    #   if(payload.get("type") == "activities"):
-        
+    
+    try:
+      if(payload.get("type") == "activities"):
+        new_activity_array = payload.get("new_activity_array")
+        print(new_activity_array)
+        itinerary.update_activities(new_activity_array)
+        return Response(f"Sucessfully updated itinerary array", status=s.HTTP_200_OK)
+    except:
+      return Response(f"Failed to update activities in PUT method", status=s.HTTP_400_BAD_REQUEST)
+  
     try:
       new_date = request.data.get("date")
       itinerary.change_date(new_date)
@@ -70,6 +77,7 @@ class Itinerary_View_All(APIView):
   def get(self, request, trip_id):
     try:
       itineraries = Itinerary.objects.filter(trip=trip_id, trip__user=request.user).all()
+      print(itineraries)
       if not itineraries:
         return Response("No Itineraries found", status=s.HTTP_418_IM_A_TEAPOT)
       itineraries_ser = Itinerary_Serializer(itineraries, many=True).data

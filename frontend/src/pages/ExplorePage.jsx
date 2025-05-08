@@ -278,7 +278,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   }, [tripAdvisorMatch]);
 
   const saveActivity = async () => {
-    const response = await axios.post()
+    const response = await axios.post("http://127.0.0.1:8000/api/v1/activity/")
   }
 
   return (

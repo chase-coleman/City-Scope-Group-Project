@@ -7,9 +7,9 @@ from .serializers import Activity_Serializer
 from itinerary_app.models import Itinerary
 
 class Activities(TokenReq):
-  def get(self, request, itinerary_id):
+  def get(self, request, trip_id):
     # get all activities belonging to the itinerary matching itinerary_id
-    itinerary_activities = Activity.objects.filter(itineraries=itinerary_id)
+    itinerary_activities = Activity.objects.filter(trip=trip_id)
     serialized_activities = Activity_Serializer(itinerary_activities, many=True)
     return Response(serialized_activities.data, status=s.HTTP_200_OK)
   

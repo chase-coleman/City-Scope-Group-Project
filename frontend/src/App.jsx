@@ -53,7 +53,7 @@ const App = () => {
   return (
     <>
       <PrimeReactProvider>
-      <NavbarComponent user = {user}/>
+      <NavbarComponent user = {user} setUser= {setUser}/>
       <Outlet context = {{setLogError, user, setUser, userTrips, fetchTrips, results, setResults}} />
       </PrimeReactProvider>
     </>

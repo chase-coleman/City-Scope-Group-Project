@@ -282,13 +282,15 @@ export default function TripViewPage() {
             <div className="flex gap-2 w-full h-4/9 border-1 p-4 overflow-x-auto">
                 {
                   itineraries
-                  ? itineraries.map((item) => {
+                  ? <>{itineraries.map((item) => {
                     return (
                       <div className={`border-2 ${selected===item ? "border-yellow-200" : ""}`} onClick={() => setterSelector(item)} key={item.id}>
                         <ItineraryTicketComponent ticket={item} itineraries={itineraries} setItineraries={setItineraries} setMiniError={setMiniError} setMiniNote={setMiniNote}/>
                       </div>
                     )
-                  })
+                  })}
+                  <button>Add another day</button>
+                  </>
                   : <div>No itineries/days</div>
                 }
             </div>

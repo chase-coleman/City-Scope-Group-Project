@@ -6,7 +6,7 @@ export const user_api = axios.create({
   baseURL: "http://127.0.0.1:8000/api/v1/user/",
 });
 
-
+                          
 // --------------- User Registration function ----------------
 export const userRegistration = async (email, firstName, lastName, password, setLogError ) => {
   if(firstName == "" || lastName == "" || password == "" || email == "") {

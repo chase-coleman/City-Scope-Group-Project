@@ -184,13 +184,15 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   const { results, setLogError, setResults } = useOutletContext()
   const navigate = useNavigate();
   const { trip_id } = useParams();
+  const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null)
 
   const redirectToLogin = () => {
     navigate("/login");
   };
 
   useEffect(() => {
-    console.log(results)
+    if (results.length < 1) return;
+    getTripAdvisorMatch(placeDetails.name)
   }, [results])
 
   const addToTrip = () => {
@@ -217,9 +219,11 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
       // if obj is truthy and is type object
       if (obj && typeof obj === 'object') {
         // loop through each object entry in results
+        if (obj.name === locationName) return obj;
         for (const [key, value] of Object.entries(obj)) {
           // if the current obj iteration key = name, & value = locationName
           if (key === 'name' && value === locationName) {
+            // console.log(key, value)
             return obj; // Found the matching location
           }
           // recursion
@@ -232,13 +236,18 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   
     // simple visual confirmation of finding the location
     if (matchingLoc) {
-      console.log("Found match:", matchingLoc);
+      setTripAdvisorMatch(matchingLoc)
     } else {
       console.log("No match found for:", locationName);
     }
   
     return matchingLoc;
   };
+
+  useEffect(() => {
+    if (!tripAdvisorMatch) return;
+    console.log("Match:", tripAdvisorMatch)
+  }, [tripAdvisorMatch])
 
 
   return (

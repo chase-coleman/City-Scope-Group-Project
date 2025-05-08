@@ -13,7 +13,7 @@ const token = localStorage.getItem("token");
 
 const App = () => {
   const navigate = useNavigate()
-  const [results, setResults] = useState(sample)
+  const [results, setResults] = useState([])
   const [logError, setLogError] = useState("") 
   const [user, setUser] = useState(useLoaderData()['username']);
   const [userTrips, setUserTrips] = useState([])

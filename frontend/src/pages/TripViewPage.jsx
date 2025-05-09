@@ -62,7 +62,7 @@ export default function TripViewPage() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/stay/itinerary/${trip_id}/`,
+        `http://localhost:8000/api/v1/stay/all/${trip_id}/`,
         {
           headers: {
             Authorization: `Token ${localStorage.getItem("token")}`,

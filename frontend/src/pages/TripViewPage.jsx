@@ -104,7 +104,6 @@ export default function TripViewPage() {
       setIsLoading(false)
       console.log("Failed to grab restaurants and activities from acitvity api")
     }
-
   }
 
   // Setter function to add stuff to currently selected itinerary date
@@ -156,7 +155,6 @@ export default function TripViewPage() {
       setMiniError(err.message)
       console.log(err)
     }
-
   }
 
   async function activityAdder(activityObject) {

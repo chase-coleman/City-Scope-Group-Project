@@ -15,11 +15,7 @@ class Activities(TokenReq):
   
   def post(self, request, trip_id):
     data = request.data.copy()
-    # have to set the trip_id to be associated with the actual trip instance
-    trip = get_object_or_404(Trip, pk=trip_id)
     data['trip'] = trip_id
-    # create the model instance for new activity
-    # new_activity = Activity.objects.create(trip=trip, **data)
     serialized_activity = Activity_Serializer(data=data)
     # check validity
     if serialized_activity.is_valid():

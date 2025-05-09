@@ -191,9 +191,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   
   // STATE VARIABLES
   const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
-  const [activityObj, setActivityObj] = useState(null); // the activity formatted for backend
   const [noMatchType, setNoMatchType] = useState("") // used to update the activity "category" from Google's category types to our backend category types (attraction/restaurant)
-  const [stayObj, setStayObj] = useState(null); // the stay formatted for backend
 
   // if they're not logged in, can't add location to a trip
   const redirectToLogin = () => {
@@ -269,17 +267,17 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     if (!tripAdvisorMatch) return;
     if (tripAdvisorMatch.details.category.name === "hotel"){
       const stay = formatStayData(tripAdvisorMatch, placeDetails, trip_id)
-      setStayObj(stay)
+      console.log(stay)
+      saveStay(stay)
     } else { 
       // if its an attraction or restaurant
       const activity = formatActivityData(tripAdvisorMatch, placeDetails, noMatchType, trip_id)
-      setActivityObj(activity)
-      saveActivity()
+      saveActivity(activity)
     }
   }, [tripAdvisorMatch]);
 
   // save the the Activity model in the backend
-  const saveActivity = async () => {
+  const saveActivity = async (activity) => {
     const response = await axios.post(
       `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`, activityObj, 
       {
@@ -288,6 +286,27 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
       }
     })
     console.log(response)
+    if (response.status === 201){
+      alert("success")
+    } else {
+      console.warn("There was an issue adding this to your trip.")
+    }
+  }
+
+  const saveStay = async (stay) => {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/v1/stay/all/${trip_id}/`, stay, 
+      {
+      headers: {
+        Authorization: `token ${token}`
+      }
+    })
+    console.log(response)
+    if (response.status === 201){
+      alert("success!")
+    } else {
+      console.warn("There was an issue adding this to your trip.")
+    }
   }
 
   return (

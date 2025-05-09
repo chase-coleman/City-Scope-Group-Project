@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import ItineraryTicketComponent from "../components/ItineraryTicketComponent";
 import PotluckPlacardComponent from "../components/PotluckPlacardComponent";
 

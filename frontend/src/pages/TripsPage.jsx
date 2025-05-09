@@ -5,7 +5,7 @@ import { Calendar } from "primereact/calendar";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import "../App.css";
-import { formatTrip } from "../Utilities/TripPageUtils";
+import { formatTrip } from "../utilities/TripPageUtils";
 
 // Get the user's auth token from localStorage
 const token = localStorage.getItem("token");
@@ -92,6 +92,7 @@ export const TripsPage = () => {
   };
 
   const createTrip = async (newTrip) => {
+    console.log(token)
     try {
       const response = await axios.post(
         "http://localhost:8000/api/v1/trip/",

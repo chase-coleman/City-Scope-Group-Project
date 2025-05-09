@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import { useOutletContext } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
 import axios from 'axios';
-import { userLogin } from '../Utilities/LoginPageUtils';
+import { userLogin } from '../utilities/LoginPageUtils';
 
 export const user_api = axios.create({
     baseURL: "http://127.0.0.1:8000/api/v1/user/",
@@ -23,7 +23,6 @@ const grabinfo = async () => {
   if (token) {
     user_api.defaults.headers.common["Authorization"] = `token ${token}`;
     let response = await user_api.get("info/");
-    console.log(response)
     return(response)
   }}
 
@@ -35,7 +34,7 @@ const grabData = async () => {
     setUserInfo(data);
     setFirst(data.first_name)
     setLast(data.last_name)
-    console.log(data)
+    // console.log(data)
 }
 grabData()
 },[])

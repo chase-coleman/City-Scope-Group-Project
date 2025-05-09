@@ -5,7 +5,6 @@ from trip_app.models import Trip
 class Stay(models.Model):
     name = models.CharField(max_length = 120, blank=False, null = False, default='name')
     location = models.CharField(max_length= 120, blank=False, null=False, default='location')
-    duration = models.PositiveIntegerField(blank=False, null=False, default=3)
     link = models.CharField(max_length=255, null=True, blank=True, default = "")
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='stay')
     image_thumb = models.CharField(null = True, blank=True)

@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import ItineraryTicketComponent from "../components/ItineraryTicketComponent"
 import PotluckPlacardComponent from "../components/PotluckPlacardComponent"
 
 export default function TripViewPage() {
 
+  function addOneDay(dateString) {
+    const date = new Date(dateString); // Convert the string to a Date object
+    date.setDate(date.getDate() + 1); // Add 1 day
+    return date.toISOString().split('T')[0]; // Return in yyyy-mm-dd format
+  }
+
+  const navigate = useNavigate();
   const { trip_id } = useParams()
 
   // Which itinerary is currently selected(yellow border for now)
@@ -55,10 +62,11 @@ export default function TripViewPage() {
     console.log(data)
   }
 
+  // Fetch activities and stays for potluck stuff(top triple bar)
   async function fetchAll() {
     setIsLoading(true)
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/stay/itinerary/${trip_id}/`, {
+      const response = await fetch(`http://localhost:8000/api/v1/stay/all/${trip_id}/`, {
         headers: {
           "Authorization": `Token ${localStorage.getItem("token")}`
         }
@@ -96,7 +104,6 @@ export default function TripViewPage() {
       setIsLoading(false)
       console.log("Failed to grab restaurants and activities from acitvity api")
     }
-
   }
 
   // Setter function to add stuff to currently selected itinerary date
@@ -110,8 +117,6 @@ export default function TripViewPage() {
     } 
   }
 
-
-  
   // Setter function to update currently selected itinerary's stay(hotel)
   async function stayAdder(stayObject) {
     setMiniError(null)
@@ -150,7 +155,6 @@ export default function TripViewPage() {
       setMiniError(err.message)
       console.log(err)
     }
-
   }
 
   async function activityAdder(activityObject) {
@@ -199,6 +203,98 @@ export default function TripViewPage() {
 
   }
 
+  async function dayAdder() {
+    setMiniError(null)
+    setMiniNote(null)
+    // This will add an itinerary object instance
+    try {
+      const prevDate = itineraries[itineraries.length-1].date
+      const newDate = addOneDay(prevDate)
+      const response = await fetch(`http://localhost:8000/api/v1/itinerary/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          "date": newDate,
+          "trip_id": trip_id
+        })
+      })
+      if(!response.ok) {
+        throw new Error("Failed to add itinerary day")
+      }
+      // After sucessfully adding an itinerary, need to update trip
+      // +1 to duration and edit end_date on trip model to reflect the newly created itinerary instance date
+      const response2 = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }, 
+        body: JSON.stringify({
+          "end_date": newDate,
+          "duration": itineraries.length+1
+        })
+      })
+      if(!response2.ok) {
+        throw new Error("Failed to update trip dates or duration")
+      }
+      // Data should be the object that was just created to append to frontend reactivity
+      const data = await response.json()
+      setItineraries((prev) => [...prev, data])
+      setMiniNote(`Sucessfully added itinerary on date: ${newDate}`)
+
+    } catch(err) {
+      setMiniError(err.message)
+      console.log(err.message)
+    }
+  }
+
+  async function dayRemover() {
+    setMiniError(null)
+    setMiniNote(null)
+
+    
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${itineraries[itineraries.length-1].id}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }
+      })
+      if(!response.ok) {
+        throw new Error("Failed to remove itinerary day")
+      }
+      const response2 = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }, 
+        body: JSON.stringify({
+          "end_date": itineraries[itineraries.length-2].date,
+          "duration": itineraries.length-1
+        })
+      })
+      if(!response2.ok) {
+        throw new Error("Failed to update trip dates or duration")
+      }
+      setItineraries((prev) => prev.slice(0, -1))
+      setMiniNote(`Sucessfully removed last itinerary`)
+
+    } catch(err) {
+      setMiniError(err.message)
+      console.log(err.message)
+    }
+  }
+
+  // redirects a user to the explore page for that trip
+  const handleRedirect = () => {
+    navigate(`/explore/${trip_id}`, { replace: true });
+  };
+
 
   useEffect(() => {
     fetchItineraries()
@@ -207,6 +303,9 @@ export default function TripViewPage() {
 
   return (
     <div className="flex flex-col h-dvh items-center justify-center p-4 mb-0">
+      <button className="border-2" onClick={handleRedirect}>
+        explore
+      </button>
       {
         error || isLoading
         ? error
@@ -279,16 +378,20 @@ export default function TripViewPage() {
               </div>
 
             </div>
-            <div className="flex gap-2 w-full h-4/9 border-1 p-4 overflow-x-auto">
+            <div className="flex items-center gap-2 w-full h-4/9 border-1 p-4 overflow-x-auto">
                 {
                   itineraries
-                  ? itineraries.map((item) => {
-                    return (
-                      <div className={`border-2 ${selected===item ? "border-yellow-200" : ""}`} onClick={() => setterSelector(item)} key={item.id}>
-                        <ItineraryTicketComponent ticket={item} itineraries={itineraries} setItineraries={setItineraries} setMiniError={setMiniError} setMiniNote={setMiniNote}/>
-                      </div>
-                    )
-                  })
+                  ? <>
+                      {itineraries.map((item) => {
+                        return (
+                          <div className={`border-2 ${selected===item ? "border-yellow-200" : ""} h-full`} onClick={() => setterSelector(item)} key={item.id}>
+                            <ItineraryTicketComponent ticket={item} itineraries={itineraries} setItineraries={setItineraries} setMiniError={setMiniError} setMiniNote={setMiniNote}/>
+                          </div>
+                        )
+                      })}
+                      <button onClick={() => dayRemover()} disabled={itineraries.length > 1 ? false : true} className="shrink-0 hover:cursor-pointer"><img src="/subtractCircle.svg" alt="circle" className="h-16 w-16"/></button>
+                      <button onClick={() => dayAdder()} className="shrink-0 hover:cursor-pointer"><img src="/addCircle.svg" alt="circle" className="h-16 w-16"/></button>
+                    </>
                   : <div>No itineries/days</div>
                 }
             </div>

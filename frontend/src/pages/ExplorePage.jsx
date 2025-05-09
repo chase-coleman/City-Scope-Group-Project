@@ -267,12 +267,11 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     if (!tripAdvisorMatch) return;
     if (tripAdvisorMatch.details.category.name === "hotel"){
       const stay = formatStayData(tripAdvisorMatch, placeDetails, trip_id)
-      console.log(stay)
-      saveStay(stay)
+      saveStay(stay) // function to save stay data to backend
     } else { 
       // if its an attraction or restaurant
       const activity = formatActivityData(tripAdvisorMatch, placeDetails, noMatchType, trip_id)
-      saveActivity(activity)
+      saveActivity(activity) // function to save activity data to backend
     }
   }, [tripAdvisorMatch]);
 
@@ -285,7 +284,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
         Authorization: `token ${token}`
       }
     })
-    console.log(response)
+    // console.log(response)
     if (response.status === 201){
       alert("success")
     } else {
@@ -301,7 +300,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
         Authorization: `token ${token}`
       }
     })
-    console.log(response)
+    // console.log(response)
     if (response.status === 201){
       alert("success!")
     } else {

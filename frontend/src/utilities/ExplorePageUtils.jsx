@@ -1,5 +1,7 @@
 
 
+
+
 // redirecting the user to view the selected location on Google Maps
 export const handleViewOnGoogle = (placeDetails) => {
   if (!placeDetails?.website) {
@@ -72,7 +74,7 @@ export const formatActivityData = (tripAdvisorMatch, placeDetails, noMatchType, 
      || `${placeDetails.address_components[3].long_name}, ${placeDetails.address_components[6].long_name}`,
     "address": tripAdvisorMatch?.details?.address_obj.address_string || placeDetails.formatted_address,
     "category": tripAdvisorMatch?.details?.category.name || noMatchType,
-     "link": tripAdvisorMatch?.details?.web_url || placeDetails.website,
+     "url": tripAdvisorMatch?.details?.web_url || placeDetails.website,
     "trip": trip_id,
     "image_thumb": tripAdvisorMatch?.photos?.data[0].images.thumbnail.url || null, 
     "image_main": tripAdvisorMatch?.photos?.data[0].images.large.url || null,

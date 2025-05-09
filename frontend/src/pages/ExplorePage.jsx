@@ -4,10 +4,10 @@ import {
   onCategoryChange, // handles changing of checked filters for the map
   formatStayData, // formats data for backend
   formatActivityData, // formats data for backend
-  lodgingSet, // list of place types under lodging
-  touristAttractionSet, // list of attraction types under tourist attractions
-  activitySet, // list of activity types
-  restaurantSet, // list of restaurant types
+  lodgingSet, // set of place types under lodging
+  touristAttractionSet, // set of attraction types under tourist attractions
+  activitySet, // set of activity types
+  restaurantSet, // set of restaurant types
 } from "../utilities/ExplorePageUtils";
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
@@ -274,11 +274,20 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
       // if its an attraction or restaurant
       const activity = formatActivityData(tripAdvisorMatch, placeDetails, noMatchType, trip_id)
       setActivityObj(activity)
+      saveActivity()
     }
   }, [tripAdvisorMatch]);
 
+  // save the the Activity model in the backend
   const saveActivity = async () => {
-    const response = await axios.post("http://127.0.0.1:8000/api/v1/activity/")
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`, activityObj, 
+      {
+      headers: {
+        Authorization: `token ${token}`
+      }
+    })
+    console.log(response)
   }
 
   return (

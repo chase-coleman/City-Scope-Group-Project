@@ -129,7 +129,7 @@ export const TripsPage = () => {
     setEditingTripId(null);
     setEditedTripName("");
   };
-
+  
   // Save the new trip name to backend
   const handleSaveEdit = async (tripId) => {
     try {

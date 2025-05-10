@@ -295,8 +295,8 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     // console.log(response)
     if (response.status === 201){
       alert("success")
-      setPlaceDetails(null)
-      setResults([])
+      setPlaceDetails(null) // removing the info for the selected place
+      setResults([]) // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
       console.warn("There was an issue adding this to your trip.")
     }
@@ -313,8 +313,8 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     // console.log(response)
     if (response.status === 201){
       alert("success!")
-      setPlaceDetails(null)
-      setResults([])
+      setPlaceDetails(null) // removing the info for the selected place
+      setResults([]) // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
       console.warn("There was an issue adding this to your trip.")
     }

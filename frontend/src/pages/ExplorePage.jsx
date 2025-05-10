@@ -201,6 +201,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   // once there is a trip advisor object that matches the selected Google location, run this useEffect
   useEffect(() => {
     if (results.length < 1) return;
+    console.log("calling tripadvisor function!")
     getTripAdvisorMatch(placeDetails.name);
   }, [results]);
 
@@ -257,6 +258,13 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
       setTripAdvisorMatch(matchingLoc);
     } else {
       console.log("No match found for:", locationName);
+      if (noMatchType === "hotel"){
+        const stay = formatStayData(null, placeDetails, trip_id)
+        saveStay(stay)
+      } else {
+        const activity = formatActivityData(null, placeDetails, noMatchType, trip_id)
+        saveActivity(activity)
+      }
     }
   
     return matchingLoc;
@@ -278,7 +286,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   // save the the Activity model in the backend
   const saveActivity = async (activity) => {
     const response = await axios.post(
-      `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`, activityObj, 
+      `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`, activity, 
       {
       headers: {
         Authorization: `token ${token}`
@@ -287,6 +295,8 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     // console.log(response)
     if (response.status === 201){
       alert("success")
+      setPlaceDetails(null) // removing the info for the selected place
+      setResults([]) // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
       console.warn("There was an issue adding this to your trip.")
     }
@@ -303,6 +313,8 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     // console.log(response)
     if (response.status === 201){
       alert("success!")
+      setPlaceDetails(null) // removing the info for the selected place
+      setResults([]) // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
       console.warn("There was an issue adding this to your trip.")
     }

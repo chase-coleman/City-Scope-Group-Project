@@ -41,6 +41,9 @@ export const ExploreContext = createContext({
   getPlaceDetails: () => {},
   handleViewOnGoogle: () => {},
   handleViewWebsite: () => {},
+  restaurants: [],
+  hotels: [],
+  attractions: []
 });
 
 export const ExplorePage = () => {
@@ -115,10 +118,6 @@ export const ExplorePage = () => {
     );
   };
 
-  useEffect(() => {
-    console.log("hotels:", hotels, "attractions:", attractions, "restaurants:", restaurants)
-  }, [attractions, hotels, restaurants])
-
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] bg-red-500 flex">
@@ -161,12 +160,15 @@ export const ExplorePage = () => {
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider
                 value={{
-                  address,
-                  setAddress,
                   place,
-                  setPlace,
                   coords,
+                  hotels,
+                  address,
+                  attractions,
+                  restaurants,
                   selectedFilters,
+                  setPlace,
+                  setAddress,
                   getPlaceDetails,
                 }}
               >

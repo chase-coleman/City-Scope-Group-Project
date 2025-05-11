@@ -6,7 +6,7 @@ import { ExploreContext } from "../pages/ExplorePage";
 const mapId = import.meta.env.VITE_MAP_ID_V1;
 
 const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
-  const { coords, getPlaceDetails, selectedFilters } =
+  const { coords, getPlaceDetails, selectedFilters, restaurants, hotels, attractions } =
     useContext(ExploreContext);
   const map = useMap();
   const mapRef = useRef(null);
@@ -19,6 +19,7 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
       map.setCenter(coords);
     }
   };
+
 
   // calls the getNearby function that will return locations matching the filters
   useEffect(() => {
@@ -114,6 +115,42 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
         onClick={(e) => getPlaceDetails(e.detail, map)} // Using map from useMap() here
       >
         {coords && <AdvancedMarker position={coords} />}
+        {/* Creating Pins for each attraction that is matching the filter */}
+        {attractions.length > 0 ? 
+        attractions.map((loc) => (
+          <AdvancedMarker 
+          key={loc.place_id}
+          position={{
+            lat: loc.geometry.location.lat(),
+            lng: loc.geometry.location.lng()
+          }}/>
+        ))
+        : null
+        }
+        {/* Creating Pins for each hotel that is matching the filter */}
+        {hotels.length > 0 ? 
+        hotels.map((loc) => (
+          <AdvancedMarker 
+          key={loc.place_id}
+          position={{
+            lat: loc.geometry.location.lat(),
+            lng: loc.geometry.location.lng()
+          }}/>
+        ))
+        : null
+        }
+        {/* Creating Pins for each restaurant that is matching the filter */}
+        {restaurants.length > 0 ? 
+        restaurants.map((loc) => (
+          <AdvancedMarker 
+          key={loc.place_id}
+          position={{
+            lat: loc.geometry.location.lat(),
+            lng: loc.geometry.location.lng()
+          }}/>
+        ))
+        : null
+        }
       </Map>
     </>
   );

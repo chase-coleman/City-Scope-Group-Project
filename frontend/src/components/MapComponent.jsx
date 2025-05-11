@@ -112,7 +112,7 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
         options={{ draggable: true }}
         disableDefaultUI={false}
         onLoad={handleMapLoad}
-        onClick={(e) => getPlaceDetails(e.detail, map)} // Using map from useMap() here
+        onClick={(e) => getPlaceDetails(e.detail.placeId, e.detail.latLng.lat, e.detail.latLng.lng, map)} // Using map from useMap() here
       >
         {coords && <AdvancedMarker position={coords} />}
         {/* Creating Pins for each attraction that is matching the filter */}
@@ -136,7 +136,7 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
             lat: loc.geometry.location.lat(),
             lng: loc.geometry.location.lng()
           }}
-          onClick={() => setPlaceDetails(loc)}
+          onClick={() => getPlaceDetails(loc.place_id, loc.geometry.location.lat(), loc.geometry.location.lng(), map)}
           />
         ))
         : null

@@ -80,8 +80,7 @@ export const ExplorePage = () => {
   };
 
   // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
-  const getPlaceDetails = (e, map) => {
-    const placeId = e.placeId;
+  const getPlaceDetails = (placeId, lat, lng, map) => {
 
     if (!map) {
       console.warn("PlacesService container is null");
@@ -109,7 +108,7 @@ export const ExplorePage = () => {
       (result, status) => {
         // if PlacesService class returns a valid value
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          result["geometry"] = { lat: e.latLng.lat, lng: e.latLng.lng };
+          result["geometry"] = { lat: lat, lng: lng };
           setPlaceDetails(result); // This sets the details of the place
           setCoords(result.geometry); // set the map to center on the clicked location now
         } else {

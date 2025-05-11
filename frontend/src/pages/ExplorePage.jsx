@@ -54,6 +54,11 @@ export const ExplorePage = () => {
     { name: "Attractions", key: "A" },
     { name: "Hotels", key: "H" },
   ];
+  // state variables for locations that match the selected filters
+  // set in the MapComponent
+  const [restaurants, setRestaurants] = useState([])
+  const [hotels, setHotels] = useState([])
+  const [attractions, setAttractions] = useState([])
 
   useEffect(() => {
     if (!place) return;
@@ -70,6 +75,7 @@ export const ExplorePage = () => {
     });
   };
 
+  // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECETED
   const getPlaceDetails = (e, map) => {
     const placeId = e.placeId;
 
@@ -109,6 +115,10 @@ export const ExplorePage = () => {
     );
   };
 
+  useEffect(() => {
+    console.log("hotels:", hotels, "attractions:", attractions, "restaurants:", restaurants)
+  }, [attractions, hotels, restaurants])
+
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] bg-red-500 flex">
@@ -128,7 +138,10 @@ export const ExplorePage = () => {
                         e,
                         category,
                         selectedFilters,
-                        setSelectedFilters
+                        setSelectedFilters,
+                        setRestaurants,
+                        setHotels,
+                        setAttractions,
                       )
                     }
                     checked={selectedFilters.some(
@@ -168,7 +181,11 @@ export const ExplorePage = () => {
                   )}
                 </div>
                 <div className="map-container border-2 h-[80%] w-full">
-                  <MapComponent />
+                  <MapComponent 
+                    setRestaurants={setRestaurants}
+                    setHotels={setHotels}
+                    setAttractions={setAttractions}
+                  />
                 </div>
                 {/* <AdvancedMarker position={coords}></AdvancedMarker> */}
               </ExploreContext.Provider>

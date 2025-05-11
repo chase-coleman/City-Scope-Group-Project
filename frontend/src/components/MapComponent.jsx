@@ -5,16 +5,13 @@ import { ExploreContext } from "../pages/ExplorePage";
 // get mapId from .env
 const mapId = import.meta.env.VITE_MAP_ID_V1;
 
-const MapComponent = () => {
+const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
   const { coords, getPlaceDetails, selectedFilters } =
     useContext(ExploreContext);
   const map = useMap();
   const mapRef = useRef(null);
   const previousCoordsRef = useRef(coords);
   const [filteredLocations, setFilteredLocations] = useState([]);
-  const [restaurants, setRestaurants] = useState([])
-  const [hotels, setHotels] = useState([])
-  const [attractions, setAttractions] = useState([])
 
   const handleMapLoad = (map) => {
     mapRef.current = map;
@@ -53,9 +50,6 @@ const MapComponent = () => {
     }
   }
 
-  useEffect(() => {
-    console.log("hotels:", hotels, "attractions:", attractions, "restaurants:", restaurants)
-  }, [attractions, hotels, restaurants])
 
   const getNearbyRestaurants = () => {
     const service = new google.maps.places.PlacesService(map);

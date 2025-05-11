@@ -29,7 +29,6 @@ const token = localStorage.getItem("token");
 const mapId = import.meta.env.VITE_MAP_ID_V1;
 
 // if they're not logged in, can't add location to a trip
-const navigate = useNavigate();
 const redirectToLogin = () => {
   navigate("/login");
 };
@@ -205,40 +204,41 @@ export const ExplorePage = () => {
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
-  
+  const navigate = useNavigate();
+
   // STATE VARIABLES
   const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
   const [noMatchType, setNoMatchType] = useState("") // used to update the activity "category" from Google's category types to our backend category types (attraction/restaurant)
+
+  
+  // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !! 
+  const setCategoryType = (types) => {
+    if (lodgingSet.has(types[0])) {
+      setNoMatchType('hotel');
+      return 'lodging';
+    } else if (touristAttractionSet.has(types[0]) || activitySet.has(types[0])) {
+      setNoMatchType('attraction');
+      return 'attraction';
+    } else if (restaurantSet.has(types[0])) {
+      setNoMatchType('restaurant');
+      return 'restaurant';
+    }
+    return '';
+  }
+  
+  
+  const addToTrip = () => {
+    let category = setCategoryType(placeDetails.types)
+    if (!category) return;  
+    // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
+    grabLocID(placeDetails.name, category, setLogError, setResults, 3);
+  };
 
   // once there is a trip advisor object that matches the selected Google location, run this useEffect
   useEffect(() => {
     if (results.length < 1) return;
     getTripAdvisorMatch(placeDetails.name);
   }, [results]);
-
-  const setCategoryType = (types) => {
-    
-  }
-
-
-
-  const addToTrip = () => {
-    let category = "";
-    // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !! 
-    if (lodgingSet.has(placeDetails.types[0])) {
-      category = "lodging";
-      setNoMatchType("hotel");
-    } else if (
-      touristAttractionSet.has(placeDetails.types[0]) || activitySet.has(placeDetails.types[0])) {
-      category = "attraction";
-      setNoMatchType("attraction");
-    } else if (restaurantSet.has(placeDetails.types[0])) {
-      category = "restaurant";
-      setNoMatchType("restaurant");
-    }
-    // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
-    grabLocID(placeDetails.name, category, setLogError, setResults, 3);
-  };
 
 
   // recursively iterating through the new results from trip advisor
@@ -264,14 +264,14 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     }
   
     // Loop through each top-level value in `results` (since it's an object)
-    let matchingLoc = null;
+    let matchingLocation = null;
     for (const obj of Object.values(results)) {
-      matchingLoc = findByName(obj, locationName);
-      if (matchingLoc) break; // Stop at the first match
+      matchingLocation = findByName(obj, locationName);
+      if (matchingLocation) break; // Stop at the first match
     }
   
-    if (matchingLoc) {
-      setTripAdvisorMatch(matchingLoc);
+    if (matchingLocation) {
+      setTripAdvisorMatch(matchingLocation);
     } else {
       console.log("No match found for:", locationName);
       if (noMatchType === "hotel"){
@@ -283,7 +283,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
       }
     }
   
-    return matchingLoc;
+    return matchingLocation;
   };
 
   // both formatStayData and formatActivityData are in the ExplorePageUtils file

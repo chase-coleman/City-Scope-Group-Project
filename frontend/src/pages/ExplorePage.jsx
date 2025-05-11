@@ -12,9 +12,8 @@ import {
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
 import { useNavigate, useParams, useOutletContext } from "react-router-dom";
-import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { APIProvider } from "@vis.gl/react-google-maps";
 import { grabLocID } from "../utilities/TripAdvisorUtils";
-import { userLogin } from "../utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
 import { Button, Card } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
@@ -28,6 +27,12 @@ const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const token = localStorage.getItem("token");
 // get mapId from .env
 const mapId = import.meta.env.VITE_MAP_ID_V1;
+
+// if they're not logged in, can't add location to a trip
+const navigate = useNavigate();
+const redirectToLogin = () => {
+  navigate("/login");
+};
 
 // setting context to pass to any component rendered on this page
 // don't need to include function params when passing thru context
@@ -69,8 +74,6 @@ export const ExplorePage = () => {
     updateMapLocation();
   }, [place]);
 
-
-
   // update the center location of the map
   const updateMapLocation = () => {
     setCoords({
@@ -86,8 +89,7 @@ export const ExplorePage = () => {
       console.warn("PlacesService container is null");
       return;
     }
-    // using 'map' as an instance of google.maps.Map as
-    // a link to PlacesServices to display it on the map
+    // map is the instance of the current map
     // the google.maps.places.PlacesService is a JS class
     const service = new google.maps.places.PlacesService(map);
     service.getDetails(
@@ -190,11 +192,9 @@ export const ExplorePage = () => {
                     setAttractions={setAttractions}
                   />
                 </div>
-                {/* <AdvancedMarker position={coords}></AdvancedMarker> */}
               </ExploreContext.Provider>
             </APIProvider>
           </div>
-          {/* render the selected location's basic info on the card component below */}
         </div>
       </div>
     </>
@@ -205,26 +205,23 @@ export const ExplorePage = () => {
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
-  const navigate = useNavigate();
-
   
   // STATE VARIABLES
   const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
   const [noMatchType, setNoMatchType] = useState("") // used to update the activity "category" from Google's category types to our backend category types (attraction/restaurant)
 
-  // if they're not logged in, can't add location to a trip
-  const redirectToLogin = () => {
-    navigate("/login");
-  };
-
   // once there is a trip advisor object that matches the selected Google location, run this useEffect
   useEffect(() => {
     if (results.length < 1) return;
-    console.log("calling tripadvisor function!")
     getTripAdvisorMatch(placeDetails.name);
   }, [results]);
 
-  // 
+  const setCategoryType = (types) => {
+    
+  }
+
+
+
   const addToTrip = () => {
     let category = "";
     // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !! 
@@ -311,7 +308,6 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
         Authorization: `token ${token}`
       }
     })
-    // console.log(response)
     if (response.status === 201){
       alert("success")
       setPlaceDetails(null) // removing the info for the selected place

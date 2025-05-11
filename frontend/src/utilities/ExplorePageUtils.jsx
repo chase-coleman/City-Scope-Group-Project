@@ -1,18 +1,25 @@
 
 // setter = the state setter for that filter's results
+// callback function that will set the state variable to the return of whatever nearbySearch function called it 
+// (restaurants, hotels, attractions)
 export const createCallback = (setter) => (result, status) => {
   if (status === google.maps.places.PlacesServiceStatus.OK){
     setter(result)
   }
 }
 
+// type will be one of these : (restaurants, hotels, attractions)
+// callback is the correct callback that sets the state for each filter's return values
+// coords are the current map's view
+// map is the map isntance
 export const createNearbySearch = (type, callback, coords, map) => () => {
   const service = new google.maps.places.PlacesService(map);
   const request = {
     location: coords,
-    radius: 1000,
-    type: type,
+    radius: 1000, // 1000 meters
+    type: type, 
   };
+  // nearbySearch is from Google Maps API
   service.nearbySearch(request, callback);
 }  
   

@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Map, useMap, AdvancedMarker } from "@vis.gl/react-google-maps";
-import { ExploreContext } from "../pages/ExplorePage";
 import { createCallback, createNearbySearch } from "../utilities/ExplorePageUtils";
+import { Map, useMap, AdvancedMarker } from "@vis.gl/react-google-maps";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { ExploreContext } from "../pages/ExplorePage";
 
 
 // get mapId from .env
@@ -23,16 +23,17 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
   };
 
 
-  // using a high-order function to DRY
+  // using a high-order function in the ExplorePageUtils file to avoid repeating
   const restaurantCallback = createCallback(setRestaurants)
   const attractionCallback = createCallback(setAttractions)
   const hotelCallback = createCallback(setHotels)
 
-  
+    // using a high-order function in the ExplorePageUtils file to avoid repeating
   const getNearbyRestaurants = createNearbySearch("restaurant", restaurantCallback, coords, map)
   const getNearbyAttraction = createNearbySearch("attraction", attractionCallback, coords, map)
   const getNearbyHotels = createNearbySearch("lodging", hotelCallback, coords, map)
   
+  // obj to map the selectedFilters to (to avoid if/else statements)
   const FILTER_ACTIONS = {
     Hotels: getNearbyHotels,
     Attractions: getNearbyAttraction,

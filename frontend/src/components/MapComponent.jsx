@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Map, useMap, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { ExploreContext } from "../pages/ExplorePage";
+import { createCallback, createNearbySearch } from "../utilities/ExplorePageUtils";
+
 
 // get mapId from .env
 const mapId = import.meta.env.VITE_MAP_ID_V1;
@@ -21,66 +23,34 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
   };
 
 
-  // calls the getNearby function that will return locations matching the filters
+  // using a high-order function to DRY
+  const restaurantCallback = createCallback(setRestaurants)
+  const attractionCallback = createCallback(setAttractions)
+  const hotelCallback = createCallback(setHotels)
+
+  
+  const getNearbyRestaurants = createNearbySearch("restaurant", restaurantCallback, coords, map)
+  const getNearbyAttraction = createNearbySearch("attraction", attractionCallback, coords, map)
+  const getNearbyHotels = createNearbySearch("lodging", hotelCallback, coords, map)
+  
+  const FILTER_ACTIONS = {
+    Hotels: getNearbyHotels,
+    Attractions: getNearbyAttraction,
+    Restaurants: getNearbyRestaurants
+  };
+
+  // calls the correct function that will return locations matching the filters
   useEffect(() => {
     if (selectedFilters.length < 1) return;
+    
+    // action is = to the value of FILTER_ACTIONS[filter.name]
+    // meaning the variable action holds a function
     selectedFilters.forEach((filter) => {
-      if (filter.name === "Hotels") {
-        getNearbyHotels()
-      } else if (filter.name === "Attractions") {
-        getNearbyAttraction()
-      } else {
-        getNearbyRestaurants()
-      }
-    });
+      const action = FILTER_ACTIONS[filter.name]
+      action() // calling the function
+  });
   }, [selectedFilters]);
 
-  const restaurantCallback = (result, status) => {
-    if (status === google.maps.places.PlacesServiceStatus.OK) {
-      setRestaurants(result)
-    }
-  };
-  const attractionCallback = (result, status) => {
-    if (status === google.maps.places.PlacesServiceStatus.OK) {
-      setAttractions(result)
-    }
-  }
-  const hotelCallback = (result, status) => {
-    if (status === google.maps.places.PlacesServiceStatus.OK) {
-      setHotels(result)
-    }
-  }
-
-
-  const getNearbyRestaurants = () => {
-    const service = new google.maps.places.PlacesService(map);
-    const request = {
-      location: coords,
-      radius: 1000,
-      type: "restaurant",
-    };
-    service.nearbySearch(request, restaurantCallback);
-  };
-
-  const getNearbyAttraction = () => {
-    const service = new google.maps.places.PlacesService(map);
-    const request = {
-      location: coords,
-      radius: 1000,
-      type: "attraction",
-    };
-    service.nearbySearch(request, attractionCallback);
-  };
-
-  const getNearbyHotels = () => {
-    const service = new google.maps.places.PlacesService(map);
-    const request = {
-      location: coords,
-      radius: 1000,
-      type: "lodging",
-    };
-    service.nearbySearch(request, hotelCallback);
-  };
   // Reset recentering when coords change via autocomplete
   useEffect(() => {
     if (
@@ -115,6 +85,7 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
         onClick={(e) => getPlaceDetails(e.detail.placeId, e.detail.latLng.lat, e.detail.latLng.lng, map)} // Using map from useMap() here
       >
         {coords && <AdvancedMarker position={coords} />}
+
         {/* Creating Pins for each attraction that is matching the filter */}
         {attractions.length > 0 ? 
         attractions.map((loc) => (
@@ -123,7 +94,10 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
           position={{
             lat: loc.geometry.location.lat(),
             lng: loc.geometry.location.lng()
-          }}/>
+          }}
+          // onClick handler that will display the selected location's info in the LocationCard on the ExplorePage
+          onClick={() => getPlaceDetails(loc.place_id, loc.geometry.location.lat(), loc.geometry.location.lng(), map)}
+          />
         ))
         : null
         }
@@ -136,6 +110,7 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
             lat: loc.geometry.location.lat(),
             lng: loc.geometry.location.lng()
           }}
+          // onClick handler that will display the selected location's info in the LocationCard on the ExplorePage
           onClick={() => getPlaceDetails(loc.place_id, loc.geometry.location.lat(), loc.geometry.location.lng(), map)}
           />
         ))
@@ -149,7 +124,10 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
           position={{
             lat: loc.geometry.location.lat(),
             lng: loc.geometry.location.lng()
-          }}/>
+          }}
+          // onClick handler that will display the selected location's info in the LocationCard on the ExplorePage
+          onClick={() => getPlaceDetails(loc.place_id, loc.geometry.location.lat(), loc.geometry.location.lng(), map)}
+          />
         ))
         : null
         }

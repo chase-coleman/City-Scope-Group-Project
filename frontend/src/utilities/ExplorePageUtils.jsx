@@ -1,7 +1,21 @@
 
+// setter = the state setter for that filter's results
+export const createCallback = (setter) => (result, status) => {
+  if (status === google.maps.places.PlacesServiceStatus.OK){
+    setter(result)
+  }
+}
 
-
-
+export const createNearbySearch = (type, callback, coords, map) => () => {
+  const service = new google.maps.places.PlacesService(map);
+  const request = {
+    location: coords,
+    radius: 1000,
+    type: type,
+  };
+  service.nearbySearch(request, callback);
+}  
+  
 // redirecting the user to view the selected location on Google Maps
 export const handleViewOnGoogle = (placeDetails) => {
   if (!placeDetails?.website) {

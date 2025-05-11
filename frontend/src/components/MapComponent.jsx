@@ -6,7 +6,7 @@ import { ExploreContext } from "../pages/ExplorePage";
 const mapId = import.meta.env.VITE_MAP_ID_V1;
 
 const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
-  const { coords, getPlaceDetails, selectedFilters, restaurants, hotels, attractions } =
+  const { coords, getPlaceDetails, setPlaceDetails, selectedFilters, restaurants, hotels, attractions } =
     useContext(ExploreContext);
   const map = useMap();
   const mapRef = useRef(null);
@@ -135,7 +135,9 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
           position={{
             lat: loc.geometry.location.lat(),
             lng: loc.geometry.location.lng()
-          }}/>
+          }}
+          onClick={() => setPlaceDetails(loc)}
+          />
         ))
         : null
         }

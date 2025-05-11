@@ -39,6 +39,7 @@ export const ExploreContext = createContext({
   setPlace: () => {},
   coords: { lat: 0, lng: 0 },
   getPlaceDetails: () => {},
+  setPlaceDetails: () => {},
   handleViewOnGoogle: () => {},
   handleViewWebsite: () => {},
   restaurants: [],
@@ -78,7 +79,7 @@ export const ExplorePage = () => {
     });
   };
 
-  // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECETED
+  // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
   const getPlaceDetails = (e, map) => {
     const placeId = e.placeId;
 
@@ -169,6 +170,7 @@ export const ExplorePage = () => {
                   selectedFilters,
                   setPlace,
                   setAddress,
+                  setPlaceDetails,
                   getPlaceDetails,
                 }}
               >

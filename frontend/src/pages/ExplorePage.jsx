@@ -35,6 +35,7 @@ export const ExploreContext = createContext({
   address: "",
   setAddress: () => {},
   place: null,
+  selectedFilters: [],
   setPlace: () => {},
   coords: { lat: 0, lng: 0 },
   getPlaceDetails: () => {},
@@ -58,6 +59,8 @@ export const ExplorePage = () => {
     if (!place) return;
     updateMapLocation();
   }, [place]);
+
+
 
   // update the center location of the map
   const updateMapLocation = () => {
@@ -106,11 +109,6 @@ export const ExplorePage = () => {
     );
   };
 
-  useEffect(() => {
-    if (selectedFilters.length < 1) return;
-    console.log(selectedFilters);
-  }, [selectedFilters]);
-
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] bg-red-500 flex">
@@ -155,6 +153,7 @@ export const ExplorePage = () => {
                   place,
                   setPlace,
                   coords,
+                  selectedFilters,
                   getPlaceDetails,
                 }}
               >

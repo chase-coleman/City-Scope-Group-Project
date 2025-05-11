@@ -6,10 +6,15 @@ import { ExploreContext } from "../pages/ExplorePage";
 const mapId = import.meta.env.VITE_MAP_ID_V1;
 
 const MapComponent = () => {
-  const { coords, getPlaceDetails } = useContext(ExploreContext);
+  const { coords, getPlaceDetails, selectedFilters } =
+    useContext(ExploreContext);
   const map = useMap();
   const mapRef = useRef(null);
   const previousCoordsRef = useRef(coords);
+  const [filteredLocations, setFilteredLocations] = useState([]);
+  const [restaurants, setRestaurants] = useState([])
+  const [hotels, setHotels] = useState([])
+  const [attractions, setAttractions] = useState([])
 
   const handleMapLoad = (map) => {
     mapRef.current = map;
@@ -18,12 +23,77 @@ const MapComponent = () => {
     }
   };
 
+  // calls the getNearby function that will return locations matching the filters
+  useEffect(() => {
+    if (selectedFilters.length < 1) return;
+    selectedFilters.forEach((filter) => {
+      if (filter.name === "Hotels") {
+        getNearbyHotels()
+      } else if (filter.name === "Attractions") {
+        getNearbyAttraction()
+      } else {
+        getNearbyRestaurants()
+      }
+    });
+  }, [selectedFilters]);
+
+  const restaurantCallback = (result, status) => {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      setRestaurants(result)
+    }
+  };
+  const attractionCallback = (result, status) => {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      setAttractions(result)
+    }
+  }
+  const hotelCallback = (result, status) => {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      setHotels(result)
+    }
+  }
+
+  useEffect(() => {
+    console.log("hotels:", hotels, "attractions:", attractions, "restaurants:", restaurants)
+  }, [attractions, hotels, restaurants])
+
+  const getNearbyRestaurants = () => {
+    const service = new google.maps.places.PlacesService(map);
+    const request = {
+      location: coords,
+      radius: 1000,
+      type: "restaurant",
+    };
+    service.nearbySearch(request, restaurantCallback);
+  };
+
+  const getNearbyAttraction = () => {
+    const service = new google.maps.places.PlacesService(map);
+    const request = {
+      location: coords,
+      radius: 1000,
+      type: "attraction",
+    };
+    service.nearbySearch(request, attractionCallback);
+  };
+
+  const getNearbyHotels = () => {
+    const service = new google.maps.places.PlacesService(map);
+    const request = {
+      location: coords,
+      radius: 1000,
+      type: "lodging",
+    };
+    service.nearbySearch(request, hotelCallback);
+  };
   // Reset recentering when coords change via autocomplete
   useEffect(() => {
-    if (coords && 
-        (!previousCoordsRef.current || 
-        coords.lat !== previousCoordsRef.current.lat || 
-        coords.lng !== previousCoordsRef.current.lng)) {
+    if (
+      coords &&
+      (!previousCoordsRef.current ||
+        coords.lat !== previousCoordsRef.current.lat ||
+        coords.lng !== previousCoordsRef.current.lng)
+    ) {
       previousCoordsRef.current = coords;
     }
   }, [coords]);
@@ -39,7 +109,7 @@ const MapComponent = () => {
     <>
       <Map
         // unique key per coord change forces the map component to re-render
-        key={`${coords?.lat ?? 0}-${coords?.lng ?? 0}`} 
+        key={`${coords?.lat ?? 0}-${coords?.lng ?? 0}`}
         defaultCenter={coords || { lat: 0, lng: 0 }}
         defaultZoom={12}
         mapId={mapId}

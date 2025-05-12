@@ -19,7 +19,7 @@ export const TripsPage = () => {
 
   // UI state
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [showNewTripForm, setShowNewTripForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -39,7 +39,11 @@ export const TripsPage = () => {
 
   // Fetch all trips for the user
   const fetchTrips = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    
     try {
+      console.log(token)
       const res = await axios.get("http://localhost:8000/api/v1/trip/", {
         headers: {
           Authorization: `token ${token}`,
@@ -50,6 +54,7 @@ export const TripsPage = () => {
       console.error("Error fetching trips:", err);
       setError("Failed to fetch trips. Please make sure you're logged in.");
     }
+    console.log(userTrips)
   };
 
   // Called when user confirms deletion in the modal
@@ -72,13 +77,20 @@ export const TripsPage = () => {
   };
 
   // Called on initial load
-  useEffect(() => {
-    const timer = setTimeout(() => {
+useEffect(() => {
+  const loadTrips = async () => {
+    try {
+      setLoading(true);
+      await fetchTrips();
+    } catch (err) {
+      console.error("Failed to load trips:", err);
+    } finally {
       setLoading(false);
-      fetchTrips();
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    }
+  };
+
+  loadTrips();
+}, []);
 
   // Begin trip creation form
   const handleNewTrip = () => {

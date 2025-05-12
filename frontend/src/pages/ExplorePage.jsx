@@ -232,6 +232,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   
   
   const addToTrip = () => {
+    
     let category = setCategoryType(placeDetails.types)
     if (!category) return;  
     // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!

@@ -28,8 +28,14 @@ export const NavbarComponent = ({user, setUser}) => {
       <Navbar.Brand as={Link} to="/">City Scope</Navbar.Brand>
       <Nav className="me-auto">
 
-        <Nav.Link as={Link} to="/explore">Explore</Nav.Link>
+        
+        {user?
+        (
+          <>
         <Nav.Link as={Link} to="/trips">Trips</Nav.Link>
+        <Nav.Link as={Link} to="/explore">Explore</Nav.Link>
+        </>
+        ):""}
       </Nav>
       {user? (
       <Dropdown align="end">

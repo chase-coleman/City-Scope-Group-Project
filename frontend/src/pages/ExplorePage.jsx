@@ -12,9 +12,8 @@ import {
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
 import { useNavigate, useParams, useOutletContext } from "react-router-dom";
-import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { APIProvider } from "@vis.gl/react-google-maps";
 import { grabLocID } from "../utilities/TripAdvisorUtils";
-import { userLogin } from "../utilities/LoginPageUtils";
 import MapComponent from "../components/MapComponent";
 import { Button, Card } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
@@ -29,17 +28,27 @@ const token = localStorage.getItem("token");
 // get mapId from .env
 const mapId = import.meta.env.VITE_MAP_ID_V1;
 
+// if they're not logged in, can't add location to a trip
+const redirectToLogin = () => {
+  navigate("/login");
+};
+
 // setting context to pass to any component rendered on this page
 // don't need to include function params when passing thru context
 export const ExploreContext = createContext({
   address: "",
   setAddress: () => {},
   place: null,
+  selectedFilters: [],
   setPlace: () => {},
   coords: { lat: 0, lng: 0 },
   getPlaceDetails: () => {},
+  setPlaceDetails: () => {},
   handleViewOnGoogle: () => {},
   handleViewWebsite: () => {},
+  restaurants: [],
+  hotels: [],
+  attractions: []
 });
 
 export const ExplorePage = () => {
@@ -53,6 +62,11 @@ export const ExplorePage = () => {
     { name: "Attractions", key: "A" },
     { name: "Hotels", key: "H" },
   ];
+  // state variables for locations that match the selected filters
+  // set in the MapComponent
+  const [restaurants, setRestaurants] = useState([])
+  const [hotels, setHotels] = useState([])
+  const [attractions, setAttractions] = useState([])
 
   useEffect(() => {
     if (!place) return;
@@ -67,15 +81,18 @@ export const ExplorePage = () => {
     });
   };
 
-  const getPlaceDetails = (e, map) => {
-    const placeId = e.placeId;
+  useEffect(() => {
+    console.log(selectedFilters)
+  }, [selectedFilters])
+
+  // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
+  const getPlaceDetails = (placeId, lat, lng, map) => {
 
     if (!map) {
       console.warn("PlacesService container is null");
       return;
     }
-    // using 'map' as an instance of google.maps.Map as
-    // a link to PlacesServices to display it on the map
+    // map is the instance of the current map
     // the google.maps.places.PlacesService is a JS class
     const service = new google.maps.places.PlacesService(map);
     service.getDetails(
@@ -96,7 +113,7 @@ export const ExplorePage = () => {
       (result, status) => {
         // if PlacesService class returns a valid value
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          result["geometry"] = { lat: e.latLng.lat, lng: e.latLng.lng };
+          result["geometry"] = { lat: lat, lng: lng };
           setPlaceDetails(result); // This sets the details of the place
           setCoords(result.geometry); // set the map to center on the clicked location now
         } else {
@@ -105,11 +122,6 @@ export const ExplorePage = () => {
       }
     );
   };
-
-  useEffect(() => {
-    if (selectedFilters.length < 1) return;
-    console.log(selectedFilters);
-  }, [selectedFilters]);
 
   return (
     <>
@@ -130,7 +142,10 @@ export const ExplorePage = () => {
                         e,
                         category,
                         selectedFilters,
-                        setSelectedFilters
+                        setSelectedFilters,
+                        setRestaurants,
+                        setHotels,
+                        setAttractions,
                       )
                     }
                     checked={selectedFilters.some(
@@ -150,11 +165,16 @@ export const ExplorePage = () => {
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider
                 value={{
-                  address,
-                  setAddress,
                   place,
-                  setPlace,
                   coords,
+                  hotels,
+                  address,
+                  attractions,
+                  restaurants,
+                  selectedFilters,
+                  setPlace,
+                  setAddress,
+                  setPlaceDetails,
                   getPlaceDetails,
                 }}
               >
@@ -169,13 +189,15 @@ export const ExplorePage = () => {
                   )}
                 </div>
                 <div className="map-container border-2 h-[80%] w-full">
-                  <MapComponent />
+                  <MapComponent 
+                    setRestaurants={setRestaurants}
+                    setHotels={setHotels}
+                    setAttractions={setAttractions}
+                  />
                 </div>
-                {/* <AdvancedMarker position={coords}></AdvancedMarker> */}
               </ExploreContext.Provider>
             </APIProvider>
           </div>
-          {/* render the selected location's basic info on the card component below */}
         </div>
       </div>
     </>
@@ -188,14 +210,32 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   const { trip_id } = useParams();
   const navigate = useNavigate();
 
-  
   // STATE VARIABLES
   const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
   const [noMatchType, setNoMatchType] = useState("") // used to update the activity "category" from Google's category types to our backend category types (attraction/restaurant)
 
-  // if they're not logged in, can't add location to a trip
-  const redirectToLogin = () => {
-    navigate("/login");
+  
+  // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !! 
+  const setCategoryType = (types) => {
+    if (lodgingSet.has(types[0])) {
+      setNoMatchType('hotel');
+      return 'lodging';
+    } else if (touristAttractionSet.has(types[0]) || activitySet.has(types[0])) {
+      setNoMatchType('attraction');
+      return 'attraction';
+    } else if (restaurantSet.has(types[0])) {
+      setNoMatchType('restaurant');
+      return 'restaurant';
+    }
+    return '';
+  }
+  
+  
+  const addToTrip = () => {
+    let category = setCategoryType(placeDetails.types)
+    if (!category) return;  
+    // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
+    grabLocID(placeDetails.name, category, setLogError, setResults, 3);
   };
 
   // once there is a trip advisor object that matches the selected Google location, run this useEffect
@@ -203,25 +243,6 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     if (results.length < 1) return;
     getTripAdvisorMatch(placeDetails.name);
   }, [results]);
-
-  // 
-  const addToTrip = () => {
-    let category = "";
-    // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !! 
-    if (lodgingSet.has(placeDetails.types[0])) {
-      category = "lodging";
-      setNoMatchType("hotel");
-    } else if (
-      touristAttractionSet.has(placeDetails.types[0]) || activitySet.has(placeDetails.types[0])) {
-      category = "attraction";
-      setNoMatchType("attraction");
-    } else if (restaurantSet.has(placeDetails.types[0])) {
-      category = "restaurant";
-      setNoMatchType("restaurant");
-    }
-    // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
-    grabLocID(placeDetails.name, category, setLogError, setResults, 3);
-  };
 
 
   // recursively iterating through the new results from trip advisor
@@ -247,19 +268,26 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     }
   
     // Loop through each top-level value in `results` (since it's an object)
-    let matchingLoc = null;
+    let matchingLocation = null;
     for (const obj of Object.values(results)) {
-      matchingLoc = findByName(obj, locationName);
-      if (matchingLoc) break; // Stop at the first match
+      matchingLocation = findByName(obj, locationName);
+      if (matchingLocation) break; // Stop at the first match
     }
   
-    if (matchingLoc) {
-      setTripAdvisorMatch(matchingLoc);
+    if (matchingLocation) {
+      setTripAdvisorMatch(matchingLocation);
     } else {
       console.log("No match found for:", locationName);
+      if (noMatchType === "hotel"){
+        const stay = formatStayData(null, placeDetails, trip_id)
+        saveStay(stay)
+      } else {
+        const activity = formatActivityData(null, placeDetails, noMatchType, trip_id)
+        saveActivity(activity)
+      }
     }
   
-    return matchingLoc;
+    return matchingLocation;
   };
 
   // both formatStayData and formatActivityData are in the ExplorePageUtils file
@@ -278,15 +306,16 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   // save the the Activity model in the backend
   const saveActivity = async (activity) => {
     const response = await axios.post(
-      `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`, activityObj, 
+      `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`, activity, 
       {
       headers: {
         Authorization: `token ${token}`
       }
     })
-    // console.log(response)
     if (response.status === 201){
       alert("success")
+      setPlaceDetails(null) // removing the info for the selected place
+      setResults([]) // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
       console.warn("There was an issue adding this to your trip.")
     }
@@ -303,6 +332,8 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     // console.log(response)
     if (response.status === 201){
       alert("success!")
+      setPlaceDetails(null) // removing the info for the selected place
+      setResults([]) // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
       console.warn("There was an issue adding this to your trip.")
     }

@@ -1,7 +1,29 @@
 
+// setter = the state setter for that filter's results
+// callback function that will set the state variable to the return of whatever nearbySearch function called it 
+// (restaurants, hotels, attractions)
+export const createCallback = (setter) => (result, status) => {
+  if (status === google.maps.places.PlacesServiceStatus.OK){
+    console.log(result)
+    setter(result)
+  }
+}
 
-
-
+// type will be one of these : (restaurants, hotels, attractions)
+// callback is the correct callback that sets the state for each filter's return values
+// coords are the current map's view
+// map is the map isntance
+export const createNearbySearch = (types, callback, coords, map) => () => {
+  const service = new google.maps.places.PlacesService(map);
+  const request = {
+    location: coords,
+    radius: 1000, // 1000 meters
+    type: types, 
+  };
+  // nearbySearch is from Google Maps API
+  service.nearbySearch(request, callback);
+}  
+  
 // redirecting the user to view the selected location on Google Maps
 export const handleViewOnGoogle = (placeDetails) => {
   if (!placeDetails?.website) {
@@ -38,12 +60,13 @@ export const handleViewWebsite = (placeDetails) => {
 };
 
 // handling the change of selected filters for the google map
-export const onCategoryChange = (e, category, selectedFilters, setSelectedFilters) => {
+export const onCategoryChange = (e, category, selectedFilters, setSelectedFilters, setRestaurants, setHotels, setAttractions) => {
   let _currentFilters = [...selectedFilters]; // retrieve the current selectedFilters
   if (e.checked) {
     _currentFilters.push(category); // add the newly checked category to the current selected filters
     setSelectedFilters(_currentFilters); // set the state
   } else { // if we're unselecting a filter, remove it 
+    clearResults(category.key, setRestaurants, setHotels, setAttractions)
     _currentFilters = _currentFilters.filter(
       (cat) => cat.key !== category.key 
     );
@@ -51,8 +74,23 @@ export const onCategoryChange = (e, category, selectedFilters, setSelectedFilter
   }
 };
 
+const clearResults = (category, setRestaurants, setHotels, setAttractions) => {
+  if (category === "H"){
+    console.log("clearing hotels!")
+    setHotels([])
+  } else if (category === "R"){
+    setRestaurants([])
+  } else {
+    console.log("clearing attractions!")
+    setAttractions([])
+  }
+}
+
 // formatting data for the backend
-export const formatStayData = (tripAdvisorMatch, placeDetails, trip_id) => {
+export const formatStayData = (
+  tripAdvisorMatch = null, 
+  placeDetails={},
+   trip_id) => {
   const stayData = {
     "name": tripAdvisorMatch?.details?.name || placeDetails.name,
     "location": `${tripAdvisorMatch?.details?.address_obj.city}, ${tripAdvisorMatch?.details?.address_obj.country}`
@@ -67,19 +105,32 @@ export const formatStayData = (tripAdvisorMatch, placeDetails, trip_id) => {
 };
 
 // formatting data for the backend
-export const formatActivityData = (tripAdvisorMatch, placeDetails, noMatchType, trip_id) => {
+export const formatActivityData = (
+  tripAdvisorMatch = null,
+  placeDetails = {},
+  noMatchType = '',
+  trip_id = null
+) => {
   const activityData = {
-    "name": tripAdvisorMatch?.details?.name || placeDetails.name,
-    "location": `${tripAdvisorMatch?.details?.address_obj.city}, ${tripAdvisorMatch?.details?.address_obj.country}`
-     || `${placeDetails.address_components[3].long_name}, ${placeDetails.address_components[6].long_name}`,
-    "address": tripAdvisorMatch?.details?.address_obj.address_string || placeDetails.formatted_address,
-    "category": tripAdvisorMatch?.details?.category.name || noMatchType,
-     "url": tripAdvisorMatch?.details?.web_url || placeDetails.website,
-    "trip": trip_id,
-    "image_thumb": tripAdvisorMatch?.photos?.data[0].images.thumbnail.url || null, 
-    "image_main": tripAdvisorMatch?.photos?.data[0].images.large.url || null,
-    "location_id": tripAdvisorMatch?.details?.location_id || null
-  }
+    name: tripAdvisorMatch?.details?.name || placeDetails.name,
+    location:
+      (tripAdvisorMatch?.details?.address_obj?.city &&
+        tripAdvisorMatch?.details?.address_obj?.country &&
+        `${tripAdvisorMatch.details.address_obj.city}, ${tripAdvisorMatch.details.address_obj.country}`) ||
+      (placeDetails.address_components &&
+        `${placeDetails.address_components[3]?.long_name}, ${placeDetails.address_components[6]?.long_name}`),
+    address:
+      tripAdvisorMatch?.details?.address_obj?.address_string ||
+      placeDetails.formatted_address,
+    category: tripAdvisorMatch?.details?.category?.name || noMatchType,
+    url: tripAdvisorMatch?.details?.web_url || placeDetails.website,
+    trip: trip_id,
+    image_thumb:
+      tripAdvisorMatch?.photos?.data?.[0]?.images?.thumbnail?.url || null,
+    image_main:
+      tripAdvisorMatch?.photos?.data?.[0]?.images?.large?.url || null,
+    location_id: tripAdvisorMatch?.details?.location_id || null,
+  };
   return activityData;
 };
 
@@ -109,3 +160,7 @@ export const activitySet = new Set([
 export const restaurantSet = new Set([
   "restaurant", "cafe", "restaurant", "meal_delivery", "meal_takeaway",
 ]);
+
+
+
+

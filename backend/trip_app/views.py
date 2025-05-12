@@ -39,16 +39,16 @@ class TripDetailView(TokenReq):
         if not trip:
             return Response({"error": "Trip not found"}, status=404)
         serializer = TripSerializer(trip)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     # update specific trip
     def put(self, request, pk):
         trip = self.get_object(pk, request.user)
         if not trip:
             return Response({"error": "Trip not found"}, status=404)
-        serializer = TripSerializer(trip, data=request.data)
+        serializer = TripSerializer(trip, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=400)
     # delete trip
     def delete(self, request, pk):

@@ -188,20 +188,20 @@ useEffect(() => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <button onClick={handleNewTrip}>Start new trip</button>
-
+    <div className="py-2">
+      <div className="flex w-full justify-center">
+      <button  className="button-background text-center text-white p-1 " onClick={handleNewTrip}>Start New Trip</button>
+      </div>
       {/* Trip List */}
-      <div className="flex justify-center">
-        <div className="flex flex-row gap-4 p-3 w-[90vw]">
+        <div className="flex flex-wrap gap-4 p-3 w-full">
           {userTrips.length === 0 ? (
             <p>No Trips available.</p>
           ) : (
-            <ul className="flex flex-wrap justify-center gap-4 list-none p-0">
+            <div className="flex flex-wrap w-full justify-center gap-2 list-none p-0">
               {userTrips.map((trip) => (
-                <li
+                <div
                   key={trip.id}
-                  className="flex flex-col border border-gray-300 p-2 rounded-lg shadow-sm"
+                  className="trip-card flex flex-col w-64 border border-gray-300 p-2 rounded-lg shadow-sm"
                 >
                   {editingTripId === trip.id ? (
                     <>
@@ -254,21 +254,20 @@ useEffect(() => {
                       <div className="flex justify-center items-center gap-2 mt-2">
                         <button
                           onClick={() => visitTripView(trip)}
-                          className="w-[40%] h-[50%] px-4 py-2 bg-yellow-400 rounded flex items-center justify-center"
+                          className="button-background w-[40%] h-[50%] p-2 rounded flex items-center justify-center"
                         >
-                          <span className="visit-trip-page text-[.75em] whitespace-nowrap">
+                          <span className="visit-trip-page text-[.75em] text-white whitespace-nowrap">
                             Trip Details
                           </span>
                         </button>
                       </div>
                     </>
                   )}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
-      </div>
       {/* Deletion Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -297,40 +296,35 @@ useEffect(() => {
 
       {/* New Trip Form */}
       {showNewTripForm && (
-        <div className="new-trip-info border-2 w-[50%] h-[50vh]">
-          <input
-            type="text"
-            className="border-2"
-            placeholder="Trip Name"
-            value={newTripData.name}
-            onChange={(e) =>
-              setNewTripData((prev) => ({ ...prev, name: e.target.value }))
-            }
-          />
-
-          <div className="border-2">
-            <AutocompleteTripComponent
-              value={newTripData.location}
-              setNewTripData={setNewTripData}
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-md">
+            <h2 className="text-xl font-bold mb-4 text-center">Create New Trip</h2>
+            <input
+              type="text"
+              className="border w-full p-2 mb-3 rounded"
+              placeholder="Trip Name"
+              value={newTripData.name}
+              onChange={(e) => setNewTripData((prev) => ({ ...prev, name: e.target.value }))}
             />
+            <div className="mb-3">
+              <AutocompleteTripComponent value={newTripData.location} setNewTripData={setNewTripData} />
+            </div>
+            <div className="mb-3">
+              <Calendar
+                value={newTripData.dates}
+                placeholder="Select Date Range"
+                selectionMode="range"
+                readOnlyInput
+                hideOnRangeSelection
+                onChange={(e) => setNewTripData((prev) => ({ ...prev, dates: e.value }))}
+                className="w-full"
+              />
+            </div>
+            <div className="flex justify-end gap-4 mt-4">
+              <button onClick={handleTripCreation} className=" button-background px-4 py-2 bg-green-600 text-white rounded">Create Trip</button>
+              <button onClick={() => setShowNewTripForm(false)} className="px-4 py-2 bg-gray-400 text-white rounded">Cancel</button>
+            </div>
           </div>
-
-          <div className="border-2">
-            <Calendar
-              value={newTripData.dates}
-              placeholder="Dates"
-              selectionMode="range"
-              readOnlyInput
-              hideOnRangeSelection
-              onChange={(e) =>
-                setNewTripData((prev) => ({ ...prev, dates: e.value }))
-              }
-            />
-          </div>
-
-          <Button variant="primary" onClick={handleTripCreation}>
-            Create Trip
-          </Button>
         </div>
       )}
     </div>

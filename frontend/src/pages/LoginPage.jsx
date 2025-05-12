@@ -21,7 +21,7 @@ const Login = () => {
     const login = await userLogin(username,password,setLogError);
     if (login?.response == 200) {
       setUser(await confirmUser())
-      navigate('/explore');
+      navigate('/trips');
     }
   }
 
@@ -35,7 +35,7 @@ const Login = () => {
     );
     if (login?.response == 200) {
       setUser(await confirmUser())
-      navigate('/explore');
+      navigate('/trips');
     }
   }
 

@@ -9,7 +9,7 @@
       "url": "https://www.toureiffel.paris/en",
       "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
       "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
-      "category": "restaurants",
+      "category": "restaurant",
       "trip": 1
     }
   },
@@ -23,7 +23,7 @@
       "url": "https://www.louvre.fr/en",
       "image_thumb": "https://media-cdn.tripadvisor.com/media/photo-t/2d/e6/4f/88/exterior.jpg",
       "image_main": "https://media-cdn.tripadvisor.com/media/photo-m/1280/2d/e6/4f/88/exterior.jpg",
-      "category": "attractions",
+      "category": "attraction",
       "trip": 1
     }
   }

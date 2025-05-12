@@ -31,10 +31,6 @@ const router = createBrowserRouter([
         element: <TripViewPage />
       },
       {
-        path: '/explore',
-        element: <ExplorePage />
-      },
-      {
         path: "/explore/:trip_id",
         element: <ExplorePage />
       },

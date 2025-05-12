@@ -19,7 +19,7 @@ export const TripsPage = () => {
 
   // UI state
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [showNewTripForm, setShowNewTripForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -39,7 +39,11 @@ export const TripsPage = () => {
 
   // Fetch all trips for the user
   const fetchTrips = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    
     try {
+      console.log(token)
       const res = await axios.get("http://localhost:8000/api/v1/trip/", {
         headers: {
           Authorization: `token ${token}`,
@@ -50,6 +54,7 @@ export const TripsPage = () => {
       console.error("Error fetching trips:", err);
       setError("Failed to fetch trips. Please make sure you're logged in.");
     }
+    console.log(userTrips)
   };
 
   // Called when user confirms deletion in the modal
@@ -72,13 +77,20 @@ export const TripsPage = () => {
   };
 
   // Called on initial load
-  useEffect(() => {
-    const timer = setTimeout(() => {
+useEffect(() => {
+  const loadTrips = async () => {
+    try {
+      setLoading(true);
+      await fetchTrips();
+    } catch (err) {
+      console.error("Failed to load trips:", err);
+    } finally {
       setLoading(false);
-      fetchTrips();
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    }
+  };
+
+  loadTrips();
+}, []);
 
   // Begin trip creation form
   const handleNewTrip = () => {
@@ -100,17 +112,32 @@ export const TripsPage = () => {
         newTrip,
         {
           headers: {
-            Authorization: `token ${token}`,
+            Authorization: `Token ${token}`,
           },
         }
       );
       if (response.status === 201) {
+        console.log(response)
+        createItineraries(response)
         fetchTrips(); // Reload list
       }
     } catch (error) {
       console.error("Error creating trip:", error);
     }
   };
+
+  const createItineraries = async (newTrip) => {
+    const tripId = newTrip.data.id
+    const response = await axios.post("http://localhost:8000/api/v1/itinerary/", 
+      {"trip_id": tripId,
+        "date": newTrip.data.start_date
+      }, {
+        headers: {
+          Authorization: `token ${token}`
+        }
+      });
+      console.log(response)
+  }
 
   // Handle trip deletion click
   const handleDeleteClick = (trip) => {
@@ -133,7 +160,7 @@ export const TripsPage = () => {
   // Save the new trip name to backend
   const handleSaveEdit = async (tripId) => {
     try {
-      await axios.patch(
+      await axios.put(
         `http://localhost:8000/api/v1/trip/${tripId}/`,
         { name: editedTripName },
         {
@@ -148,6 +175,8 @@ export const TripsPage = () => {
       console.error("Error updating trip name:", err);
     }
   };
+
+  // CREATING TRIP COMMENT FOR TIM TO SYNC UP
 
   const visitTripView = (trip) => {
     navigate(`/tripview/${trip.id}`, { replace: true });

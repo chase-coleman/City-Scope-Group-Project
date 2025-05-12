@@ -48,7 +48,7 @@ export const ExploreContext = createContext({
   handleViewWebsite: () => {},
   restaurants: [],
   hotels: [],
-  attractions: []
+  attractions: [],
 });
 
 export const ExplorePage = () => {
@@ -64,9 +64,9 @@ export const ExplorePage = () => {
   ];
   // state variables for locations that match the selected filters
   // set in the MapComponent
-  const [restaurants, setRestaurants] = useState([])
-  const [hotels, setHotels] = useState([])
-  const [attractions, setAttractions] = useState([])
+  const [restaurants, setRestaurants] = useState([]);
+  const [hotels, setHotels] = useState([]);
+  const [attractions, setAttractions] = useState([]);
 
   useEffect(() => {
     if (!place) return;
@@ -82,12 +82,11 @@ export const ExplorePage = () => {
   };
 
   useEffect(() => {
-    console.log(selectedFilters)
-  }, [selectedFilters])
+    console.log(selectedFilters);
+  }, [selectedFilters]);
 
   // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
   const getPlaceDetails = (placeId, lat, lng, map) => {
-
     if (!map) {
       console.warn("PlacesService container is null");
       return;
@@ -145,7 +144,7 @@ export const ExplorePage = () => {
                         setSelectedFilters,
                         setRestaurants,
                         setHotels,
-                        setAttractions,
+                        setAttractions
                       )
                     }
                     checked={selectedFilters.some(
@@ -189,7 +188,7 @@ export const ExplorePage = () => {
                   )}
                 </div>
                 <div className="map-container border-2 h-[80%] w-full">
-                  <MapComponent 
+                  <MapComponent
                     setRestaurants={setRestaurants}
                     setHotels={setHotels}
                     setAttractions={setAttractions}
@@ -212,28 +211,39 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
 
   // STATE VARIABLES
   const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
-  const [noMatchType, setNoMatchType] = useState("") // used to update the activity "category" from Google's category types to our backend category types (attraction/restaurant)
+  const [noMatchType, setNoMatchType] = useState(""); // used to update the activity "category" from Google's category types to our backend category types (attraction/restaurant)
+  const [isDisabled, setIsDisabled] = useState(false);
 
-  
-  // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !! 
+  // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !!
   const setCategoryType = (types) => {
     if (lodgingSet.has(types[0])) {
-      setNoMatchType('hotel');
-      return 'lodging';
-    } else if (touristAttractionSet.has(types[0]) || activitySet.has(types[0])) {
-      setNoMatchType('attraction');
-      return 'attraction';
+      setNoMatchType("hotel");
+      return "lodging";
+    } else if (
+      touristAttractionSet.has(types[0]) ||
+      activitySet.has(types[0])
+    ) {
+      setNoMatchType("attraction");
+      return "attraction";
     } else if (restaurantSet.has(types[0])) {
-      setNoMatchType('restaurant');
-      return 'restaurant';
+      setNoMatchType("restaurant");
+      return "restaurant";
     }
-    return '';
-  }
-  
-  
+    return "NO_MATCH";
+  };
+
+  useEffect(() => {
+    const category = setCategoryType(placeDetails.types);
+    if (category === "NO_MATCH") {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false)
+    }
+  }, [placeDetails]);
+
   const addToTrip = () => {
-    let category = setCategoryType(placeDetails.types)
-    if (!category) return;  
+    let category = setCategoryType(placeDetails.types);
+    if (!category) return;
     // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
     grabLocID(placeDetails.name, category, setLogError, setResults, 3);
   };
@@ -244,18 +254,16 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     getTripAdvisorMatch(placeDetails.name);
   }, [results]);
 
-
   // recursively iterating through the new results from trip advisor
   const getTripAdvisorMatch = (locationName) => {
-    
-    function findByName(obj, locationName) { 
+    function findByName(obj, locationName) {
       // obj is the object containing the details and photos (both their own objects aka NESTED)
       if (obj && typeof obj === "object") {
         // checking of the details has a matching name
         if (obj.details && obj.details.name === locationName) {
           return obj;
         }
-  
+
         for (const [key, value] of Object.entries(obj)) {
           if (key === "name" && value === locationName) {
             return obj;
@@ -266,78 +274,92 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
       }
       return null;
     }
-  
+
     // Loop through each top-level value in `results` (since it's an object)
     let matchingLocation = null;
     for (const obj of Object.values(results)) {
       matchingLocation = findByName(obj, locationName);
       if (matchingLocation) break; // Stop at the first match
     }
-  
+
     if (matchingLocation) {
       setTripAdvisorMatch(matchingLocation);
     } else {
       console.log("No match found for:", locationName);
-      if (noMatchType === "hotel"){
-        const stay = formatStayData(null, placeDetails, trip_id)
-        saveStay(stay)
+      if (noMatchType === "hotel") {
+        const stay = formatStayData(null, placeDetails, trip_id);
+        saveStay(stay);
       } else {
-        const activity = formatActivityData(null, placeDetails, noMatchType, trip_id)
-        saveActivity(activity)
+        const activity = formatActivityData(
+          null,
+          placeDetails,
+          noMatchType,
+          trip_id
+        );
+        saveActivity(activity);
       }
     }
-  
+
     return matchingLocation;
   };
 
   // both formatStayData and formatActivityData are in the ExplorePageUtils file
   useEffect(() => {
     if (!tripAdvisorMatch) return;
-    if (tripAdvisorMatch.details.category.name === "hotel"){
-      const stay = formatStayData(tripAdvisorMatch, placeDetails, trip_id)
-      saveStay(stay) // function to save stay data to backend
-    } else { 
+    if (tripAdvisorMatch.details.category.name === "hotel") {
+      const stay = formatStayData(tripAdvisorMatch, placeDetails, trip_id);
+      saveStay(stay); // function to save stay data to backend
+    } else {
       // if its an attraction or restaurant
-      const activity = formatActivityData(tripAdvisorMatch, placeDetails, noMatchType, trip_id)
-      saveActivity(activity) // function to save activity data to backend
+      const activity = formatActivityData(
+        tripAdvisorMatch,
+        placeDetails,
+        noMatchType,
+        trip_id
+      );
+      saveActivity(activity); // function to save activity data to backend
     }
   }, [tripAdvisorMatch]);
 
   // save the the Activity model in the backend
   const saveActivity = async (activity) => {
     const response = await axios.post(
-      `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`, activity, 
+      `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`,
+      activity,
       {
-      headers: {
-        Authorization: `token ${token}`
+        headers: {
+          Authorization: `token ${token}`,
+        },
       }
-    })
-    if (response.status === 201){
-      alert("success")
-      setPlaceDetails(null) // removing the info for the selected place
-      setResults([]) // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
+    );
+    if (response.status === 201) {
+      alert("success");
+      setPlaceDetails(null); // removing the info for the selected place
+      setResults([]); // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
-      console.warn("There was an issue adding this to your trip.")
+      console.warn("There was an issue adding this to your trip.");
     }
-  }
+  };
 
   const saveStay = async (stay) => {
     const response = await axios.post(
-      `http://127.0.0.1:8000/api/v1/stay/all/${trip_id}/`, stay, 
+      `http://127.0.0.1:8000/api/v1/stay/all/${trip_id}/`,
+      stay,
       {
-      headers: {
-        Authorization: `token ${token}`
+        headers: {
+          Authorization: `token ${token}`,
+        },
       }
-    })
+    );
     // console.log(response)
-    if (response.status === 201){
-      alert("success!")
-      setPlaceDetails(null) // removing the info for the selected place
-      setResults([]) // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
+    if (response.status === 201) {
+      alert("success!");
+      setPlaceDetails(null); // removing the info for the selected place
+      setResults([]); // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
-      console.warn("There was an issue adding this to your trip.")
+      console.warn("There was an issue adding this to your trip.");
     }
-  }
+  };
 
   return (
     <>
@@ -356,7 +378,16 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
             {/* token - is user logged in? trip_id - is user editing a specific trip? */}
             {token ? (
               trip_id ? (
-                <button className="border-2" onClick={addToTrip}>
+                <button
+                  className="add-to_trip_btn border-2"
+                  onClick={addToTrip}
+                  disabled={isDisabled}
+                  style={{
+                    backgroundColor: isDisabled ? "#ccc" : "#007bff",
+                    color: isDisabled ? "#666" : "white",
+                    cursor: isDisabled ? "not-allowed" : "pointer",
+                  }}
+                >
                   Add to trip
                 </button>
               ) : null

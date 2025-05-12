@@ -109,4 +109,5 @@
 /* disables the 2nd checkmark displayed when a map filter is displayed from Primereact */
 .p-checkbox-box {
   display: none !important;
+ 
 }

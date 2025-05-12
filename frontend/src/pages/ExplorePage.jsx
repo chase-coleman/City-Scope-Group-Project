@@ -223,11 +223,11 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
       touristAttractionSet.has(types[0]) ||
       activitySet.has(types[0])
     ) {
-      setNoMatchType("attractions");
-      return "attractions";
+      setNoMatchType("attraction");
+      return "attraction";
     } else if (restaurantSet.has(types[0])) {
-      setNoMatchType("restaurants");
-      return "restaurants";
+      setNoMatchType("restaurant");
+      return "restaurant";
     }
     return "NO_MATCH";
   };

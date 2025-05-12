@@ -81,6 +81,10 @@ export const ExplorePage = () => {
     });
   };
 
+  useEffect(() => {
+    console.log(selectedFilters)
+  }, [selectedFilters])
+
   // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
   const getPlaceDetails = (placeId, lat, lng, map) => {
 

@@ -22,7 +22,6 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
     }
   };
 
-
   // using a high-order function in the ExplorePageUtils file to avoid repeating
   const restaurantCallback = createCallback(setRestaurants)
   const attractionCallback = createCallback(setAttractions)
@@ -30,7 +29,7 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
 
     // using a high-order function in the ExplorePageUtils file to avoid repeating
   const getNearbyRestaurants = createNearbySearch("restaurant", restaurantCallback, coords, map)
-  const getNearbyAttraction = createNearbySearch("attraction", attractionCallback, coords, map)
+  const getNearbyAttraction = createNearbySearch("tourist_attraction", attractionCallback, coords, map)
   const getNearbyHotels = createNearbySearch("lodging", hotelCallback, coords, map)
   
   // obj to map the selectedFilters to (to avoid if/else statements)
@@ -51,6 +50,10 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
       action() // calling the function
   });
   }, [selectedFilters]);
+
+  useEffect(() => {
+    console.log(attractions)
+  }, [attractions])
 
   // Reset recentering when coords change via autocomplete
   useEffect(() => {

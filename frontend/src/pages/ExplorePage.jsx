@@ -205,6 +205,8 @@ export const ExplorePage = () => {
 
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
+  const token = localStorage.getItem("token");
+
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
   const navigate = useNavigate();
@@ -327,6 +329,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
 
   // save the the Activity model in the backend
   const saveActivity = async (activity) => {
+    const token = localStorage.getItem("token");
     const response = await axios.post(
       `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`,
       activity,
@@ -346,6 +349,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   };
 
   const saveStay = async (stay) => {
+    const token = localStorage.getItem("token");
     const response = await axios.post(
       `http://127.0.0.1:8000/api/v1/stay/all/${trip_id}/`,
       stay,

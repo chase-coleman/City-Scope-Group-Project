@@ -347,26 +347,28 @@ export default function TripViewPage() {
               explore
             </button>
             <div className="flex flex-col items-center justify-center h-2/16">
-              <div className="border-2 rounded-xl text-4xl px-4 py-1">
+              <div className="border-2 rounded-xl text-4xl px-4 py-1 h-1/2">
                 {trip.name}
               </div>
-              <div className="text-xl px-2">
+              <div className="text-xl px-2 h-1/4">
                 {trip.city}, {trip.country}
               </div>
-              {
-                miniError
-                ? <div className="text-red-400 mb-0">{miniError}</div>
-                : null
-              }
-              {
-                miniNote
-                ? <div className="text-green-400 mb-0">{miniNote}</div>
-                : null
-              }
+              <div className="h-1/4">
+                {
+                  miniError
+                  ? <div className="text-red-400 mb-0">{miniError}</div>
+                  : null
+                }
+                {
+                  miniNote
+                  ? <div className="text-green-400 mb-0">{miniNote}</div>
+                  : null
+                }
+              </div>
             </div>
-            <div className="flex items-center justify-center w-full h-7/16">
+            <div className="flex items-center justify-center shadow-sm w-full h-7/16">
 
-              <div className="flex flex-col items-center h-full w-full border-2 overflow-y-auto">
+              <div className="flex flex-col items-center h-full w-full border-1 overflow-y-auto">
                 <div className="">
                   Stays
                 </div>
@@ -381,7 +383,7 @@ export default function TripViewPage() {
                 }
               </div>
 
-              <div className="flex flex-col items-center h-full w-full border-2  overflow-y-auto">
+              <div className="flex flex-col items-center h-full w-full border-1  overflow-y-auto">
                 <div>
                   Restaurants/Food
                 </div>
@@ -400,7 +402,7 @@ export default function TripViewPage() {
                 }
               </div>
 
-              <div className="flex flex-col items-center h-full w-full border-2 overflow-y-auto">
+              <div className="flex flex-col items-center h-full w-full border-1 overflow-y-auto">
                 <div>
                   Activities
                 </div>

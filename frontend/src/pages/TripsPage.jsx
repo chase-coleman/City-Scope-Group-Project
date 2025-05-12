@@ -117,12 +117,27 @@ useEffect(() => {
         }
       );
       if (response.status === 201) {
+        console.log(response)
+        createItineraries(response)
         fetchTrips(); // Reload list
       }
     } catch (error) {
       console.error("Error creating trip:", error);
     }
   };
+
+  const createItineraries = async (newTrip) => {
+    const tripId = newTrip.data.id
+    const response = await axios.post("http://localhost:8000/api/v1/itinerary/", 
+      {"trip_id": tripId,
+        "date": newTrip.data.start_date
+      }, {
+        headers: {
+          Authorization: `token ${token}`
+        }
+      });
+      console.log(response)
+  }
 
   // Handle trip deletion click
   const handleDeleteClick = (trip) => {
@@ -160,6 +175,8 @@ useEffect(() => {
       console.error("Error updating trip name:", err);
     }
   };
+
+  // CREATING TRIP COMMENT FOR TIM TO SYNC UP
 
   const visitTripView = (trip) => {
     navigate(`/tripview/${trip.id}`, { replace: true });

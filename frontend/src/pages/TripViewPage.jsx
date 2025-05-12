@@ -5,6 +5,7 @@ import ItineraryTicketComponent from "../components/ItineraryTicketComponent"
 import PotluckPlacardComponent from "../components/PotluckPlacardComponent"
 
 import { Grid } from "ldrs/react"
+import "ldrs/react/Grid.css"
 
 export default function TripViewPage() {
 
@@ -28,7 +29,7 @@ export default function TripViewPage() {
   const [restaurants, setRestaurants] = useState([])
   // All activities user chose to add to potluck
   const [activities, setActivities] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   // Mini error is for activities and stay removers to notify useres if they failed to remove a stay or activity
   const [miniError, setMiniError] = useState(null)
@@ -37,9 +38,7 @@ export default function TripViewPage() {
 
   // Fetch the information for this trip
   async function fetchTrip() {
-    setIsLoading(true)
     setError(null)
-    console.log("hi")
     try {
       const response = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
         method: "GET",
@@ -54,16 +53,14 @@ export default function TripViewPage() {
       const data = await response.json()
       console.log(data)
       setTrip(data)
-      setIsLoading(false)
 
     } catch(err) {
       setError(err.message)
-      setIsLoading(false)
       console.log(err)
     }
   }
+
   async function fetchItineraries() {
-    setIsLoading(true)
     const response = await fetch(`http://localhost:8000/api/v1/itinerary/all/${trip_id}/`, {
       headers: {
         "Authorization": `Token ${localStorage.getItem("token")}`
@@ -71,7 +68,6 @@ export default function TripViewPage() {
     })
     if(!response.ok) {
       setItineraries(null)
-      setIsLoading(false)
       setError(`Had troubles fetching trip itineraries`)
     }
     let data = await response.json()
@@ -87,14 +83,12 @@ export default function TripViewPage() {
     })
     // Sort itinerary days by date lowest => highest
     data = data.sort((a, b) => a.date.localeCompare(b.date))
-    setIsLoading(false)
     setItineraries(data)
     console.log(data)
   }
 
   // Fetch activities and stays for potluck stuff(top triple bar)
   async function fetchAll() {
-    setIsLoading(true)
     try {
       const response = await fetch(`http://localhost:8000/api/v1/stay/all/${trip_id}/`, {
         headers: {
@@ -105,7 +99,6 @@ export default function TripViewPage() {
       setStays(data.stays)
     } catch(err) {
       setError(err)
-      setIsLoading(false)
       console.log("failed to fetch stays for itinerary")
     }
 
@@ -123,15 +116,14 @@ export default function TripViewPage() {
   
       // Decipher activity category for usestate
       data2.forEach((item) => {
-        if(item.category === "restaurants") {
+        if(item.category === "restaurant") {
           setRestaurants((prev) => [...prev, item])
-        } else if(item.category === "attractions") {
+        } else if(item.category === "attraction") {
           setActivities((prev) => [...prev, item])
         }
       })
     } catch(err) {
       setError(err)
-      setIsLoading(false)
       console.log("Failed to grab restaurants and activities from acitvity api")
     }
   }
@@ -284,8 +276,7 @@ export default function TripViewPage() {
   async function dayRemover() {
     setMiniError(null)
     setMiniNote(null)
-
-    
+    // Remove from Itinerary_app
     try {
       const response = await fetch(`http://localhost:8000/api/v1/itinerary/${itineraries[itineraries.length-1].id}/`, {
         method: "DELETE",
@@ -297,6 +288,7 @@ export default function TripViewPage() {
       if(!response.ok) {
         throw new Error("Failed to remove itinerary day")
       }
+      // Update Trip_App to match correct end_date and duration after sucessfull above response
       const response2 = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
         method: "PUT",
         headers: {
@@ -313,7 +305,6 @@ export default function TripViewPage() {
       }
       setItineraries((prev) => prev.slice(0, -1))
       setMiniNote(`Sucessfully removed last itinerary`)
-
     } catch(err) {
       setMiniError(err.message)
       console.log(err.message)
@@ -327,45 +318,53 @@ export default function TripViewPage() {
 
 
   useEffect(() => {
-    fetchItineraries()
-    fetchAll()
-    fetchTrip()
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      await Promise.all([
+        fetchTrip(),
+        fetchItineraries(),
+        fetchAll()
+      ]);
+      setIsLoading(false);
+    };
+  
+    fetchAllData();
   }, [])
 
   return (
-    <div className="flex flex-col h-dvh items-center justify-center p-4 mb-0">
-      <button className="border-2" onClick={handleRedirect}>
-        explore
-      </button>
+    <div className="flex flex-col h-dvh items-center justify-center p-4 mb-0 select-none">
       {
         isLoading
-        ? error
+        ? <Grid
+            size="75"
+            speed="1.5"
+            color="black" 
+          />
+        : error
           ? <div>{error}</div>
-          : <Grid
-              size="75"
-              speed="1.5"
-              color="#B8FFFE" 
-            />
-        : <>
-            <div className="flex flex-col items-center justify-center h-1/9">
-              <div className="mb-0">
-                {/* Trip Name: {trip.name} */}
+          : <>
+            <button className="border-2" onClick={handleRedirect}>
+              explore
+            </button>
+            <div className="flex flex-col items-center justify-center h-2/16">
+              <div className="border-2 rounded-xl text-4xl px-4 py-1">
+                {trip.name}
               </div>
-              <div className="mb-0">
-                {/* Destination: {trip.city}, {trip.country} */}
+              <div className="text-xl px-2">
+                {trip.city}, {trip.country}
               </div>
               {
                 miniError
-                ? <div className="text-red-300 mb-0">{miniError}</div>
+                ? <div className="text-red-400 mb-0">{miniError}</div>
                 : null
               }
               {
                 miniNote
-                ? <div className="text-green-300 mb-0">{miniNote}</div>
+                ? <div className="text-green-400 mb-0">{miniNote}</div>
                 : null
               }
             </div>
-            <div className="flex items-center justify-center w-full h-4/9 border-2">
+            <div className="flex items-center justify-center w-full h-7/16">
 
               <div className="flex flex-col items-center h-full w-full border-2 overflow-y-auto">
                 <div className="">
@@ -382,9 +381,9 @@ export default function TripViewPage() {
                 }
               </div>
 
-              <div className="flex flex-col items-center h-full w-full border-2 overflow-y-auto">
+              <div className="flex flex-col items-center h-full w-full border-2  overflow-y-auto">
                 <div>
-                  Resturants/Food
+                  Restaurants/Food
                 </div>
                 {
                   restaurants
@@ -421,13 +420,18 @@ export default function TripViewPage() {
               </div>
 
             </div>
-            <div className="flex items-center gap-2 w-full h-4/9 border-1 p-4 overflow-x-auto">
+            <div className="flex h-1/16 items-center justify-center">
+                {/* Day Remover button DISABLED when only 1 ticket left */}
+              <button onClick={() => dayRemover()} disabled={itineraries.length > 1 ? false : true} className="shrink-0 hover:cursor-pointer h-12 w-12"><img src="/subtractCircle.svg" alt="circle" className="h-12 w-12"/></button>
+              <button onClick={() => dayAdder()} className="shrink-0 hover:cursor-pointer h-12 w-12"><img src="/addCircle.svg" alt="circle" className="h-12 w-12"/></button>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 w-full h-6/16 border-1 rounded-md p-1 overflow-y-auto">
                 {
                   itineraries
                   ? <>
                       {itineraries.map((item) => {
                         return (
-                          <div className={`border-2 ${selected===item ? "border-yellow-200" : ""} h-full`} onClick={() => setterSelector(item)} key={item.id}>
+                          <div className={`border-2 rounded-md ${selected===item ? "border-[#A0DEFF]" : ""} h-full`} onClick={() => setterSelector(item)} key={item.id}>
                             <ItineraryTicketComponent 
                               ticket={item} 
                               itineraries={itineraries} 
@@ -438,8 +442,6 @@ export default function TripViewPage() {
                           </div>
                         )
                       })}
-                      <button onClick={() => dayRemover()} disabled={itineraries.length > 1 ? false : true} className="shrink-0 hover:cursor-pointer"><img src="/subtractCircle.svg" alt="circle" className="h-16 w-16"/></button>
-                      <button onClick={() => dayAdder()} className="shrink-0 hover:cursor-pointer"><img src="/addCircle.svg" alt="circle" className="h-16 w-16"/></button>
                     </>
                   : <div>No itineries/days</div>
                 }

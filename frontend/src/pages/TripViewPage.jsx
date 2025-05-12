@@ -38,6 +38,7 @@ export default function TripViewPage() {
   // Fetch the information for this trip
   async function fetchTrip() {
     setIsLoading(true)
+    setError(null)
     console.log("hi")
     try {
       const response = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
@@ -56,6 +57,8 @@ export default function TripViewPage() {
       setIsLoading(false)
 
     } catch(err) {
+      setError(err.message)
+      setIsLoading(false)
       console.log(err)
     }
   }
@@ -335,21 +338,21 @@ export default function TripViewPage() {
         explore
       </button>
       {
-        error || isLoading
+        isLoading
         ? error
           ? <div>{error}</div>
-          :<Grid
-            size="75"
-            speed="1.5"
-            color="#B8FFFE" 
-          />
+          : <Grid
+              size="75"
+              speed="1.5"
+              color="#B8FFFE" 
+            />
         : <>
             <div className="flex flex-col items-center justify-center h-1/9">
               <div className="mb-0">
-                Trip Name: {trip.name}
+                {/* Trip Name: {trip.name} */}
               </div>
               <div className="mb-0">
-                Destination: {trip.city}, {trip.country}
+                {/* Destination: {trip.city}, {trip.country} */}
               </div>
               {
                 miniError

@@ -3,7 +3,7 @@ export default function PotluckPlacardComponent({ activityObject, stayAdder, act
 
   return (
     <>
-      <div className="flex items-center justify-center w-full px-2">
+      <div className="flex bg-white items-center justify-center w-full px-2">
         <div className="flex items-center gap-2 h-20 overflow-x-auto w-full whitespace-nowrap">
           <img src={activityObject.image_main} className="h-16 w-16 shrink-0" />
           <div className="flex flex-col">

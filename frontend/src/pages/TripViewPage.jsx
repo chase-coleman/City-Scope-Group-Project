@@ -364,7 +364,7 @@ export default function TripViewPage() {
                 : null
               }
             </div>
-            <div className="flex items-center justify-center w-full h-7/16">
+            <div className="flex bg-[#FFF9D0] items-center justify-center w-full h-7/16">
 
               <div className="flex flex-col items-center h-full w-full border-2 overflow-y-auto">
                 <div className="">

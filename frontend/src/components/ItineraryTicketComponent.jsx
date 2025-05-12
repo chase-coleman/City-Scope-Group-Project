@@ -86,7 +86,7 @@ export default function ItineraryTicketComponent({ ticket, itineraries, setItine
 
   }
   return (
-    <div className="flex flex-col h-full items-center w-36 overflow-y-auto">
+    <div className="flex flex-col bg-[#FFF9D0] h-full items-center w-36 overflow-y-auto">
       <div>{ticket.date}</div>
       {
         ticket.stay

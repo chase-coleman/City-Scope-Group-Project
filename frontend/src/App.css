@@ -2,12 +2,13 @@
   height: 100% !important;
   padding: 1px !important;
   margin: 0;
-  /* background-color: red; */
-  background-image: url("/shubham-dhage--2eXWZkliWo-unsplash.jpg");
+  /* background-color: red;  */
+  /* background-image: url("/shubham-dhage--2eXWZkliWo-unsplash.jpg"); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment: fixed;  */
+  background-color: white;
 }
 .body {
   height: 100vh;
@@ -110,4 +111,14 @@
 .p-checkbox-box {
   display: none !important;
  
+}
+
+.button-background {
+  background-image: linear-gradient(90deg, rgb(0, 55, 235) -26.47%, rgb(120, 80, 250) 97.77%);
+  border-radius: 50px;
+  transition: filter 0.3s ease;
+}
+
+.button-background:hover {
+  filter: brightness(1.25);
 }

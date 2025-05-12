@@ -1,22 +1,21 @@
-import React from 'react'
 
 export default function PotluckPlacardComponent({ activityObject, stayAdder, activityAdder }) {
 
   return (
     <>
-      <div className="flex items-center justify-center border-2 w-full p-2">
-        <div className="flex items-center justify-center gap-2 h-36">
-          <img src={activityObject.image_main} className="h-20 w-20" />
+      <div className="flex items-center justify-center w-full px-2">
+        <div className="flex items-center gap-2 h-20 overflow-x-auto w-full whitespace-nowrap">
+          <img src={activityObject.image_main} className="h-16 w-16 shrink-0" />
           <div className="flex flex-col">
-            <p className="mb-0">{activityObject.name}</p>
-            <p className="mb-0">{activityObject.location}</p>
+            <div className="mb-0">{activityObject.name}</div>
+            <div className="mb-0">{activityObject.location}</div>
             <a href={activityObject.link ? activityObject.link : activityObject.url}>Link to place</a>
           </div>
-          <div className="text-center">
+          <div className="text-center shrink-0 ml-auto">
             {
               stayAdder
-              ? <button onClick={() => stayAdder(activityObject)} className='border-2 rounded-md'>add to Itinerary</button>
-              : <button onClick={() => activityAdder(activityObject)} className='border-2 rounded-md'>add to Itinerary</button>
+              ? <button onClick={() => stayAdder(activityObject)} className=''><img src="/addCircle.svg" alt="circle" className="h-12 w-12"/></button>
+              : <button onClick={() => activityAdder(activityObject)} className=''><img src="/addCircle.svg" alt="circle" className="h-12 w-12"/></button>
             }
           </div>
         </div>

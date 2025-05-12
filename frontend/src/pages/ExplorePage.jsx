@@ -232,10 +232,14 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   
   
   const addToTrip = () => {
+    console.log("adding to trip")
     let category = setCategoryType(placeDetails.types)
+    console.log(category)
     if (!category) return;  
+    
     // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
     grabLocID(placeDetails.name, category, setLogError, setResults, 3);
+    
   };
 
   // once there is a trip advisor object that matches the selected Google location, run this useEffect

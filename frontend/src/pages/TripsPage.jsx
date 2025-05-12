@@ -112,7 +112,7 @@ useEffect(() => {
         newTrip,
         {
           headers: {
-            Authorization: `token ${token}`,
+            Authorization: `Token ${token}`,
           },
         }
       );
@@ -145,7 +145,7 @@ useEffect(() => {
   // Save the new trip name to backend
   const handleSaveEdit = async (tripId) => {
     try {
-      await axios.patch(
+      await axios.put(
         `http://localhost:8000/api/v1/trip/${tripId}/`,
         { name: editedTripName },
         {

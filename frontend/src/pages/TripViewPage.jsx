@@ -116,9 +116,9 @@ export default function TripViewPage() {
   
       // Decipher activity category for usestate
       data2.forEach((item) => {
-        if(item.category === "restaurants") {
+        if(item.category === "restaurant") {
           setRestaurants((prev) => [...prev, item])
-        } else if(item.category === "attractions") {
+        } else if(item.category === "attraction") {
           setActivities((prev) => [...prev, item])
         }
       })

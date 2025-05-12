@@ -11,11 +11,11 @@ class Stay(models.Model):
     image_main = models.CharField(null = True, blank=True)
     location_id = models.CharField(null = True, blank=True)
 
-    def __rpr__(self):
-        return f"{self.name}, {self.duration} days in {self.location}"
+    def __repr__(self):
+        return f"{self.name}, {self.location}"
     
     def __str__(self):
-        return f"{self.name}, {self.duration} days in {self.location}"
+        return f"{self.name}, {self.location}"
     
     def change_stay_name(self, name):
         self.set_name = name

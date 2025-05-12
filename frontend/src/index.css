@@ -3,5 +3,10 @@
 #root {
   height: 100vh !important;
   padding: 1px !important;
+  background-color: #fcfbf7;
   margin: 0;
+}
+
+html, body {
+  background-color: #fcfbf7;
 }

@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom"
 import ItineraryTicketComponent from "../components/ItineraryTicketComponent"
 import PotluckPlacardComponent from "../components/PotluckPlacardComponent"
 
+import { Grid } from "ldrs/react"
+
 export default function TripViewPage() {
 
   function addOneDay(dateString) {
@@ -15,6 +17,7 @@ export default function TripViewPage() {
   const navigate = useNavigate();
   const { trip_id } = useParams()
 
+  const [trip, setTrip] = useState(null)
   // Which itinerary is currently selected(yellow border for now)
   const [selected, setSelected] = useState(null)
   // All itinieraries for a specific trip
@@ -32,6 +35,30 @@ export default function TripViewPage() {
   // Mini note is for activities and stay adders
   const [miniNote, setMiniNote] = useState(null)
 
+  // Fetch the information for this trip
+  async function fetchTrip() {
+    setIsLoading(true)
+    console.log("hi")
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }
+      })
+      if(!response.ok) {
+        throw new Error("failed to retrieve Trip")
+      }
+      const data = await response.json()
+      console.log(data)
+      setTrip(data)
+      setIsLoading(false)
+
+    } catch(err) {
+      console.log(err)
+    }
+  }
   async function fetchItineraries() {
     setIsLoading(true)
     const response = await fetch(`http://localhost:8000/api/v1/itinerary/all/${trip_id}/`, {
@@ -299,6 +326,7 @@ export default function TripViewPage() {
   useEffect(() => {
     fetchItineraries()
     fetchAll()
+    fetchTrip()
   }, [])
 
   return (
@@ -310,14 +338,18 @@ export default function TripViewPage() {
         error || isLoading
         ? error
           ? <div>{error}</div>
-          : <div>Loading.......</div>
+          :<Grid
+            size="75"
+            speed="1.5"
+            color="#B8FFFE" 
+          />
         : <>
             <div className="flex flex-col items-center justify-center h-1/9">
               <div className="mb-0">
-                Trip Name: Chugnus trip
+                Trip Name: {trip.name}
               </div>
               <div className="mb-0">
-                Destination: big lungus
+                Destination: {trip.city}, {trip.country}
               </div>
               {
                 miniError
@@ -355,7 +387,11 @@ export default function TripViewPage() {
                   restaurants
                   ? restaurants.map((restaurant) => {
                     return (
-                      <PotluckPlacardComponent activityObject={restaurant} activityAdder={activityAdder} key={restaurant.uuid}/>
+                      <PotluckPlacardComponent 
+                        activityObject={restaurant} 
+                        activityAdder={activityAdder} 
+                        key={restaurant.uuid}
+                      />
                     )
                   })
                   : <div>No restaurants added, add some by exploring the explore page</div>
@@ -370,7 +406,11 @@ export default function TripViewPage() {
                   activities
                   ? activities.map((activity) => {
                     return (
-                      <PotluckPlacardComponent activityObject={activity} activityAdder={activityAdder} key={activity.uuid}/>
+                      <PotluckPlacardComponent 
+                        activityObject={activity} 
+                        activityAdder={activityAdder} 
+                        key={activity.uuid}
+                      />
                     )
                   })
                   : <div>No activities added, add some by exploring the explore page</div>
@@ -385,7 +425,13 @@ export default function TripViewPage() {
                       {itineraries.map((item) => {
                         return (
                           <div className={`border-2 ${selected===item ? "border-yellow-200" : ""} h-full`} onClick={() => setterSelector(item)} key={item.id}>
-                            <ItineraryTicketComponent ticket={item} itineraries={itineraries} setItineraries={setItineraries} setMiniError={setMiniError} setMiniNote={setMiniNote}/>
+                            <ItineraryTicketComponent 
+                              ticket={item} 
+                              itineraries={itineraries} 
+                              setItineraries={setItineraries} 
+                              setMiniError={setMiniError} 
+                              setMiniNote={setMiniNote}
+                            />
                           </div>
                         )
                       })}

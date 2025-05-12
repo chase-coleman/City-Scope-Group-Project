@@ -90,12 +90,13 @@ const HomePage = () => {
           <img src={photoArr[6]} alt="Image 7" className="w-full h-full object-cover" />
         </div>
       </div>
-
+</div>
     </div>
   </div>
 </div>
-
-  )
+</div>
+</>
+)  
 }
 
 export default HomePage

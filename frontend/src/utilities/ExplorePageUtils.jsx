@@ -151,10 +151,10 @@ export const touristAttractionSet = new Set([
 ]);
 
 export const activitySet = new Set([
-  "bar", "bicycle_store", "book_store", "bowling_alley", "night_club", 
-  "shopping_mall", "spa", "movie_rental", "movie_theater", "liquor_store", 
-  "library", "gym", "supermarket",  "department_store", "clothing_store", 
-  "florist", "subway_station"
+  "bar", "book_store", "bowling_alley", "night_club", 
+  "shopping_mall", "spa", "movie_theater", "liquor_store", 
+  "library", "gym", "supermarket",  "clothing_store", 
+  
 ]);
 
 export const restaurantSet = new Set([

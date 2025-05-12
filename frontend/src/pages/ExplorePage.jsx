@@ -227,13 +227,14 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
       setNoMatchType('restaurant');
       return 'restaurant';
     }
-    return '';
+    return "activity";
   }
   
   
   const addToTrip = () => {
     
     let category = setCategoryType(placeDetails.types)
+    console.log(category)
     if (!category) return;  
     // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
     grabLocID(placeDetails.name, category, setLogError, setResults, 3);

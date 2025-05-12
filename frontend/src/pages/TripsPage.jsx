@@ -7,11 +7,11 @@ import axios from "axios";
 import "../App.css";
 import { formatTrip } from "../Utilities/TripPageUtils";
 
-// Get the user's auth token from localStorage
-const token = localStorage.getItem("token");
-
 export const TripsPage = () => {
   const navigate = useNavigate();
+
+  // Token state (fetched from localStorage once component mounts)
+  const [token, setToken] = useState(null);
 
   // All trips for the current user
   const [userTrips, setUserTrips] = useState([]);
@@ -51,33 +51,27 @@ export const TripsPage = () => {
     }
   };
 
-  // Called when user confirms deletion in the modal
-  const confirmDelete = async () => {
-    try {
-      await axios.delete(
-        `http://localhost:8000/api/v1/trip/${tripDelete.id}/`,
-        {
-          headers: {
-            Authorization: `token ${token}`,
-          },
-        }
-      );
-      fetchTrips(); // Refresh list after deletion
-      setShowModal(false);
-      setTripDelete(null);
-    } catch (err) {
-      console.error("Failed to delete trip:", err);
-    }
-  };
-
-  // Called on initial load
+  // On mount, check for token
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
       setLoading(false);
-      fetchTrips();
-    }, 1000);
-    return () => clearTimeout(timer);
+      setError("Not logged in.");
+    }
   }, []);
+
+  // Once token is ready, fetch trips
+  useEffect(() => {
+    const loadTrips = async () => {
+      if (token) {
+        await fetchTrips();
+        setLoading(false);
+      }
+    };
+    loadTrips();
+  }, [token]);
 
   // Begin trip creation form
   const handleNewTrip = () => {
@@ -114,6 +108,25 @@ export const TripsPage = () => {
   const handleDeleteClick = (trip) => {
     setTripDelete(trip);
     setShowModal(true);
+  };
+
+  // Confirm deletion
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(
+        `http://localhost:8000/api/v1/trip/${tripDelete.id}/`,
+        {
+          headers: {
+            Authorization: `token ${token}`,
+          },
+        }
+      );
+      fetchTrips(); // Refresh list after deletion
+      setShowModal(false);
+      setTripDelete(null);
+    } catch (err) {
+      console.error("Failed to delete trip:", err);
+    }
   };
 
   // Begin editing a trip name
@@ -176,10 +189,14 @@ export const TripsPage = () => {
               ) : (
                 <>
                   <h2>{trip.name}</h2>
-                  <p>{trip.city}, {trip.country}</p>
+                  <p>
+                    {trip.city}, {trip.country}
+                  </p>
                   <p>Duration: {trip.duration} days</p>
                   <button onClick={() => startEditing(trip)}>Edit Trip</button>
-                  <button onClick={() => handleDeleteClick(trip)}>Delete Trip</button>
+                  <button onClick={() => handleDeleteClick(trip)}>
+                    Delete Trip
+                  </button>
                 </>
               )}
             </li>

@@ -25,7 +25,6 @@ const HomePage = () => {
     setPhotoArr(shuffledPhotos);
   }, []);
 
-  console.log(results)
 
     useEffect(() => {
       const timeout = setTimeout(() => {
@@ -96,23 +95,6 @@ const HomePage = () => {
   </div>
 </div>
 
-      </div>
-    </div>
-{/* 
-    <button
-    className="font-bold text-2xl text-fuchsia-700 border-2 bg-amber-300 pt-2 pb-2 m-2"
-    onClick = {
-      () => {
-        grabLocID('National Museum of Mexican Art', 'attractions', setLogError, setResults, 3)
-      }
-    }
-    >Click me and look to your console, WILL SUBMIT REQUEST TO TRIP ADVISOR FOR HOTEL IS SEOUL!</button>
-    <br />
-    {logError}
-    <TripAdvisorComponent locinfo = {results.locinfo} />
-*/}
-
-</>
   )
 }
 

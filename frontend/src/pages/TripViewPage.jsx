@@ -1,313 +1,342 @@
-import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import "../App.css"
+import ItineraryTicketComponent from "../components/ItineraryTicketComponent";
+import PotluckPlacardComponent from "../components/PotluckPlacardComponent";
 
-import ItineraryTicketComponent from "../components/ItineraryTicketComponent"
-import PotluckPlacardComponent from "../components/PotluckPlacardComponent"
-
-import { Grid } from "ldrs/react"
-import "ldrs/react/Grid.css"
+import { Grid } from "ldrs/react";
+import "ldrs/react/Grid.css";
 
 export default function TripViewPage() {
-
   function addOneDay(dateString) {
     const date = new Date(dateString); // Convert the string to a Date object
     date.setDate(date.getDate() + 1); // Add 1 day
-    return date.toISOString().split('T')[0]; // Return in yyyy-mm-dd format
+    return date.toISOString().split("T")[0]; // Return in yyyy-mm-dd format
   }
 
   const navigate = useNavigate();
-  const { trip_id } = useParams()
+  const { trip_id } = useParams();
 
-  const [trip, setTrip] = useState(null)
+  const [trip, setTrip] = useState(null);
   // Which itinerary is currently selected(yellow border for now)
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState(null);
   // All itinieraries for a specific trip
-  const [itineraries, setItineraries] = useState(null)
+  const [itineraries, setItineraries] = useState(null);
   // All stays user chose to add to potluck
-  const [stays, setStays] = useState(null)
+  const [stays, setStays] = useState(null);
   // All restaurants user chose to add to potluck
-  const [restaurants, setRestaurants] = useState([])
+  const [restaurants, setRestaurants] = useState([]);
   // All activities user chose to add to potluck
-  const [activities, setActivities] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [activities, setActivities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   // Mini error is for activities and stay removers to notify useres if they failed to remove a stay or activity
-  const [miniError, setMiniError] = useState(null)
+  const [miniError, setMiniError] = useState(null);
   // Mini note is for activities and stay adders
-  const [miniNote, setMiniNote] = useState(null)
+  const [miniNote, setMiniNote] = useState(null);
 
   // Fetch the information for this trip
   async function fetchTrip() {
-    setError(null)
+    setError(null);
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Token ${localStorage.getItem("token")}`
+      const response = await fetch(
+        `http://localhost:8000/api/v1/trip/${trip_id}/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
         }
-      })
-      if(!response.ok) {
-        throw new Error("failed to retrieve Trip")
+      );
+      if (!response.ok) {
+        throw new Error("failed to retrieve Trip");
       }
-      const data = await response.json()
-      console.log(data)
-      setTrip(data)
-
-    } catch(err) {
-      setError(err.message)
-      console.log(err)
+      const data = await response.json();
+      console.log(data);
+      setTrip(data);
+    } catch (err) {
+      setError(err.message);
+      console.log(err);
     }
   }
 
   async function fetchItineraries() {
-    const response = await fetch(`http://localhost:8000/api/v1/itinerary/all/${trip_id}/`, {
-      headers: {
-        "Authorization": `Token ${localStorage.getItem("token")}`
+    const response = await fetch(
+      `http://localhost:8000/api/v1/itinerary/all/${trip_id}/`,
+      {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
       }
-    })
-    if(!response.ok) {
-      setItineraries(null)
-      setError(`Had troubles fetching trip itineraries`)
+    );
+    if (!response.ok) {
+      setItineraries(null);
+      setError(`Had troubles fetching trip itineraries`);
     }
-    let data = await response.json()
+    let data = await response.json();
     // Add a uuid to each activity for React Key
     data = data.map((item) => {
       return {
-          ...item,
-          activities: item.activities.map((activity) => ({
-              ...activity,
-              uuid: crypto.randomUUID()
-          }))
-      }
-    })
+        ...item,
+        activities: item.activities.map((activity) => ({
+          ...activity,
+          uuid: crypto.randomUUID(),
+        })),
+      };
+    });
     // Sort itinerary days by date lowest => highest
-    data = data.sort((a, b) => a.date.localeCompare(b.date))
-    setItineraries(data)
-    console.log(data)
+    data = data.sort((a, b) => a.date.localeCompare(b.date));
+    setItineraries(data);
+    console.log(data);
   }
 
   // Fetch activities and stays for potluck stuff(top triple bar)
   async function fetchAll() {
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/stay/all/${trip_id}/`, {
-        headers: {
-          "Authorization": `Token ${localStorage.getItem("token")}`
+      const response = await fetch(
+        `http://localhost:8000/api/v1/stay/all/${trip_id}/`,
+        {
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
         }
-      })
-      const data = await response.json()
-      setStays(data.stays)
-    } catch(err) {
-      setError(err)
-      console.log("failed to fetch stays for itinerary")
+      );
+      const data = await response.json();
+      setStays(data.stays);
+    } catch (err) {
+      setError(err);
+      console.log("failed to fetch stays for itinerary");
     }
 
     try {
-      const response2 = await fetch(`http://localhost:8000/api/v1/activity/all/${trip_id}/`, {
-        headers: {
-          "Authorization": `Token ${localStorage.getItem("token")}`
+      const response2 = await fetch(
+        `http://localhost:8000/api/v1/activity/all/${trip_id}/`,
+        {
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
         }
-      })
-      const data2 = await response2.json()
-      console.log(data2)
-  
-      setRestaurants([])
-      setActivities([])
-  
+      );
+      const data2 = await response2.json();
+      console.log(data2);
+
+      setRestaurants([]);
+      setActivities([]);
+
       // Decipher activity category for usestate
       data2.forEach((item) => {
-        if(item.category === "restaurant") {
-          setRestaurants((prev) => [...prev, item])
-        } else if(item.category === "attraction") {
-          setActivities((prev) => [...prev, item])
+        if (item.category === "restaurant") {
+          setRestaurants((prev) => [...prev, item]);
+        } else if (item.category === "attraction") {
+          setActivities((prev) => [...prev, item]);
         }
-      })
-    } catch(err) {
-      setError(err)
-      console.log("Failed to grab restaurants and activities from acitvity api")
+      });
+    } catch (err) {
+      setError(err);
+      console.log(
+        "Failed to grab restaurants and activities from acitvity api"
+      );
     }
   }
 
   // Setter function to add stuff to currently selected itinerary date
   async function setterSelector(currentSelectedObj) {
-    if(selected === currentSelectedObj) {
-      setSelected(null)
-    } else if(!selected) {
-      setSelected(currentSelectedObj)
-    } else if(selected) {
-      setSelected(currentSelectedObj)
-    } 
+    if (selected === currentSelectedObj) {
+      setSelected(null);
+    } else if (!selected) {
+      setSelected(currentSelectedObj);
+    } else if (selected) {
+      setSelected(currentSelectedObj);
+    }
   }
 
   // Setter function to update currently selected itinerary's stay(hotel)
   async function stayAdder(stayObject) {
-    setMiniError(null)
-    setMiniNote(null)
-    if(!selected && stayObject) {
-      setMiniError("Please select an itinerary in order to update your stay")
-      return
+    setMiniError(null);
+    setMiniNote(null);
+    if (!selected && stayObject) {
+      setMiniError("Please select an itinerary in order to update your stay");
+      return;
     }
-    let temp = [...itineraries]
-    let adjusted 
+    let temp = [...itineraries];
+    let adjusted;
     temp.forEach((item) => {
-      if(item.id === selected.id) {
-        item.stay = stayObject
-        adjusted = item.id
+      if (item.id === selected.id) {
+        item.stay = stayObject;
+        adjusted = item.id;
       }
-    })
-  
+    });
+
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${adjusted}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Token ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({
-          "type": "stay",
-          "new_stay_id": stayObject.id
-        })
-      })
-      if(!response.ok){
-        throw new Error("Failed to update Stay")
+      const response = await fetch(
+        `http://localhost:8000/api/v1/itinerary/${adjusted}/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            type: "stay",
+            new_stay_id: stayObject.id,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update Stay");
       }
-      setMiniNote("Successfully changed/added stay to itinerary")
-      setItineraries(temp)
-    } catch(err) {
-      setMiniError(err.message)
-      console.log(err)
+      setMiniNote("Successfully changed/added stay to itinerary");
+      setItineraries(temp);
+    } catch (err) {
+      setMiniError(err.message);
+      console.log(err);
     }
   }
 
   async function activityAdder(activityObject) {
     // activityObject is the object referring to itself when called inside a potluckcomponent card for restaurants or actvities//
-    setMiniError(null)
-    setMiniNote(null)
-    if(!selected && activityObject) {
-      setMiniError("Please select an itinerary in order add this item")
-      return
+    setMiniError(null);
+    setMiniNote(null);
+    if (!selected && activityObject) {
+      setMiniError("Please select an itinerary in order add this item");
+      return;
     }
 
     // activities are serialized, and they need to be reduced to only an array full of the activity's ID
-    let arrayIdMap = selected.activities.map((item) => item.id)
-    arrayIdMap.push(activityObject.id)
-    try{
-      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${selected.id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Token ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          "type": "activities",
-          "new_activity_array": arrayIdMap
-        })
-      })
-      if(!response.ok) {
-        throw new Error("Failed to add activity to itinerary")
+    let arrayIdMap = selected.activities.map((item) => item.id);
+    arrayIdMap.push(activityObject.id);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/v1/itinerary/${selected.id}/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            type: "activities",
+            new_activity_array: arrayIdMap,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to add activity to itinerary");
       }
       // temp is all itineraries, but with the selected itinerary being modified with the new activity being added along with a random uuid
       let temp = itineraries.map((itin) => {
-        if(itin.id === selected.id) {
-          itin.activities.push({...activityObject, uuid:crypto.randomUUID()})
-          return itin
+        if (itin.id === selected.id) {
+          itin.activities.push({
+            ...activityObject,
+            uuid: crypto.randomUUID(),
+          });
+          return itin;
         } else {
-          return itin
+          return itin;
         }
-      })
-      console.log(itineraries)
-      setItineraries(temp)
-      setMiniNote("Activity added to itinerary")
-    } catch(err) {
-      setMiniError(err.message)
+      });
+      console.log(itineraries);
+      setItineraries(temp);
+      setMiniNote("Activity added to itinerary");
+    } catch (err) {
+      setMiniError(err.message);
     }
-
-
   }
 
   async function dayAdder() {
-    setMiniError(null)
-    setMiniNote(null)
+    setMiniError(null);
+    setMiniNote(null);
     // This will add an itinerary object instance
     try {
-      const prevDate = itineraries[itineraries.length-1].date
-      const newDate = addOneDay(prevDate)
+      const prevDate = itineraries[itineraries.length - 1].date;
+      const newDate = addOneDay(prevDate);
       const response = await fetch(`http://localhost:8000/api/v1/itinerary/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Token ${localStorage.getItem("token")}`
+          Authorization: `Token ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          "date": newDate,
-          "trip_id": trip_id
-        })
-      })
-      if(!response.ok) {
-        throw new Error("Failed to add itinerary day")
+          date: newDate,
+          trip_id: trip_id,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add itinerary day");
       }
       // After sucessfully adding an itinerary, need to update trip
       // +1 to duration and edit end_date on trip model to reflect the newly created itinerary instance date
-      const response2 = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Token ${localStorage.getItem("token")}`
-        }, 
-        body: JSON.stringify({
-          "end_date": newDate,
-          "duration": itineraries.length+1
-        })
-      })
-      if(!response2.ok) {
-        throw new Error("Failed to update trip dates or duration")
+      const response2 = await fetch(
+        `http://localhost:8000/api/v1/trip/${trip_id}/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            end_date: newDate,
+            duration: itineraries.length + 1,
+          }),
+        }
+      );
+      if (!response2.ok) {
+        throw new Error("Failed to update trip dates or duration");
       }
       // Data should be the object that was just created to append to frontend reactivity
-      const data = await response.json()
-      setItineraries((prev) => [...prev, data])
-      setMiniNote(`Sucessfully added itinerary on date: ${newDate}`)
-
-    } catch(err) {
-      setMiniError(err.message)
-      console.log(err.message)
+      const data = await response.json();
+      setItineraries((prev) => [...prev, data]);
+      setMiniNote(`Sucessfully added itinerary on date: ${newDate}`);
+    } catch (err) {
+      setMiniError(err.message);
+      console.log(err.message);
     }
   }
 
   async function dayRemover() {
-    setMiniError(null)
-    setMiniNote(null)
+    setMiniError(null);
+    setMiniNote(null);
     // Remove from Itinerary_app
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${itineraries[itineraries.length-1].id}/`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Token ${localStorage.getItem("token")}`
+      const response = await fetch(
+        `http://localhost:8000/api/v1/itinerary/${
+          itineraries[itineraries.length - 1].id
+        }/`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
         }
-      })
-      if(!response.ok) {
-        throw new Error("Failed to remove itinerary day")
+      );
+      if (!response.ok) {
+        throw new Error("Failed to remove itinerary day");
       }
       // Update Trip_App to match correct end_date and duration after sucessfull above response
-      const response2 = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Token ${localStorage.getItem("token")}`
-        }, 
-        body: JSON.stringify({
-          "end_date": itineraries[itineraries.length-2].date,
-          "duration": itineraries.length-1
-        })
-      })
-      if(!response2.ok) {
-        throw new Error("Failed to update trip dates or duration")
+      const response2 = await fetch(
+        `http://localhost:8000/api/v1/trip/${trip_id}/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            end_date: itineraries[itineraries.length - 2].date,
+            duration: itineraries.length - 1,
+          }),
+        }
+      );
+      if (!response2.ok) {
+        throw new Error("Failed to update trip dates or duration");
       }
-      setItineraries((prev) => prev.slice(0, -1))
-      setMiniNote(`Sucessfully removed last itinerary`)
-    } catch(err) {
-      setMiniError(err.message)
-      console.log(err.message)
+      setItineraries((prev) => prev.slice(0, -1));
+      setMiniNote(`Sucessfully removed last itinerary`);
+    } catch (err) {
+      setMiniError(err.message);
+      console.log(err.message);
     }
   }
 
@@ -316,141 +345,157 @@ export default function TripViewPage() {
     navigate(`/explore/${trip_id}`, { replace: true });
   };
 
-
   useEffect(() => {
     const fetchAllData = async () => {
       setIsLoading(true);
-      await Promise.all([
-        fetchTrip(),
-        fetchItineraries(),
-        fetchAll()
-      ]);
+      await Promise.all([fetchTrip(), fetchItineraries(), fetchAll()]);
       setIsLoading(false);
     };
-  
+
     fetchAllData();
-  }, [])
+  }, []);
 
   return (
-    <div className="flex flex-col h-dvh items-center justify-center p-4 mb-0 select-none">
-      {
-        isLoading
-        ? <Grid
-            size="75"
-            speed="1.5"
-            color="black" 
-          />
-        : error
-          ? <div>{error}</div>
-          : <>
-            <button className="border-2" onClick={handleRedirect}>
-              explore
+    <div className="flex flex-col h-dvh items-center justify-center p-4 mb-0 select-none text-[#010219]">
+      {isLoading ? (
+        <Grid size="75" speed="1.5" color="black" />
+      ) : error ? (
+        <div>{error}</div>
+      ) : (
+        <>
+          <div className="flex flex-col items-center justify-center h-2/16">
+            <div className="rounded-xl h-1/2 text-4xl px-4 py-1 bg-white text-[#00005A]">
+              {trip.name}
+            </div>
+            <div className="h-1/4">
+            <button className="button-background text-center border-2 border-black text-white p-1 hover:bg-[#091A55] transition">
+            Explore {trip.city}
             </button>
-            <div className="flex flex-col items-center justify-center h-2/16">
-              <div className="border-2 rounded-xl text-4xl px-4 py-1 h-1/2">
-                {trip.name}
-              </div>
-              <div className="text-xl px-2 h-1/4">
-                {trip.city}, {trip.country}
-              </div>
-              <div className="h-1/4">
-                {
-                  miniError
-                  ? <div className="text-red-400 mb-0">{miniError}</div>
-                  : null
-                }
-                {
-                  miniNote
-                  ? <div className="text-green-400 mb-0">{miniNote}</div>
-                  : null
-                }
-              </div>
             </div>
-            <div className="flex items-center justify-center shadow-sm w-full h-7/16">
-
-              <div className="flex flex-col items-center h-full w-full border-1 overflow-y-auto">
-                <div className="">
-                  Stays
-                </div>
-                {
-                  stays
-                  ? stays.map((stay) => {
-                    return (
-                      <PotluckPlacardComponent activityObject={stay} key={stay.id} stayAdder={stayAdder}/>
-                    )
-                  })
-                  : <div>No stays added, add some by exploring the explore page</div>
-                }
+            <div className="h-1/4">
+            {miniError ? (
+              <div className="text-red-400 mb-0">{miniError}</div>
+            ) : null}
+            {miniNote ? (
+              <div className="text-green-400 mb-0">{miniNote}</div>
+            ) : null}
+          </div>
+          </div>
+          <div className=" flex items-center justify-center w-full h-7/16">
+            <div className="flex flex-col items-center h-full w-full border-2 border-[#B2A9CF] overflow-y-auto">
+              <div className="text-xl font-semibold text-[#00005A] border-b border-[#B2A9CF] mb-2">
+                Stays
               </div>
-
-              <div className="flex flex-col items-center h-full w-full border-1  overflow-y-auto">
-                <div>
-                  Restaurants/Food
+              {stays ? (
+                stays.map((stay) => {
+                  return (
+                    <PotluckPlacardComponent
+                      activityObject={stay}
+                      key={stay.id}
+                      stayAdder={stayAdder}
+                    />
+                  );
+                })
+              ) : (
+                <div className="text-[#091A55]">
+                  No stays added, add some by exploring the explore page
                 </div>
-                {
-                  restaurants
-                  ? restaurants.map((restaurant) => {
-                    return (
-                      <PotluckPlacardComponent 
-                        activityObject={restaurant} 
-                        activityAdder={activityAdder} 
-                        key={restaurant.uuid}
+              )}
+            </div>
+
+            <div className="flex flex-col items-center h-full w-full border-2 border-[#B2A9CF] overflow-y-auto">
+              <div className="text-xl font-semibold text-[#00005A] border-b border-[#B2A9CF] mb-2">
+                Restaurants/Food
+              </div>
+              {restaurants ? (
+                restaurants.map((restaurant) => {
+                  return (
+                    <PotluckPlacardComponent
+                      activityObject={restaurant}
+                      activityAdder={activityAdder}
+                      key={restaurant.uuid}
+                    />
+                  );
+                })
+              ) : (
+                <div className="text-[#091A55]">
+                  No restaurants added, add some by exploring the explore page
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col items-center h-full w-full border-2 border-[#B2A9CF] overflow-y-auto">
+              <div className="text-xl font-semibold text-[#00005A] border-b border-[#B2A9CF] mb-2">
+                Activities
+              </div>
+              {activities ? (
+                activities.map((activity) => {
+                  return (
+                    <PotluckPlacardComponent
+                      activityObject={activity}
+                      activityAdder={activityAdder}
+                      key={activity.uuid}
+                    />
+                  );
+                })
+              ) : (
+                <div className="text-[#00005A]">
+                  No activities added, add some by exploring the explore page
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex h-1/16 items-center justify-center">
+            {/* Day Remover button DISABLED when only 1 ticket left */}
+            <button
+              onClick={() => dayRemover()}
+              disabled={itineraries.length > 1 ? false : true}
+              className="subtract-btn shrink-0 hover:cursor-pointer h-12 w-12"
+            >
+              <img
+                src="/subtractCircle.svg"
+                alt="circle"
+                className="button-background rounded-full h-12 w-12"
+              />
+            </button>
+            <button
+              onClick={() => dayAdder()}
+              className="shrink-0 hover:cursor-pointer h-full w-full"
+            >
+              <img src="/addCircle.svg" alt="circle" className="h-full w-full" />
+            </button>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 w-full h-6/16 border-1 rounded-md p-1 overflow-y-auto">
+            {itineraries ? (
+              <>
+                {itineraries.map((item) => {
+                  return (
+                    <div
+                      className={`border-2 rounded-md ${
+                        selected === item
+                          ? "border-[#7682B9] bg-[#B2A9CF]"
+                          : "border-[#B2A9CF]"
+                      } h-full`}
+                      onClick={() => setterSelector(item)}
+                      key={item.id}
+                    >
+                      <ItineraryTicketComponent
+                        ticket={item}
+                        itineraries={itineraries}
+                        setItineraries={setItineraries}
+                        setMiniError={setMiniError}
+                        setMiniNote={setMiniNote}
                       />
-                    )
-                  })
-                  : <div>No restaurants added, add some by exploring the explore page</div>
-                }
-              </div>
-
-              <div className="flex flex-col items-center h-full w-full border-1 overflow-y-auto">
-                <div>
-                  Activities
-                </div>
-                {
-                  activities
-                  ? activities.map((activity) => {
-                    return (
-                      <PotluckPlacardComponent 
-                        activityObject={activity} 
-                        activityAdder={activityAdder} 
-                        key={activity.uuid}
-                      />
-                    )
-                  })
-                  : <div>No activities added, add some by exploring the explore page</div>
-                }
-              </div>
-
-            </div>
-            <div className="flex h-1/16 items-center justify-center">
-                {/* Day Remover button DISABLED when only 1 ticket left */}
-              <button onClick={() => dayRemover()} disabled={itineraries.length > 1 ? false : true} className="shrink-0 hover:cursor-pointer h-12 w-12"><img src="/subtractCircle.svg" alt="circle" className="h-12 w-12"/></button>
-              <button onClick={() => dayAdder()} className="shrink-0 hover:cursor-pointer h-12 w-12"><img src="/addCircle.svg" alt="circle" className="h-12 w-12"/></button>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-2 w-full h-6/16 border-1 rounded-md p-1 overflow-y-auto">
-                {
-                  itineraries
-                  ? <>
-                      {itineraries.map((item) => {
-                        return (
-                          <div className={`border-2 rounded-md ${selected===item ? "border-[#A0DEFF]" : ""} h-full`} onClick={() => setterSelector(item)} key={item.id}>
-                            <ItineraryTicketComponent 
-                              ticket={item} 
-                              itineraries={itineraries} 
-                              setItineraries={setItineraries} 
-                              setMiniError={setMiniError} 
-                              setMiniNote={setMiniNote}
-                            />
-                          </div>
-                        )
-                      })}
-                    </>
-                  : <div>No itineries/days</div>
-                }
-            </div>
-          </>
-      }
-      
+                    </div>
+                  );
+                })}
+              </>
+            ) : (
+              <div className="text-[#00005A]">No itineraries/days</div>
+            )}
+          </div>
+        </>
+      )}
     </div>
-  )
+  );
 }

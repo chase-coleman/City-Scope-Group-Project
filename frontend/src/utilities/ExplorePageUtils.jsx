@@ -131,6 +131,7 @@ export const formatActivityData = (
       tripAdvisorMatch?.photos?.data?.[0]?.images?.large?.url || null,
     location_id: tripAdvisorMatch?.details?.location_id || null,
   };
+  console.log(activityData)
   return activityData;
 };
 

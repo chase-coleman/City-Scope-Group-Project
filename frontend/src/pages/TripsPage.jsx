@@ -6,36 +6,28 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import "../App.css";
 import { formatTrip } from "../Utilities/TripPageUtils";
-
-// Get the user's auth token from localStorage
-const token = localStorage.getItem("token");
-
 export const TripsPage = () => {
   const navigate = useNavigate();
-
+  // Token state (fetched from localStorage once component mounts)
+  const [token, setToken] = useState(null);
   // All trips for the current user
   const [userTrips, setUserTrips] = useState([]);
-
   // UI state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showNewTripForm, setShowNewTripForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
   // New trip form state
   const [newTripData, setNewTripData] = useState({
     name: "",
     location: "",
     dates: "",
   });
-
   // State for trip deletion
   const [tripDelete, setTripDelete] = useState(null);
-
   // State for trip editing
   const [editingTripId, setEditingTripId] = useState(null);
   const [editedTripName, setEditedTripName] = useState("");
-
   // Fetch all trips for the user
   const fetchTrips = async () => {
     try {
@@ -50,47 +42,36 @@ export const TripsPage = () => {
       setError("Failed to fetch trips. Please make sure you're logged in.");
     }
   };
-
-  // Called when user confirms deletion in the modal
-  const confirmDelete = async () => {
-    try {
-      await axios.delete(
-        `http://localhost:8000/api/v1/trip/${tripDelete.id}/`,
-        {
-          headers: {
-            Authorization: `token ${token}`,
-          },
-        }
-      );
-      fetchTrips(); // Refresh list after deletion
-      setShowModal(false);
-      setTripDelete(null);
-    } catch (err) {
-      console.error("Failed to delete trip:", err);
-    }
-  };
-
-  // Called on initial load
+  // On mount, check for token
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
       setLoading(false);
-      fetchTrips();
-    }, 1000);
-    return () => clearTimeout(timer);
+      setError("Not logged in.");
+    }
   }, []);
-
+  // Once token is ready, fetch trips
+  useEffect(() => {
+    const loadTrips = async () => {
+      if (token) {
+        await fetchTrips();
+        setLoading(false);
+      }
+    };
+    loadTrips();
+  }, [token]);
   // Begin trip creation form
   const handleNewTrip = () => {
     setShowNewTripForm(true);
   };
-
   // Submit new trip to backend
   const handleTripCreation = () => {
     const trip = formatTrip(newTripData);
     createTrip(trip);
     setShowNewTripForm(false);
   };
-
   const createTrip = async (newTrip) => {
     try {
       const response = await axios.post(
@@ -109,25 +90,39 @@ export const TripsPage = () => {
       console.error("Error creating trip:", error);
     }
   };
-
   // Handle trip deletion click
   const handleDeleteClick = (trip) => {
     setTripDelete(trip);
     setShowModal(true);
   };
-
+  // Confirm deletion
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(
+        `http://localhost:8000/api/v1/trip/${tripDelete.id}/`,
+        {
+          headers: {
+            Authorization: `token ${token}`,
+          },
+        }
+      );
+      fetchTrips(); // Refresh list after deletion
+      setShowModal(false);
+      setTripDelete(null);
+    } catch (err) {
+      console.error("Failed to delete trip:", err);
+    }
+  };
   // Begin editing a trip name
   const startEditing = (trip) => {
     setEditingTripId(trip.id);
     setEditedTripName(trip.name);
   };
-
   // Cancel editing
   const cancelEdit = () => {
     setEditingTripId(null);
     setEditedTripName("");
   };
-
   // Save the new trip name to backend
   const handleSaveEdit = async (tripId) => {
     try {
@@ -146,15 +141,12 @@ export const TripsPage = () => {
       console.error("Error updating trip name:", err);
     }
   };
-
   if (loading) return <span>Loading...</span>;
   if (error) return <p>{error}</p>;
-
   return (
     <div>
       <h1>All Trips</h1>
       <button onClick={handleNewTrip}>Start new trip</button>
-
       {/* Trip List */}
       {userTrips.length === 0 ? (
         <p>No Trips available.</p>
@@ -176,17 +168,20 @@ export const TripsPage = () => {
               ) : (
                 <>
                   <h2>{trip.name}</h2>
-                  <p>{trip.city}, {trip.country}</p>
+                  <p>
+                    {trip.city}, {trip.country}
+                  </p>
                   <p>Duration: {trip.duration} days</p>
                   <button onClick={() => startEditing(trip)}>Edit Trip</button>
-                  <button onClick={() => handleDeleteClick(trip)}>Delete Trip</button>
+                  <button onClick={() => handleDeleteClick(trip)}>
+                    Delete Trip
+                  </button>
                 </>
               )}
             </li>
           ))}
         </ul>
       )}
-
       {/* Deletion Modal */}
       {showModal && (
         <div className="modal-overlay">
@@ -200,7 +195,6 @@ export const TripsPage = () => {
           </div>
         </div>
       )}
-
       {/* New Trip Form */}
       {showNewTripForm && (
         <div className="new-trip-info border-2 w-[50%] h-[50vh]">
@@ -213,14 +207,12 @@ export const TripsPage = () => {
               setNewTripData((prev) => ({ ...prev, name: e.target.value }))
             }
           />
-
           <div className="border-2">
             <AutocompleteTripComponent
               value={newTripData.location}
               setNewTripData={setNewTripData}
             />
           </div>
-
           <div className="border-2">
             <Calendar
               value={newTripData.dates}
@@ -233,7 +225,6 @@ export const TripsPage = () => {
               }
             />
           </div>
-
           <Button variant="primary" onClick={handleTripCreation}>
             Create Trip
           </Button>

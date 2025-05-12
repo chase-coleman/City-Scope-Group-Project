@@ -43,9 +43,10 @@ class All_Stays(TokenReq):
 # ---------------------
 #
 
-    def post(self, request, itinerary):
+    def post(self, request, trip_id):
         data = request.data.copy()
-        data["itinerary"] = itinerary
+        print(data)
+        data["trip"] = trip_id
         serialized_stay = Stay_Serializer(data=data)
         if serialized_stay.is_valid():
             instance = serialized_stay.save()

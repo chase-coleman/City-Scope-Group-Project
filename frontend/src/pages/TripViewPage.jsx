@@ -1,13 +1,23 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import ItineraryTicketComponent from "../components/ItineraryTicketComponent"
 import PotluckPlacardComponent from "../components/PotluckPlacardComponent"
 
+import { Grid } from "ldrs/react"
+
 export default function TripViewPage() {
 
+  function addOneDay(dateString) {
+    const date = new Date(dateString); // Convert the string to a Date object
+    date.setDate(date.getDate() + 1); // Add 1 day
+    return date.toISOString().split('T')[0]; // Return in yyyy-mm-dd format
+  }
+
+  const navigate = useNavigate();
   const { trip_id } = useParams()
 
+  const [trip, setTrip] = useState(null)
   // Which itinerary is currently selected(yellow border for now)
   const [selected, setSelected] = useState(null)
   // All itinieraries for a specific trip
@@ -25,6 +35,33 @@ export default function TripViewPage() {
   // Mini note is for activities and stay adders
   const [miniNote, setMiniNote] = useState(null)
 
+  // Fetch the information for this trip
+  async function fetchTrip() {
+    setIsLoading(true)
+    setError(null)
+    console.log("hi")
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }
+      })
+      if(!response.ok) {
+        throw new Error("failed to retrieve Trip")
+      }
+      const data = await response.json()
+      console.log(data)
+      setTrip(data)
+      setIsLoading(false)
+
+    } catch(err) {
+      setError(err.message)
+      setIsLoading(false)
+      console.log(err)
+    }
+  }
   async function fetchItineraries() {
     setIsLoading(true)
     const response = await fetch(`http://localhost:8000/api/v1/itinerary/all/${trip_id}/`, {
@@ -55,10 +92,11 @@ export default function TripViewPage() {
     console.log(data)
   }
 
+  // Fetch activities and stays for potluck stuff(top triple bar)
   async function fetchAll() {
     setIsLoading(true)
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/stay/itinerary/${trip_id}/`, {
+      const response = await fetch(`http://localhost:8000/api/v1/stay/all/${trip_id}/`, {
         headers: {
           "Authorization": `Token ${localStorage.getItem("token")}`
         }
@@ -96,7 +134,6 @@ export default function TripViewPage() {
       setIsLoading(false)
       console.log("Failed to grab restaurants and activities from acitvity api")
     }
-
   }
 
   // Setter function to add stuff to currently selected itinerary date
@@ -110,8 +147,6 @@ export default function TripViewPage() {
     } 
   }
 
-
-  
   // Setter function to update currently selected itinerary's stay(hotel)
   async function stayAdder(stayObject) {
     setMiniError(null)
@@ -150,7 +185,6 @@ export default function TripViewPage() {
       setMiniError(err.message)
       console.log(err)
     }
-
   }
 
   async function activityAdder(activityObject) {
@@ -199,26 +233,126 @@ export default function TripViewPage() {
 
   }
 
+  async function dayAdder() {
+    setMiniError(null)
+    setMiniNote(null)
+    // This will add an itinerary object instance
+    try {
+      const prevDate = itineraries[itineraries.length-1].date
+      const newDate = addOneDay(prevDate)
+      const response = await fetch(`http://localhost:8000/api/v1/itinerary/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          "date": newDate,
+          "trip_id": trip_id
+        })
+      })
+      if(!response.ok) {
+        throw new Error("Failed to add itinerary day")
+      }
+      // After sucessfully adding an itinerary, need to update trip
+      // +1 to duration and edit end_date on trip model to reflect the newly created itinerary instance date
+      const response2 = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }, 
+        body: JSON.stringify({
+          "end_date": newDate,
+          "duration": itineraries.length+1
+        })
+      })
+      if(!response2.ok) {
+        throw new Error("Failed to update trip dates or duration")
+      }
+      // Data should be the object that was just created to append to frontend reactivity
+      const data = await response.json()
+      setItineraries((prev) => [...prev, data])
+      setMiniNote(`Sucessfully added itinerary on date: ${newDate}`)
+
+    } catch(err) {
+      setMiniError(err.message)
+      console.log(err.message)
+    }
+  }
+
+  async function dayRemover() {
+    setMiniError(null)
+    setMiniNote(null)
+
+    
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/itinerary/${itineraries[itineraries.length-1].id}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }
+      })
+      if(!response.ok) {
+        throw new Error("Failed to remove itinerary day")
+      }
+      const response2 = await fetch(`http://localhost:8000/api/v1/trip/${trip_id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`
+        }, 
+        body: JSON.stringify({
+          "end_date": itineraries[itineraries.length-2].date,
+          "duration": itineraries.length-1
+        })
+      })
+      if(!response2.ok) {
+        throw new Error("Failed to update trip dates or duration")
+      }
+      setItineraries((prev) => prev.slice(0, -1))
+      setMiniNote(`Sucessfully removed last itinerary`)
+
+    } catch(err) {
+      setMiniError(err.message)
+      console.log(err.message)
+    }
+  }
+
+  // redirects a user to the explore page for that trip
+  const handleRedirect = () => {
+    navigate(`/explore/${trip_id}`, { replace: true });
+  };
+
 
   useEffect(() => {
     fetchItineraries()
     fetchAll()
+    fetchTrip()
   }, [])
 
   return (
     <div className="flex flex-col h-dvh items-center justify-center p-4 mb-0">
+      <button className="border-2" onClick={handleRedirect}>
+        explore
+      </button>
       {
-        error || isLoading
+        isLoading
         ? error
           ? <div>{error}</div>
-          : <div>Loading.......</div>
+          : <Grid
+              size="75"
+              speed="1.5"
+              color="#B8FFFE" 
+            />
         : <>
             <div className="flex flex-col items-center justify-center h-1/9">
               <div className="mb-0">
-                Trip Name: Chugnus trip
+                {/* Trip Name: {trip.name} */}
               </div>
               <div className="mb-0">
-                Destination: big lungus
+                {/* Destination: {trip.city}, {trip.country} */}
               </div>
               {
                 miniError
@@ -256,7 +390,11 @@ export default function TripViewPage() {
                   restaurants
                   ? restaurants.map((restaurant) => {
                     return (
-                      <PotluckPlacardComponent activityObject={restaurant} activityAdder={activityAdder} key={restaurant.uuid}/>
+                      <PotluckPlacardComponent 
+                        activityObject={restaurant} 
+                        activityAdder={activityAdder} 
+                        key={restaurant.uuid}
+                      />
                     )
                   })
                   : <div>No restaurants added, add some by exploring the explore page</div>
@@ -271,7 +409,11 @@ export default function TripViewPage() {
                   activities
                   ? activities.map((activity) => {
                     return (
-                      <PotluckPlacardComponent activityObject={activity} activityAdder={activityAdder} key={activity.uuid}/>
+                      <PotluckPlacardComponent 
+                        activityObject={activity} 
+                        activityAdder={activityAdder} 
+                        key={activity.uuid}
+                      />
                     )
                   })
                   : <div>No activities added, add some by exploring the explore page</div>
@@ -279,16 +421,26 @@ export default function TripViewPage() {
               </div>
 
             </div>
-            <div className="flex gap-2 w-full h-4/9 border-1 p-4 overflow-x-auto">
+            <div className="flex items-center gap-2 w-full h-4/9 border-1 p-4 overflow-x-auto">
                 {
                   itineraries
-                  ? itineraries.map((item) => {
-                    return (
-                      <div className={`border-2 ${selected===item ? "border-yellow-200" : ""}`} onClick={() => setterSelector(item)} key={item.id}>
-                        <ItineraryTicketComponent ticket={item} itineraries={itineraries} setItineraries={setItineraries} setMiniError={setMiniError} setMiniNote={setMiniNote}/>
-                      </div>
-                    )
-                  })
+                  ? <>
+                      {itineraries.map((item) => {
+                        return (
+                          <div className={`border-2 ${selected===item ? "border-yellow-200" : ""} h-full`} onClick={() => setterSelector(item)} key={item.id}>
+                            <ItineraryTicketComponent 
+                              ticket={item} 
+                              itineraries={itineraries} 
+                              setItineraries={setItineraries} 
+                              setMiniError={setMiniError} 
+                              setMiniNote={setMiniNote}
+                            />
+                          </div>
+                        )
+                      })}
+                      <button onClick={() => dayRemover()} disabled={itineraries.length > 1 ? false : true} className="shrink-0 hover:cursor-pointer"><img src="/subtractCircle.svg" alt="circle" className="h-16 w-16"/></button>
+                      <button onClick={() => dayAdder()} className="shrink-0 hover:cursor-pointer"><img src="/addCircle.svg" alt="circle" className="h-16 w-16"/></button>
+                    </>
                   : <div>No itineries/days</div>
                 }
             </div>

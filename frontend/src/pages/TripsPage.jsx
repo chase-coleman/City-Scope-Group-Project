@@ -186,20 +186,20 @@ useEffect(() => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <button onClick={handleNewTrip}>Start new trip</button>
-
+    <div className="py-2">
+      <div className="flex w-full justify-center">
+      <button  className="button-background text-center text-white p-1 " onClick={handleNewTrip}>Start New Trip</button>
+      </div>
       {/* Trip List */}
-      <div className="flex justify-center">
-        <div className="flex flex-row gap-4 p-3 w-[90vw]">
+        <div className="flex flex-wrap gap-4 p-3 w-full">
           {userTrips.length === 0 ? (
             <p>No Trips available.</p>
           ) : (
-            <ul className="flex flex-wrap justify-center gap-4 list-none p-0">
+            <div className="flex flex-wrap w-full justify-center gap-2 list-none p-0">
               {userTrips.map((trip) => (
-                <li
+                <div
                   key={trip.id}
-                  className="flex flex-col border border-gray-300 p-2 rounded-lg shadow-sm"
+                  className="trip-card flex flex-col w-64 border border-gray-300 p-2 rounded-lg shadow-sm"
                 >
                   {editingTripId === trip.id ? (
                     <>
@@ -252,21 +252,20 @@ useEffect(() => {
                       <div className="flex justify-center items-center gap-2 mt-2">
                         <button
                           onClick={() => visitTripView(trip)}
-                          className="w-[40%] h-[50%] px-4 py-2 bg-yellow-400 rounded flex items-center justify-center"
+                          className="button-background w-[40%] h-[50%] p-2 rounded flex items-center justify-center"
                         >
-                          <span className="visit-trip-page text-[.75em] whitespace-nowrap">
+                          <span className="visit-trip-page text-[.75em] text-white whitespace-nowrap">
                             Trip Details
                           </span>
                         </button>
                       </div>
                     </>
                   )}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
-      </div>
       {/* Deletion Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -320,7 +319,7 @@ useEffect(() => {
               />
             </div>
             <div className="flex justify-end gap-4 mt-4">
-              <button onClick={handleTripCreation} className="px-4 py-2 bg-green-600 text-white rounded">Create Trip</button>
+              <button onClick={handleTripCreation} className=" button-background px-4 py-2 bg-green-600 text-white rounded">Create Trip</button>
               <button onClick={() => setShowNewTripForm(false)} className="px-4 py-2 bg-gray-400 text-white rounded">Cancel</button>
             </div>
           </div>

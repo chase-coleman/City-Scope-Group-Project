@@ -8,7 +8,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;  */
-  background-color: #FAF9F6;
+  background-color: white;
 }
 .body {
   height: 100vh;
@@ -111,4 +111,14 @@
 .p-checkbox-box {
   display: none !important;
  
+}
+
+.button-background {
+  background-image: linear-gradient(90deg, rgb(0, 55, 235) -26.47%, rgb(120, 80, 250) 97.77%);
+  border-radius: 50px;
+  transition: filter 0.3s ease;
+}
+
+.button-background:hover {
+  filter: brightness(1.25);
 }

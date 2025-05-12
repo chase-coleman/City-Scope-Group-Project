@@ -33,7 +33,7 @@ export const NavbarComponent = ({user, setUser}) => {
         (
           <>
         <Nav.Link as={Link} to="/trips">Trips</Nav.Link>
-        <Nav.Link as={Link} to="/explore">Explore</Nav.Link>
+        {/* <Nav.Link as={Link} to="/explore">Explore</Nav.Link> */}
         </>
         ):""}
       </Nav>

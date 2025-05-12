@@ -80,7 +80,7 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
         // unique key per coord change forces the map component to re-render
         key={`${coords?.lat ?? 0}-${coords?.lng ?? 0}`}
         defaultCenter={coords || { lat: 0, lng: 0 }}
-        defaultZoom={12}
+        defaultZoom={15}
         mapId={mapId}
         gestureHandling={"greedy"}
         options={{ draggable: true }}

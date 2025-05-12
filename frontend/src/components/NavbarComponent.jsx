@@ -43,8 +43,11 @@ export const NavbarComponent = ({user, setUser}) => {
           variant="link"
           className="text-gray-900 no-underline shadow-none"
         >
-          {/* Replace this with an image later */}
-          <span className="text-4xl">🗺️</span>
+
+<div className="flex flex-col items-center">
+  <img src="Logo.png" className="w-[10vh]" />
+  <span className="text-white">| {user.username} |</span>
+</div>
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
@@ -70,7 +73,12 @@ export const NavbarComponent = ({user, setUser}) => {
 
         </Dropdown.Menu>
       </Dropdown>
-    ):<Nav.Link as={Link} to="/login" className="text-white">| Login |</Nav.Link>}
+    ):<>
+<div className="flex flex-col items-center">
+  <img src="Logo.png" className="w-[10vh]" />
+  <a href="/login" className="text-white">| Login |</a>
+</div>
+    </>}
     </Container>
 
   </Navbar>

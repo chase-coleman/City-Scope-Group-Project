@@ -52,6 +52,7 @@ export const ExploreContext = createContext({
 });
 
 export const ExplorePage = () => {
+
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
@@ -205,6 +206,7 @@ export const ExplorePage = () => {
 
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
+  const token = localStorage.getItem("token");
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
   const navigate = useNavigate();

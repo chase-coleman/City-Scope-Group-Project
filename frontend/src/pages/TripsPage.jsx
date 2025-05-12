@@ -179,7 +179,7 @@ export const TripsPage = () => {
                   <p>{trip.city}, {trip.country}</p>
                   <p>Duration: {trip.duration} days</p>
                   <button onClick={() => startEditing(trip)}>Edit Trip</button>
-                  <button onClick={() => handleDeleteClick(trip)}>Delete</button>
+                  <button onClick={() => handleDeleteClick(trip)}>Delete Trip</button>
                 </>
               )}
             </li>

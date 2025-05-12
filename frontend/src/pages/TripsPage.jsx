@@ -161,6 +161,8 @@ useEffect(() => {
     }
   };
 
+  // CREATING TRIP COMMENT FOR TIM TO SYNC UP
+
   const visitTripView = (trip) => {
     navigate(`/tripview/${trip.id}`, { replace: true });
   };

@@ -295,40 +295,35 @@ useEffect(() => {
 
       {/* New Trip Form */}
       {showNewTripForm && (
-        <div className="new-trip-info border-2 w-[50%] h-[50vh]">
-          <input
-            type="text"
-            className="border-2"
-            placeholder="Trip Name"
-            value={newTripData.name}
-            onChange={(e) =>
-              setNewTripData((prev) => ({ ...prev, name: e.target.value }))
-            }
-          />
-
-          <div className="border-2">
-            <AutocompleteTripComponent
-              value={newTripData.location}
-              setNewTripData={setNewTripData}
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-md">
+            <h2 className="text-xl font-bold mb-4 text-center">Create New Trip</h2>
+            <input
+              type="text"
+              className="border w-full p-2 mb-3 rounded"
+              placeholder="Trip Name"
+              value={newTripData.name}
+              onChange={(e) => setNewTripData((prev) => ({ ...prev, name: e.target.value }))}
             />
+            <div className="mb-3">
+              <AutocompleteTripComponent value={newTripData.location} setNewTripData={setNewTripData} />
+            </div>
+            <div className="mb-3">
+              <Calendar
+                value={newTripData.dates}
+                placeholder="Select Date Range"
+                selectionMode="range"
+                readOnlyInput
+                hideOnRangeSelection
+                onChange={(e) => setNewTripData((prev) => ({ ...prev, dates: e.value }))}
+                className="w-full"
+              />
+            </div>
+            <div className="flex justify-end gap-4 mt-4">
+              <button onClick={handleTripCreation} className="px-4 py-2 bg-green-600 text-white rounded">Create Trip</button>
+              <button onClick={() => setShowNewTripForm(false)} className="px-4 py-2 bg-gray-400 text-white rounded">Cancel</button>
+            </div>
           </div>
-
-          <div className="border-2">
-            <Calendar
-              value={newTripData.dates}
-              placeholder="Dates"
-              selectionMode="range"
-              readOnlyInput
-              hideOnRangeSelection
-              onChange={(e) =>
-                setNewTripData((prev) => ({ ...prev, dates: e.value }))
-              }
-            />
-          </div>
-
-          <Button variant="primary" onClick={handleTripCreation}>
-            Create Trip
-          </Button>
         </div>
       )}
     </div>

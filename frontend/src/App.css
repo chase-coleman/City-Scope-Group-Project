@@ -22,21 +22,45 @@
   align-items: center;
   padding: 2rem;
   width: 100%;
-  min-height: 20%;
+  position: relative;
+  min-height: 10%;
   box-sizing: border-box;
   border: solid black 1px;
-  overflow-y: auto; /* Enables scrolling if content exceeds viewport height */
 }
 
 .autocomplete-input {
   width: 80%;
-  height: 50%;
-  background-color: red;
+  height: 60%;
+  background-color: white;
+  border: solid black 1px;
   max-width: 500px;
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
   margin-bottom: 20px;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: white;
+  border-left: solid black 1px;
+  border-right: solid black 1px;
+  border-bottom: solid black 1px;
+  width: 69%;
+  max-width: 500px;
+  z-index: 50;
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f5f5f5;
 }
 
 .place-info {
@@ -77,25 +101,6 @@
   color: #555;
 }
 
-.autocomplete-dropdown {
-  position: absolute;
-  max-height: 200px;
-  overflow-y: auto;
-  background-color: white;
-  border: 1px solid #ccc;
-  width: 80%;
-  max-width: 500px;
-  z-index: 50;
-}
-
-.suggestion-item {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.suggestion-item:hover {
-  background-color: #f5f5f5;
-}
 
 .p-datepicker {
   background-color: red;
@@ -104,4 +109,5 @@
 /* disables the 2nd checkmark displayed when a map filter is displayed from Primereact */
 .p-checkbox-box {
   display: none !important;
+ 
 }

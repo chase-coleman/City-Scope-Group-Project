@@ -1,19 +1,25 @@
 import {
-  handleViewOnGoogle,
-  handleViewWebsite,
-  onCategoryChange,
-} from "../Utilities/ExplorePageUtils";
+  handleViewOnGoogle, // redirects to google
+  handleViewWebsite, // redirects to the locations website
+  onCategoryChange, // handles changing of checked filters for the map
+  formatStayData, // formats data for backend
+  formatActivityData, // formats data for backend
+  lodgingSet, // set of place types under lodging
+  touristAttractionSet, // set of attraction types under tourist attractions
+  activitySet, // set of activity types
+  restaurantSet, // set of restaurant types
+} from "../utilities/ExplorePageUtils";
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { AutocompleteComponent } from "../components/AutocompleteComponent";
-import { APIProvider, AdvancedMarker } from "@vis.gl/react-google-maps";
-import { grabLocID } from "../Utilities/TripAdvisorUtils";
-import { userLogin } from "../Utilities/LoginPageUtils";
+import { useNavigate, useParams, useOutletContext } from "react-router-dom";
+import { APIProvider } from "@vis.gl/react-google-maps";
+import { grabLocID } from "../utilities/TripAdvisorUtils";
 import MapComponent from "../components/MapComponent";
-import { useNavigate } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
 import { ExternalLink } from "lucide-react";
 import "../App.css";
+import axios from "axios";
 
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -22,17 +28,27 @@ const token = localStorage.getItem("token");
 // get mapId from .env
 const mapId = import.meta.env.VITE_MAP_ID_V1;
 
+// if they're not logged in, can't add location to a trip
+const redirectToLogin = () => {
+  navigate("/login");
+};
+
 // setting context to pass to any component rendered on this page
 // don't need to include function params when passing thru context
 export const ExploreContext = createContext({
   address: "",
   setAddress: () => {},
   place: null,
+  selectedFilters: [],
   setPlace: () => {},
   coords: { lat: 0, lng: 0 },
   getPlaceDetails: () => {},
+  setPlaceDetails: () => {},
   handleViewOnGoogle: () => {},
   handleViewWebsite: () => {},
+  restaurants: [],
+  hotels: [],
+  attractions: [],
 });
 
 export const ExplorePage = () => {
@@ -41,17 +57,21 @@ export const ExplorePage = () => {
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
   const [placeDetails, setPlaceDetails] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState([]);
-
   const categoryFilters = [
     { name: "Restaurants", key: "R" },
     { name: "Attractions", key: "A" },
     { name: "Hotels", key: "H" },
   ];
+  // state variables for locations that match the selected filters
+  // set in the MapComponent
+  const [restaurants, setRestaurants] = useState([]);
+  const [hotels, setHotels] = useState([]);
+  const [attractions, setAttractions] = useState([]);
 
   useEffect(() => {
     if (!place) return;
     updateMapLocation();
-  }, [place]); // might have to change this to watch lat/lng states instead
+  }, [place]);
 
   // update the center location of the map
   const updateMapLocation = () => {
@@ -61,15 +81,17 @@ export const ExplorePage = () => {
     });
   };
 
-  const getPlaceDetails = (e, map) => {
-    const placeId = e.placeId;
+  useEffect(() => {
+    console.log(selectedFilters);
+  }, [selectedFilters]);
 
+  // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
+  const getPlaceDetails = (placeId, lat, lng, map) => {
     if (!map) {
       console.warn("PlacesService container is null");
       return;
     }
-    // using 'map' as an instance of google.maps.Map as
-    // a link to PlacesServices to display it on the map
+    // map is the instance of the current map
     // the google.maps.places.PlacesService is a JS class
     const service = new google.maps.places.PlacesService(map);
     service.getDetails(
@@ -90,7 +112,7 @@ export const ExplorePage = () => {
       (result, status) => {
         // if PlacesService class returns a valid value
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          result["geometry"] = { lat: e.latLng.lat, lng: e.latLng.lng };
+          result["geometry"] = { lat: lat, lng: lng };
           setPlaceDetails(result); // This sets the details of the place
           setCoords(result.geometry); // set the map to center on the clicked location now
         } else {
@@ -99,11 +121,6 @@ export const ExplorePage = () => {
       }
     );
   };
-
-  useEffect(() => {
-    if (selectedFilters.length < 1) return;
-    console.log(selectedFilters);
-  }, [selectedFilters]);
 
   return (
     <>
@@ -124,7 +141,10 @@ export const ExplorePage = () => {
                         e,
                         category,
                         selectedFilters,
-                        setSelectedFilters
+                        setSelectedFilters,
+                        setRestaurants,
+                        setHotels,
+                        setAttractions
                       )
                     }
                     checked={selectedFilters.some(
@@ -144,11 +164,16 @@ export const ExplorePage = () => {
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider
                 value={{
-                  address,
-                  setAddress,
                   place,
-                  setPlace,
                   coords,
+                  hotels,
+                  address,
+                  attractions,
+                  restaurants,
+                  selectedFilters,
+                  setPlace,
+                  setAddress,
+                  setPlaceDetails,
                   getPlaceDetails,
                 }}
               >
@@ -163,13 +188,15 @@ export const ExplorePage = () => {
                   )}
                 </div>
                 <div className="map-container border-2 h-[80%] w-full">
-                  <MapComponent />
+                  <MapComponent
+                    setRestaurants={setRestaurants}
+                    setHotels={setHotels}
+                    setAttractions={setAttractions}
+                  />
                 </div>
-                {/* <AdvancedMarker position={coords}></AdvancedMarker> */}
               </ExploreContext.Provider>
             </APIProvider>
           </div>
-          {/* render the selected location's basic info on the card component below */}
         </div>
       </div>
     </>
@@ -178,14 +205,160 @@ export const ExplorePage = () => {
 
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
+  const { results, setLogError, setResults } = useOutletContext();
+  const { trip_id } = useParams();
   const navigate = useNavigate();
 
-  const redirectToLogin = () => {
-    navigate("/login");
+  // STATE VARIABLES
+  const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
+  const [noMatchType, setNoMatchType] = useState(""); // used to update the activity "category" from Google's category types to our backend category types (attraction/restaurant)
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  // checking which Google category type the location falls under --> LOOK IN THE ExplorePageUtils FILE for the SETS !!
+  const setCategoryType = (types) => {
+    if (lodgingSet.has(types[0])) {
+      setNoMatchType("hotel");
+      return "lodging";
+    } else if (
+      touristAttractionSet.has(types[0]) ||
+      activitySet.has(types[0])
+    ) {
+      setNoMatchType("attraction");
+      return "attraction";
+    } else if (restaurantSet.has(types[0])) {
+      setNoMatchType("restaurant");
+      return "restaurant";
+    }
+    return "NO_MATCH";
   };
 
+  useEffect(() => {
+    const category = setCategoryType(placeDetails.types);
+    if (category === "NO_MATCH") {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false)
+    }
+  }, [placeDetails]);
+
   const addToTrip = () => {
-    console.log(placeDetails);
+    let category = setCategoryType(placeDetails.types);
+    if (!category) return;
+    // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
+    grabLocID(placeDetails.name, category, setLogError, setResults, 3);
+  };
+
+  // once there is a trip advisor object that matches the selected Google location, run this useEffect
+  useEffect(() => {
+    if (results.length < 1) return;
+    getTripAdvisorMatch(placeDetails.name);
+  }, [results]);
+
+  // recursively iterating through the new results from trip advisor
+  const getTripAdvisorMatch = (locationName) => {
+    function findByName(obj, locationName) {
+      // obj is the object containing the details and photos (both their own objects aka NESTED)
+      if (obj && typeof obj === "object") {
+        // checking of the details has a matching name
+        if (obj.details && obj.details.name === locationName) {
+          return obj;
+        }
+
+        for (const [key, value] of Object.entries(obj)) {
+          if (key === "name" && value === locationName) {
+            return obj;
+          }
+          const found = findByName(value, locationName);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    // Loop through each top-level value in `results` (since it's an object)
+    let matchingLocation = null;
+    for (const obj of Object.values(results)) {
+      matchingLocation = findByName(obj, locationName);
+      if (matchingLocation) break; // Stop at the first match
+    }
+
+    if (matchingLocation) {
+      setTripAdvisorMatch(matchingLocation);
+    } else {
+      console.log("No match found for:", locationName);
+      if (noMatchType === "hotel") {
+        const stay = formatStayData(null, placeDetails, trip_id);
+        saveStay(stay);
+      } else {
+        const activity = formatActivityData(
+          null,
+          placeDetails,
+          noMatchType,
+          trip_id
+        );
+        saveActivity(activity);
+      }
+    }
+
+    return matchingLocation;
+  };
+
+  // both formatStayData and formatActivityData are in the ExplorePageUtils file
+  useEffect(() => {
+    if (!tripAdvisorMatch) return;
+    if (tripAdvisorMatch.details.category.name === "hotel") {
+      const stay = formatStayData(tripAdvisorMatch, placeDetails, trip_id);
+      saveStay(stay); // function to save stay data to backend
+    } else {
+      // if its an attraction or restaurant
+      const activity = formatActivityData(
+        tripAdvisorMatch,
+        placeDetails,
+        noMatchType,
+        trip_id
+      );
+      saveActivity(activity); // function to save activity data to backend
+    }
+  }, [tripAdvisorMatch]);
+
+  // save the the Activity model in the backend
+  const saveActivity = async (activity) => {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`,
+      activity,
+      {
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
+    );
+    if (response.status === 201) {
+      alert("success");
+      setPlaceDetails(null); // removing the info for the selected place
+      setResults([]); // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
+    } else {
+      console.warn("There was an issue adding this to your trip.");
+    }
+  };
+
+  const saveStay = async (stay) => {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/v1/stay/all/${trip_id}/`,
+      stay,
+      {
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
+    );
+    // console.log(response)
+    if (response.status === 201) {
+      alert("success!");
+      setPlaceDetails(null); // removing the info for the selected place
+      setResults([]); // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
+    } else {
+      console.warn("There was an issue adding this to your trip.");
+    }
   };
 
   return (
@@ -202,12 +375,24 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">
-            {/* if user is logged in, let them add to a trip, if not redirect them to the login page */}
+            {/* token - is user logged in? trip_id - is user editing a specific trip? */}
             {token ? (
-              <button className="border-2" onClick={addToTrip}>
-                Add to trip
-              </button>
+              trip_id ? (
+                <button
+                  className="add-to_trip_btn border-2"
+                  onClick={addToTrip}
+                  disabled={isDisabled}
+                  style={{
+                    backgroundColor: isDisabled ? "#ccc" : "#007bff",
+                    color: isDisabled ? "#666" : "white",
+                    cursor: isDisabled ? "not-allowed" : "pointer",
+                  }}
+                >
+                  Add to trip
+                </button>
+              ) : null
             ) : (
+              // if token is null (not logged in)
               <button className="border-2" onClick={redirectToLogin}>
                 You have to login to add this to a trip!
               </button>

@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from .models import Itinerary
 from .serializers import Itinerary_Serializer
 
+from trip_app.models import Trip
+
 # Singular Itinerary viewer
 # Requires an id for _RUD purposes
 # Create will not need an ID and will be set automatically to None
@@ -26,8 +28,11 @@ class Itinerary_View(APIView):
     try:
       # The date the user inputs from the frontend in format YYYY-MM-DD
       date = request.data.get("date")
-      itinerary = Itinerary.objects.create(date=date)
-      return Response(f"Itinerary created for the date: {date} with ID: {itinerary.id}", status=s.HTTP_200_OK)
+      trip_id = request.data.get("trip_id")
+      trip = get_object_or_404(Trip, id=trip_id)
+      itinerary = Itinerary.objects.create(date=date, trip=trip)
+      itinerary_ser = Itinerary_Serializer(itinerary).data
+      return Response(itinerary_ser, status=s.HTTP_200_OK)
     except:
       return Response(f"Failed to create an itinerary for the date: {date}", status=s.HTTP_400_BAD_REQUEST)
   
@@ -65,6 +70,8 @@ class Itinerary_View(APIView):
   def delete(self, request, id):
     try:
       itinerary = get_object_or_404(Itinerary, id=id, trip__user=request.user)
+      if Itinerary.objects.count() <= 1:
+        return Response(f"Cannot delete last itinerary. Must keep the first day", status=s.HTTP_403_FORBIDDEN)
       itinerary.delete()
       return Response(f"Itinerary of ID: {id} deleted succesfully", status=s.HTTP_204_NO_CONTENT)
     except: 

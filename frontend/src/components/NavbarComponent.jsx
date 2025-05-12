@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import { Nav, Button, Dropdown } from "react-bootstrap";
 import Navbar from 'react-bootstrap/Navbar';
 import { Link, useNavigate, useOutletContext} from "react-router-dom";
-import {userLogout} from '../Utilities/LoginPageUtils'
+import {userLogout} from '../utilities/LoginPageUtils'
 import ManageAccount from "./ManageAccount";
 
 
@@ -27,11 +27,11 @@ export const NavbarComponent = ({user, setUser}) => {
     <Container>
       <Navbar.Brand as={Link} to="/">City Scope</Navbar.Brand>
       <Nav className="me-auto">
-      {user == false? (<Nav.Link as={Link} to="/login">| Login |</Nav.Link>):""}
+
         <Nav.Link as={Link} to="/explore">Explore</Nav.Link>
         <Nav.Link as={Link} to="/trips">Trips</Nav.Link>
       </Nav>
-      {user && (
+      {user? (
       <Dropdown align="end">
         <Dropdown.Toggle
           variant="link"
@@ -42,7 +42,7 @@ export const NavbarComponent = ({user, setUser}) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          {user && (
+
             <Dropdown.Item onClick ={ (() => {
               setIsOpen(true)
               
@@ -51,7 +51,7 @@ export const NavbarComponent = ({user, setUser}) => {
             >
               Manage Account
             </Dropdown.Item>
-          )}
+
 
           <Dropdown.Item><Button variant="outline-danger"
           onClick={() => {
@@ -64,7 +64,7 @@ export const NavbarComponent = ({user, setUser}) => {
 
         </Dropdown.Menu>
       </Dropdown>
-    )}
+    ):<Nav.Link as={Link} to="/login" className="text-white">| Login |</Nav.Link>}
     </Container>
 
   </Navbar>

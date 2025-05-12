@@ -7,7 +7,7 @@
       "city": "Osaka",
       "country": "Japan",
       "duration": 5,
-      "user": 21
+      "user": 1
     }
   },
   {
@@ -18,7 +18,7 @@
       "city": "Tokyo",
       "country": "Japan",
       "duration": 12,
-      "user": 21
+      "user": 1
     }
   }
 ]

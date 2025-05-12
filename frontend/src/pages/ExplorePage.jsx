@@ -381,7 +381,6 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
           <div className="flex flex-col gap-1">
             {/* token - is user logged in? trip_id - is user editing a specific trip? */}
             {token ? (
-              trip_id ? (
                 <button
                   className="add-to_trip_btn border-2"
                   onClick={addToTrip}
@@ -394,7 +393,6 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
                 >
                   Add to trip
                 </button>
-              ) : null
             ) : (
               // if token is null (not logged in)
               <button className="border-2" onClick={redirectToLogin}>

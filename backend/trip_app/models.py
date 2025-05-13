@@ -12,7 +12,8 @@ class Trip(models.Model):
     start_date = models.DateField(null=True, blank=True) #startdate
     end_date = models.DateField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trips")
-
+    lat = models.FloatField(blank=True, null=True)
+    lng = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}. {self.name} - {self.city}, {self.country}"

@@ -16,33 +16,16 @@ const App = () => {
   const [results, setResults] = useState([])
   const [logError, setLogError] = useState("") 
   const [user, setUser] = useState(useLoaderData()['username']);
-  const [userTrips, setUserTrips] = useState([])
 
   useEffect(() => {
     setLogError("");
   }, [location.pathname]);
 
-  const fetchTrips = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000/api/v1/trip/", {
-        headers: {
-          Authorization: `token ${token}`,
-        },
-      });
-      setUserTrips(response.data);
-      // setLoading(false); // end loading on success
-    } catch (err) {
-      console.error("Error fetching trips:", err);
-      // setError("Unable to load trips.");
-      // setLoading(false); // end loading on error
-    }
-  };
 
   useEffect(() => {
     const checkuser = async () => {
       const data = await confirmUser()
       setUser(data)
-      fetchTrips()
     }
     
     checkuser()
@@ -54,7 +37,7 @@ const App = () => {
     <>
       <PrimeReactProvider>
       <NavbarComponent user = {user} setUser= {setUser}/>
-      <Outlet context = {{setLogError, user, setUser, userTrips, fetchTrips, results, setResults}} />
+      <Outlet context = {{setLogError, user, setUser, results, setResults}} />
       </PrimeReactProvider>
     </>
   );

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../App.css"
 import ItineraryTicketComponent from "../components/ItineraryTicketComponent";
 import PotluckPlacardComponent from "../components/PotluckPlacardComponent";
+import { fetchTrip } from "../utilities/TripViewPageUtils";
 
 import { Grid } from "ldrs/react";
 import "ldrs/react/Grid.css";
@@ -35,32 +36,6 @@ export default function TripViewPage() {
   // Mini note is for activities and stay adders
   const [miniNote, setMiniNote] = useState(null);
 
-  // Fetch the information for this trip
-  async function fetchTrip() {
-    setError(null);
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/trip/${trip_id}/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("failed to retrieve Trip");
-      }
-      const data = await response.json();
-      console.log(data);
-      setTrip(data);
-    } catch (err) {
-      setError(err.message);
-      console.log(err);
-    }
-  }
-
   async function fetchItineraries() {
     const response = await fetch(
       `http://localhost:8000/api/v1/itinerary/all/${trip_id}/`,
@@ -88,8 +63,7 @@ export default function TripViewPage() {
     // Sort itinerary days by date lowest => highest
     data = data.sort((a, b) => a.date.localeCompare(b.date));
     setItineraries(data);
-    console.log(data);
-  }
+  };
 
   // Fetch activities and stays for potluck stuff(top triple bar)
   async function fetchAll() {
@@ -447,7 +421,8 @@ export default function TripViewPage() {
   useEffect(() => {
     const fetchAllData = async () => {
       setIsLoading(true);
-      await Promise.all([fetchTrip(), fetchItineraries(), fetchAll()]);
+      // fetchTrip is in TripViewPageUtils
+      await Promise.all([fetchTrip(trip_id, setError, setTrip), fetchItineraries(), fetchAll()]);
       setIsLoading(false);
     };
 

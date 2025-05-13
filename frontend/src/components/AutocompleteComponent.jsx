@@ -23,6 +23,7 @@ export const AutocompleteComponent = () => {
     setAddress(address);
   };
 
+
   const handleSelect = async (selectedAddress) => {
     // set address state to obj of selected location
     setAddress(selectedAddress);
@@ -100,9 +101,17 @@ export const AutocompleteTripComponent = ({ setNewTripData }) => {
   } = usePlacesAutocomplete();
 
   const handleSelect = async (selectedAddress) => {
+    const results = await getGeocode({
+        address: selectedAddress.description,
+      });
+
+    // call the getLatLng function from google maps so we can change the map's view to that lat/long
+    // (the selected location)
+    const latLng = getLatLng(results[0]);
     setValue(selectedAddress.description, false); // false stops any other fetches
     setNewTripData((prev) => ({
       ...prev,
+      geometry: {lat: latLng.lat, lng:latLng.lng},
       location: selectedAddress.description,
     }));
     clearSuggestions();

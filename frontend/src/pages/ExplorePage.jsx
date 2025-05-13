@@ -22,6 +22,7 @@ import "../App.css";
 import axios from "axios";
 import { Grid } from "ldrs/react";
 import "ldrs/react/Grid.css";
+import { fetchTrip } from "../utilities/TripViewPageUtils";
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 // logged in user's token
@@ -54,15 +55,24 @@ export const ExploreContext = createContext({
 });
 
 export const ExplorePage = () => {
-  const { trip_id } = useParams();
+  const { trip_id } = useParams(); // id for the trip
   const navigate = useNavigate();
+  // the current trip being viewed
+  const [trip, setTrip] = useState(null)
+  const [error, setError] = useState(null);
+  // the MapComponent instance used for pins/viewing
   const [mapInst, setMapInst] = useState(null);
+  // the selected location in the Filter's
   const [selected, setSelected] = useState(null);
+  // basic info for the selected place
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
+  // details for the current selected place
   const [placeDetails, setPlaceDetails] = useState(null);
+  // selected filters (hotels/restaurants/activities)
   const [selectedFilters, setSelectedFilters] = useState([]);
+  // available filters to view in the map
   const categoryFilters = [
     { name: "Restaurants", key: "R" },
     { name: "Attractions", key: "A" },
@@ -73,7 +83,9 @@ export const ExplorePage = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [attractions, setAttractions] = useState([]);
+  // handles the long wait time when a user adds a location to their trip
   const [isAdding, setIsAdding] = useState(false);
+  // handles the Accordion opening/closing when a filter is selected
   const [activeAccordion, setActiveAccordion] = useState(null);
 
   useEffect(() => {
@@ -84,10 +96,21 @@ export const ExplorePage = () => {
   // update the center location of the map
   const updateMapLocation = () => {
     setCoords({
-      lat: place.geometry.location.lat,
-      lng: place.geometry.location.lng,
+      lat: place?.geometry?.location?.lat || trip.lat,
+      lng: place?.geometry?.location?.lng || trip.lng
     });
   };
+
+  // fetchTrip is in TripViewPageUtils file
+  useEffect(() => {
+    fetchTrip(trip_id, setError, setTrip)
+  }, [trip_id])
+
+  // update the map's center when the trip data is returned from the backend
+  useEffect(() => {
+    if (!trip) return;
+    updateMapLocation()
+  }, [trip])
 
   // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
   const getPlaceDetails = (placeId, lat, lng, map) => {
@@ -126,6 +149,7 @@ export const ExplorePage = () => {
     );
   };
 
+  // sends user back to that Trips information page (TripView)
   const returnToTrip = () => {
     navigate(`/tripview/${trip_id}`);
   };
@@ -140,6 +164,7 @@ export const ExplorePage = () => {
     }
   };
 
+  // handles selecting a location from the filters, calls the getPlaceDetails function
   useEffect(() => {
     if (!selected) return;
     getPlaceDetails(
@@ -154,14 +179,6 @@ export const ExplorePage = () => {
     <>
       <div className="explore-page-container h-[calc(100vh-56px)] flex pr-3 pl-3">
         <div className="left-side w-[30%] h-full overflow-hidden">
-          {/* <div className="w-full flex justify-center">
-            <button
-              className="button-background text-white w-1/2 h-/5"
-              onClick={returnToTrip}
-            >
-              Return to Trip
-            </button>
-          </div> */}
           <h1 className="!text-[#00005A] text-center">Filters</h1>
           <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">
@@ -171,7 +188,7 @@ export const ExplorePage = () => {
                 onSelect={(key) => setActiveAccordion(key)}
               >
                 {categoryFilters.map((category) => (
-                  <Accordion.Item eventKey={category.key}>
+                  <Accordion.Item eventKey={category.key} key={category.key}>
                     <div key={category.key} className="flex items-center">
                       <div className="w-6 flex-shrink-0 flex justify-center">
                         <Checkbox

@@ -55,17 +55,24 @@ export const ExploreContext = createContext({
 });
 
 export const ExplorePage = () => {
-  const { trip_id } = useParams();
+  const { trip_id } = useParams(); // id for the trip
   const navigate = useNavigate();
+  // the current trip being viewed
   const [trip, setTrip] = useState(null)
   const [error, setError] = useState(null);
+  // the MapComponent instance used for pins/viewing
   const [mapInst, setMapInst] = useState(null);
+  // the selected location in the Filter's
   const [selected, setSelected] = useState(null);
+  // basic info for the selected place
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
+  // details for the current selected place
   const [placeDetails, setPlaceDetails] = useState(null);
+  // selected filters (hotels/restaurants/activities)
   const [selectedFilters, setSelectedFilters] = useState([]);
+  // available filters to view in the map
   const categoryFilters = [
     { name: "Restaurants", key: "R" },
     { name: "Attractions", key: "A" },
@@ -76,7 +83,9 @@ export const ExplorePage = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [attractions, setAttractions] = useState([]);
+  // handles the long wait time when a user adds a location to their trip
   const [isAdding, setIsAdding] = useState(false);
+  // handles the Accordion opening/closing when a filter is selected
   const [activeAccordion, setActiveAccordion] = useState(null);
 
   useEffect(() => {

@@ -171,7 +171,7 @@ export const ExplorePage = () => {
                 onSelect={(key) => setActiveAccordion(key)}
               >
                 {categoryFilters.map((category) => (
-                  <Accordion.Item eventKey={category.key}>
+                  <Accordion.Item eventKey={category.key} >
                     <div key={category.key} className="flex items-center">
                       <div className="w-6 flex-shrink-0 flex justify-center">
                         <Checkbox

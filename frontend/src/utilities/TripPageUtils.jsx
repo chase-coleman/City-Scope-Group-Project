@@ -28,4 +28,3 @@ export const formatTrip = (tripData) => {
   
   return formattedTrip
 }
-

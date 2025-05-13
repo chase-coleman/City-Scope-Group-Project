@@ -133,6 +133,7 @@ export const ExplorePage = () => {
   const selectedSetter = (selectedLoc) => {
     if (selected === selectedLoc){
       setSelected(null)
+      setPlaceDetails(null)
     } else if (!selected || selected){
       setSelected(selectedLoc)
     }
@@ -140,9 +141,7 @@ export const ExplorePage = () => {
 
 useEffect(() => {
   if (!selected) return;
-  // placeId, lat, lng, map
-  console.log(selected);
-  
+  getPlaceDetails(selected.place_id, selected.geometry.location.lat(), selected.geometry.location.lng(), mapInst)
 }, [selected]);
 
   return (
@@ -169,7 +168,9 @@ useEffect(() => {
                               setSelectedFilters,
                               setRestaurants,
                               setHotels,
-                              setAttractions
+                              setAttractions,
+                              placeDetails,
+                              setPlaceDetails
                             )
                           }
                           checked={selectedFilters.some(

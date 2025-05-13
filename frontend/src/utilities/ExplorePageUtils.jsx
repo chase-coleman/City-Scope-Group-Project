@@ -59,7 +59,7 @@ export const handleViewWebsite = (placeDetails) => {
 };
 
 // handling the change of selected filters for the google map
-export const onCategoryChange = (e, category, selectedFilters, setSelectedFilters, setRestaurants, setHotels, setAttractions) => {
+export const onCategoryChange = (e, category, selectedFilters, setSelectedFilters, setRestaurants, setHotels, setAttractions, placeDetails, setPlaceDetails) => {
   let _currentFilters = [...selectedFilters]; // retrieve the current selectedFilters
   if (e.checked) {
     _currentFilters.push(category); // add the newly checked category to the current selected filters
@@ -69,6 +69,9 @@ export const onCategoryChange = (e, category, selectedFilters, setSelectedFilter
     _currentFilters = _currentFilters.filter(
       (cat) => cat.key !== category.key 
     );
+    if (placeDetails){
+      setPlaceDetails(null)
+    }
     setSelectedFilters(_currentFilters);
   }
 };

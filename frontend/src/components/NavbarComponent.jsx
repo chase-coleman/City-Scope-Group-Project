@@ -22,6 +22,7 @@ export const NavbarComponent = ({user, setUser}) => {
   const context = useOutletContext()
   const [isOpen,setIsOpen] = useState(false)
 
+
   return (<>
     <Navbar className="bg-[#091A55]">
     <Container>
@@ -37,19 +38,32 @@ export const NavbarComponent = ({user, setUser}) => {
         </>
         ):""}
       </Nav>
-      {user? (
-      <Dropdown align="end">
+
+      <Dropdown align='end' className="w-48">
         <Dropdown.Toggle
           variant="link"
           className="text-gray-900 no-underline shadow-none"
         >
 
-<div className="flex flex-col items-center">
-  <img src="Logo.png" className="w-[10vh]" />
-  <span className="text-white">| {user.username} |</span>
+<div className="flex flex-col items-center w-[150px]">
+  <img src="Logo.png" className="w-[75px]" />
+  <div className="text-white text-center font-mono">
+    {user ? (
+      <span className="inline-block w-[130px]">
+        | {user.username.length > 11 
+            ? user.username.substring(0, 11) 
+            : user.username.padEnd(11, " ")} |
+      </span>
+    ) : (
+      <Link to="/login" className="text-white no-underline inline-block w-[130px]">
+        |    Login    |
+      </Link>
+    )}
+  </div>
 </div>
         </Dropdown.Toggle>
-
+{user?
+(
         <Dropdown.Menu>
 
             <Dropdown.Item onClick ={ (() => {
@@ -71,14 +85,10 @@ export const NavbarComponent = ({user, setUser}) => {
                 {`Log Out\n${user.username}`}
               </Button></Dropdown.Item>
 
-        </Dropdown.Menu>
+        </Dropdown.Menu>):""
+}
       </Dropdown>
-    ):<>
-<div className="flex flex-col items-center">
-  <img src="Logo.png" className="w-[10vh]" />
-  <a href="/login" className="text-white">| Login |</a>
-</div>
-    </>}
+
     </Container>
 
   </Navbar>

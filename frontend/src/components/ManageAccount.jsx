@@ -19,6 +19,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
   const [userInfo, setUserInfo] = useState([]);
 
   const grabinfo = async () => {
+    if(user == false) return
     let token = localStorage.getItem("token");
     if (token) {
       user_api.defaults.headers.common["Authorization"] = `token ${token}`;

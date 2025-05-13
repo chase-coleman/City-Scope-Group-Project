@@ -133,7 +133,7 @@ export const ExplorePage = () => {
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] flex">
-        <div className="left-side w-[20%] pl-3">
+        <div className="left-side w-[20%] h-full pl-3 overflow-hidden">
           <h1 className="!text-[#00005A] text-center">Filters</h1>
           <div className="card !bg-[#00005A]">
             <div className="flex flex-column gap-1">
@@ -166,6 +166,16 @@ export const ExplorePage = () => {
                 </div>
               ))}
             </div>
+          </div>
+          <div className="results-container border-2 w-full h-full">
+              {restaurants ? 
+              restaurants.map((restaurant) => (
+              <div className="">
+                <span>{restaurant.name}</span>
+              </div> 
+              ))
+              : null
+              }
           </div>
         </div>
         <div className="right-side relative flex flex-col items-center w-[80%]">
@@ -393,10 +403,10 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
           <div className="flex flex-row justify-between items-center text-white ">
             <Card.Title>{placeDetails.name}</Card.Title>
             <button
-              className="button-background !rounded-none w-5 h-5 flex items-center justify-center"
+              className="bg-white !rounded-none w-5 h-5 flex items-center justify-center"
               onClick={() => setPlaceDetails(null)}
             >
-              <X color="white" size={15} />
+              <X color="black" size={15} />
             </button>
           </div>
           <Card.Subtitle className="mb-2 text-white !text-[.75em]">
@@ -406,7 +416,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
             {/* token - is user logged in? trip_id - is user editing a specific trip? */}
             {token ? (
               <button
-                className="button-background"
+                className="bg-white !text-[#00005A]"
                 onClick={addToTrip}
                 disabled={isDisabled}
                 style={{
@@ -419,14 +429,14 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
               </button>
             ) : (
               // if token is null (not logged in)
-              <button className="button-background" onClick={redirectToLogin}>
+              <button className="bg-white text-[#00005A]" onClick={redirectToLogin}>
                 You have to login to add this to a trip!
               </button>
             )}
             <div className="location-links flex flex-row gap-1 justify-center">
               <button
                 onClick={() => handleViewOnGoogle(placeDetails)}
-                className="button-background !text-[0.75em] text-white w-[35%] flex items-center gap-1 justify-center"
+                className="bg-white !text-[0.75em] !text-[#00005A] w-[35%] flex items-center gap-1 justify-center"
                 variant="primary"
                 size="sm"
               >
@@ -434,7 +444,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
               </button>
               <button
                 onClick={() => handleViewWebsite(placeDetails)}
-                className="button-background !text-[0.75em] text-white w-[35%] flex items-center gap-1 justify-center"
+                className="bg-white !text-[0.75em] !text-[#00005A] w-[35%] flex items-center gap-1 justify-center"
                 variant="primary"
                 size="sm"
               >

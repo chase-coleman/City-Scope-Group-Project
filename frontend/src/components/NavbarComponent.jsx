@@ -23,7 +23,7 @@ export const NavbarComponent = ({user, setUser}) => {
   const [isOpen,setIsOpen] = useState(false)
 
   return (<>
-    <Navbar className="bg-[#091A55]">
+    <Navbar className="bg-[#091A55] rounded-b-2xl">
     <Container>
       <Navbar.Brand as={Link} to="/" className="text-white">City Scope</Navbar.Brand>
       <Nav className="me-auto">

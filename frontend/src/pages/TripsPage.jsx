@@ -12,6 +12,7 @@ import { Pencil, Trash2 } from "lucide-react";
 const token = localStorage.getItem("token");
 
 export const TripsPage = () => {
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   // All trips for the current user
@@ -57,6 +58,7 @@ export const TripsPage = () => {
 
   // Called when user confirms deletion in the modal
   const confirmDelete = async () => {
+    if(!token) return
     try {
       await axios.delete(
         `http://localhost:8000/api/v1/trip/${tripDelete.id}/`,

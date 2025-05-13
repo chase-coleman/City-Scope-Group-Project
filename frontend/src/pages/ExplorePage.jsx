@@ -233,6 +233,7 @@ export const ExplorePage = () => {
 
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
+  const token = localStorage.getItem("token");
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
   const navigate = useNavigate();

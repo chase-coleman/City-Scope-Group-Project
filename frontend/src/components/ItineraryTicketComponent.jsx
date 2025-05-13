@@ -93,8 +93,8 @@ export default function ItineraryTicketComponent({
     }
   }
   return (
-    <div className="flex flex-col bg-[#00005A] h-full items-center w-36 overflow-y-auto rounded-lg gap-1">
-      <div className="text-white">{ticket.date}</div>
+    <div className="flex flex-col bg-[#00005A] h-full items-center w-36 overflow-y-auto rounded-lg gap-1 px-1">
+      <div className="text-white text-xl">{ticket.date}</div>
       {ticket.stay ? (
         <div className="text-white">
           {ticket.stay.name}
@@ -114,7 +114,7 @@ export default function ItineraryTicketComponent({
       {ticket.activities.length ? (
         ticket.activities.map((item) => {
           return (
-            <div key={item.uuid} className="flex items-center justify-center text-white border-1 rounded-lg">
+            <div key={item.uuid} className="flex items-center w-full justify-center text-white border-1 rounded-lg p-1">
               <div className="text-center">
                 {item.name}
               </div>

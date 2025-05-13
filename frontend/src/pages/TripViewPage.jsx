@@ -462,26 +462,28 @@ export default function TripViewPage() {
         <div>{error}</div>
       ) : (
         <>
-          <div className="flex flex-col items-center justify-center h-2/16">
-            <div className="rounded-xl h-1/2 text-4xl px-4 py-1 bg-white text-[#00005A]">
-              {trip.name}
+          <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex items-center justify-center rounded-xl h-16 text-5xl bg-white text-[#00005A]">
+                {trip.name}
+              </div>
+              <div className="flex justify-center items-center h-10">
+                <button onClick={() => handleRedirect()} className="h-10 w-36 button-background text-center border-2 border-black text-white hover:bg-[#091A55] transition">
+                  <div className="flex justify-center items-center">Explore {trip.city}</div>
+                </button>
+              </div>
+              <div className="flex justify-center items-center h-8">
+                {miniError ? (
+                  <div className="text-red-400 mb-0">{miniError}</div>
+                ) : null}
+                {miniNote ? (
+                  <div className="text-green-400 mb-0">{miniNote}</div>
+                ) : null}
+              </div>
             </div>
-            <div className="h-1/4">
-            <button  onClick={handleRedirect} className="button-background text-center border-2 border-black text-white p-1 hover:bg-[#091A55] transition">
-            Explore {trip.city}
-            </button>
-            </div>
-            <div className="h-1/4">
-            {miniError ? (
-              <div className="text-red-400 mb-0">{miniError}</div>
-            ) : null}
-            {miniNote ? (
-              <div className="text-green-400 mb-0">{miniNote}</div>
-            ) : null}
           </div>
-          </div>
-          <div className=" flex items-center justify-center w-full h-7/16">
-            <div className="flex flex-col items-center h-full w-full border-2 border-[#B2A9CF] overflow-y-auto">
+          <div className=" flex items-center justify-center w-full h-84">
+            <div className="flex flex-col items-center h-full w-full border-l-4 border-t-4 border-b-4 border-[#B2A9CF] rounded-l-md overflow-y-auto">
               <div className="text-xl font-semibold text-[#00005A] border-b border-[#B2A9CF] mb-2">
                 Stays
               </div>

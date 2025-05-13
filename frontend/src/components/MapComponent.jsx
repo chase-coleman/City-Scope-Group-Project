@@ -51,10 +51,6 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
   });
   }, [selectedFilters]);
 
-  useEffect(() => {
-    console.log(attractions)
-  }, [attractions])
-
   // Reset recentering when coords change via autocomplete
   useEffect(() => {
     if (

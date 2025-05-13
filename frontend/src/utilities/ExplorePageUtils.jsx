@@ -4,7 +4,6 @@
 // (restaurants, hotels, attractions)
 export const createCallback = (setter) => (result, status) => {
   if (status === google.maps.places.PlacesServiceStatus.OK){
-    console.log(result)
     setter(result)
   }
 }

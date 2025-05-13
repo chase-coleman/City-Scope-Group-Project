@@ -55,6 +55,7 @@ export const ExploreContext = createContext({
 export const ExplorePage = () => {
   const { trip_id } = useParams();
   const navigate = useNavigate();
+  const [selected, setSelected] = useState(null)
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
@@ -84,10 +85,6 @@ export const ExplorePage = () => {
       lng: place.geometry.location.lng,
     });
   };
-
-  useEffect(() => {
-    console.log(selectedFilters);
-  }, [selectedFilters]);
 
   // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
   const getPlaceDetails = (placeId, lat, lng, map) => {
@@ -130,6 +127,20 @@ export const ExplorePage = () => {
     navigate(`/tripview/${trip_id}`);
   };
 
+  // handles the state for the selected location in the accordion dropdown
+  const selectedSetter = (selectedLoc) => {
+    if (selected === selectedLoc){
+      setSelected(null)
+    } else if (!selected || selected){
+      setSelected(selectedLoc)
+    }
+  };
+
+useEffect(() => {
+  if (!selected) return;
+  console.log(selected);
+}, [selected]);
+
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] flex">
@@ -168,25 +179,53 @@ export const ExplorePage = () => {
                   </label> */}
                     </div>
                     <Accordion.Body>
+
+
+                      {/* checking if restaurants filter is selected */}
                       {category.key === "R" && restaurants
                         ? restaurants.map((restaurant) => (
-                            <div className="border-b-1">
+                            <div className={`border-b-1 rounded-md p-1 ${
+                              selected === restaurant
+                              ? "bg-[#00005A] text-white"
+                              : null
+                            }`}
+                              onClick={() => selectedSetter(restaurant)}
+                              key={restaurant.name}
+                              >
                               <span className="!text-[.75em]">
                                 {restaurant.name}
                               </span>
                             </div>
                           ))
                         : null}
+
+
+                        {/* checking if attractions filter is selected */}
                       {category.key === "A" && attractions
                         ? attractions.map((attraction) => (
-                            <div className="border-b-1">
+                            <div className={`border-b-1 rounded-md p-1 ${
+                              selected === attraction
+                              ? "bg-[#00005A] text-white"
+                              : null
+                            }`}
+                              onClick={() => selectedSetter(attraction)}
+                              key={attraction.name}
+                              >
                               <span className="!text-[.75em]">{attraction.name}</span>
                             </div>
                           ))
                         : null}
+                        {/* checking if hotels filter is selected */}
                       {category.key === "H" && hotels
                         ? hotels.map((hotel) => (
-                            <div className="border-b-1">
+                            <div className={`border-b-1 rounded-md p-1 ${
+                              selected === hotel
+                              ? "bg-[#00005A] text-white"
+                              : null
+                            }`}
+                              onClick={() => selectedSetter(hotel)}
+                              key={hotel.name}
+                              >
                               <span className="!text-[.75em]">{hotel.name}</span>
                             </div>
                           ))

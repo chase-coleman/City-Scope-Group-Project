@@ -20,7 +20,8 @@ import { Checkbox } from "primereact/checkbox";
 import { ExternalLink, X } from "lucide-react";
 import "../App.css";
 import axios from "axios";
-
+import { Grid } from "ldrs/react";
+import "ldrs/react/Grid.css";
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 // logged in user's token
@@ -52,8 +53,8 @@ export const ExploreContext = createContext({
 });
 
 export const ExplorePage = () => {
-  const { trip_id } = useParams()
-  const navigate = useNavigate()
+  const { trip_id } = useParams();
+  const navigate = useNavigate();
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
@@ -69,6 +70,7 @@ export const ExplorePage = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [attractions, setAttractions] = useState([]);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     if (!place) return;
@@ -125,8 +127,8 @@ export const ExplorePage = () => {
   };
 
   const returnToTrip = () => {
-    navigate(`/tripview/${trip_id}`)
-  }
+    navigate(`/tripview/${trip_id}`);
+  };
 
   return (
     <>
@@ -185,9 +187,12 @@ export const ExplorePage = () => {
                 }}
               >
                 <div className="w-1/2">
-                <button className="button-background text-white w-1/2 h-full" onClick={returnToTrip}>
-                  Return to Trip
-                </button>
+                  <button
+                    className="button-background text-white w-1/2 h-full"
+                    onClick={returnToTrip}
+                  >
+                    Return to Trip
+                  </button>
                 </div>
                 <div className="autocomplete-container w-[100%] h-[30%] p-1">
                   {placeDetails ? (
@@ -195,6 +200,7 @@ export const ExplorePage = () => {
                       placeDetails={placeDetails}
                       setPlaceDetails={setPlaceDetails}
                     />
+                    // {!isAdding ? <Grid size="50" speed="1.5" color="black" /> : null}
                   ) : (
                     <AutocompleteComponent />
                   )}
@@ -220,6 +226,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
   const navigate = useNavigate();
+  const [isAdding, setIsAdding] = useState(false);
 
   // STATE VARIABLES
   const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj

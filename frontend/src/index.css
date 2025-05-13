@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'grotley';
+  src: url('/fonts/grotley.otf') format('opentype');
+}
 
 #root {
   height: 100vh !important;
@@ -11,6 +15,7 @@
 html, body {
   background-color: #fcfbf7;
   box-sizing: border-box;
+  font-family: 'grotley' !important;
 }
 
 * {

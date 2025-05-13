@@ -97,8 +97,8 @@ export const formatStayData = (
      || `${placeDetails.address_components[3].long_name}, ${placeDetails.address_components[6].long_name}`,
     "link": tripAdvisorMatch?.details?.web_url || placeDetails.website,
     "trip": trip_id,
-    "image_thumb": tripAdvisorMatch?.photos?.data[0].images.thumbnail.url || null, 
-    "image_main": tripAdvisorMatch?.photos?.data[0].images.large.url || null,
+    "image_thumb": tripAdvisorMatch?.photos?.data[0].images.thumbnail.url || "../../public/genericHote.jpg", 
+    "image_main": tripAdvisorMatch?.photos?.data[0].images.large.url || "../../public/genericHotel.jpg",
     "location_id": tripAdvisorMatch?.details?.location_id || null
   }
   return stayData

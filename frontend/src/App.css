@@ -17,39 +17,26 @@
 
 
 /* google maps autocomplete api stuff */
-.autocomplete-container-full {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  width: 100%;
-  position: relative;
-  min-height: 10%;
-  box-sizing: border-box;
-  border: solid black 1px;
-}
+
 .autocomplete-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
   width: 100%;
   position: relative;
   min-height: 10%;
   box-sizing: border-box;
-  border: solid black 1px;
 }
 
 .autocomplete-input {
   width: 80%;
-  height: 60%;
+  height: 100%;
   background-color: white;
   border: solid black 1px;
   max-width: 500px;
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
-  margin-bottom: 20px;
 }
 
 .autocomplete-dropdown {

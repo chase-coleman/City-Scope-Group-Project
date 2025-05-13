@@ -267,7 +267,7 @@ useEffect(() => {
                     Return to Trip
                   </button>
                 </div>
-                <div className="autocomplete-explore w-[100%] h-[30%] p-1">
+                <div className="autocomplete-explore w-full h-1/10 p-1">
                   {placeDetails ? (
                     <LocationCard
                       placeDetails={placeDetails}
@@ -278,7 +278,7 @@ useEffect(() => {
                     <AutocompleteComponent />
                   )}
                 </div>
-                <div className="map-container border-2 h-[80%] w-full">
+                <div className="map-container border-2 h-[80%] w-full mt-3">
                   <MapComponent
                     setRestaurants={setRestaurants}
                     setHotels={setHotels}

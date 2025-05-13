@@ -102,9 +102,10 @@
   color: #555;
 }
 
-
+/* calendar component when creating a trip */
 .p-datepicker {
-  background-color: red;
+  background-color: white;
+  color: #00005A;
 }
 
 /* disables the 2nd checkmark displayed when a map filter is displayed from Primereact */
@@ -127,4 +128,7 @@
 
 .bttn {
   border-radius: 50px;
+}
+.button-background:hover {
+  filter: brightness(1.25);
 }

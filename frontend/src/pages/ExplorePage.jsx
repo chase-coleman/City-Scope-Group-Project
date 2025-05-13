@@ -17,10 +17,11 @@ import { grabLocID } from "../utilities/TripAdvisorUtils";
 import MapComponent from "../components/MapComponent";
 import { Button, Card } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 import "../App.css";
 import axios from "axios";
-
+import { Grid } from "ldrs/react";
+import "ldrs/react/Grid.css";
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 // logged in user's token
@@ -52,6 +53,8 @@ export const ExploreContext = createContext({
 });
 
 export const ExplorePage = () => {
+  const { trip_id } = useParams();
+  const navigate = useNavigate();
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
@@ -67,6 +70,7 @@ export const ExplorePage = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [attractions, setAttractions] = useState([]);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     if (!place) return;
@@ -122,45 +126,60 @@ export const ExplorePage = () => {
     );
   };
 
+  const returnToTrip = () => {
+    navigate(`/tripview/${trip_id}`);
+  };
+
   return (
     <>
-      <div className="explore-page-container  h-[calc(100vh-56px)] bg-red-500 flex">
-        <div className="left-side bg-blue-500 w-[20%]">
-          <h1>Filters</h1>
-          <div className="card flex justify-center">
+      <div className="explore-page-container  h-[calc(100vh-56px)] flex">
+        <div className="left-side w-[20%] h-full pl-3 overflow-hidden">
+          <h1 className="!text-[#00005A] text-center">Filters</h1>
+          <div className="card !bg-[#00005A]">
             <div className="flex flex-column gap-1">
               {categoryFilters.map((category) => (
                 <div key={category.key} className="flex items-center">
-                  <Checkbox
-                    inputId={category.id}
-                    name="category"
-                    value={category.key}
-                    // onCategoryChange is in the ExplorePageUtils file
-                    onChange={(e) =>
-                      onCategoryChange(
-                        e,
-                        category,
-                        selectedFilters,
-                        setSelectedFilters,
-                        setRestaurants,
-                        setHotels,
-                        setAttractions
-                      )
-                    }
-                    checked={selectedFilters.some(
-                      (item) => item.key === category.key
-                    )}
-                  />
-                  <label htmlFor={category.key} className="ml-2">
+                  <div className="w-6 flex-shrink-0 flex justify-center">
+                    <Checkbox
+                      inputId={category.id}
+                      name="category"
+                      value={category.key}
+                      onChange={(e) =>
+                        onCategoryChange(
+                          e,
+                          category,
+                          selectedFilters,
+                          setSelectedFilters,
+                          setRestaurants,
+                          setHotels,
+                          setAttractions
+                        )
+                      }
+                      checked={selectedFilters.some(
+                        (item) => item.key === category.key
+                      )}
+                    />
+                  </div>
+                  <label htmlFor={category.key} className="ml-2 text-white p-1">
                     {category.name}
                   </label>
                 </div>
               ))}
             </div>
           </div>
+          <div className="results-container border-2 w-full h-full">
+              {restaurants ? 
+              restaurants.map((restaurant) => (
+              <div className="">
+                <span>{restaurant.name}</span>
+              </div> 
+              ))
+              : null
+              }
+          </div>
         </div>
-        <div className="right-side relative flex flex-col items-center bg-pink-500 w-[80%]">
-          <div className="right-container bg-purple-200 w-[75%] h-[95%] flex flex-col">
+        <div className="right-side relative flex flex-col items-center w-[80%]">
+          <div className="right-container w-[75%] h-[95%] flex flex-col justify-center">
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider
                 value={{
@@ -177,12 +196,21 @@ export const ExplorePage = () => {
                   getPlaceDetails,
                 }}
               >
-                <div className="autocomplete-container w-[100%] h-[30%] border-2 bg-blue-500 p-1">
+                <div className="w-1/2">
+                  <button
+                    className="button-background text-white w-1/2 h-full"
+                    onClick={returnToTrip}
+                  >
+                    Return to Trip
+                  </button>
+                </div>
+                <div className="autocomplete-container w-[100%] h-[30%] p-1">
                   {placeDetails ? (
                     <LocationCard
                       placeDetails={placeDetails}
                       setPlaceDetails={setPlaceDetails}
                     />
+                    // {!isAdding ? <Grid size="50" speed="1.5" color="black" /> : null}
                   ) : (
                     <AutocompleteComponent />
                   )}
@@ -206,10 +234,10 @@ export const ExplorePage = () => {
 // card to be displayed if a user select's a location on the map.
 export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   const token = localStorage.getItem("token");
-
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
   const navigate = useNavigate();
+  const [isAdding, setIsAdding] = useState(false);
 
   // STATE VARIABLES
   const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
@@ -239,19 +267,18 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
     if (category === "NO_MATCH") {
       setIsDisabled(true);
     } else {
-      setIsDisabled(false)
+      setIsDisabled(false);
     }
   }, [placeDetails]);
 
   const addToTrip = () => {
-    console.log("adding to trip")
+    console.log("adding to trip");
     let category = setCategoryType(placeDetails.types);
-    console.log(category)
+    console.log(category);
     if (!category) return;
-    
+
     // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
     grabLocID(placeDetails.name, category, setLogError, setResults, 3);
-    
   };
 
   // once there is a trip advisor object that matches the selected Google location, run this useEffect
@@ -371,42 +398,48 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
 
   return (
     <>
-      <Card style={{ width: "18rem" }} className="border-2 !w-[100%] !h-[100%]">
+      <Card
+        style={{ width: "18rem" }}
+        className="!bg-[#00005A] !w-[100%] !h-[100%]"
+      >
         <Card.Body>
-          <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row justify-between items-center text-white ">
             <Card.Title>{placeDetails.name}</Card.Title>
-            <Button size="sm" onClick={() => setPlaceDetails(null)}>
-              X
-            </Button>
+            <button
+              className="bg-white !rounded-none w-5 h-5 flex items-center justify-center"
+              onClick={() => setPlaceDetails(null)}
+            >
+              <X color="black" size={15} />
+            </button>
           </div>
-          <Card.Subtitle className="mb-2 text-muted !text-[.75em]">
+          <Card.Subtitle className="mb-2 text-white !text-[.75em]">
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">
             {/* token - is user logged in? trip_id - is user editing a specific trip? */}
             {token ? (
-                <button
-                  className="add-to_trip_btn border-2"
-                  onClick={addToTrip}
-                  disabled={isDisabled}
-                  style={{
-                    backgroundColor: isDisabled ? "#ccc" : "#007bff",
-                    color: isDisabled ? "#666" : "white",
-                    cursor: isDisabled ? "not-allowed" : "pointer",
-                  }}
-                >
-                  Add to trip
-                </button>
+              <button
+                className="bg-white !text-[#00005A]"
+                onClick={addToTrip}
+                disabled={isDisabled}
+                style={{
+                  backgroundColor: isDisabled ? "#ccc" : "#007bff",
+                  color: isDisabled ? "#666" : "white",
+                  cursor: isDisabled ? "not-allowed" : "pointer",
+                }}
+              >
+                Add to trip
+              </button>
             ) : (
               // if token is null (not logged in)
-              <button className="border-2" onClick={redirectToLogin}>
+              <button className="bg-white text-[#00005A]" onClick={redirectToLogin}>
                 You have to login to add this to a trip!
               </button>
             )}
             <div className="location-links flex flex-row gap-1 justify-center">
               <button
                 onClick={() => handleViewOnGoogle(placeDetails)}
-                className="!text-[0.75em] border-2 w-[35%] flex items-center gap-1 justify-center"
+                className="bg-white !text-[0.75em] !text-[#00005A] w-[35%] flex items-center gap-1 justify-center"
                 variant="primary"
                 size="sm"
               >
@@ -414,7 +447,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
               </button>
               <button
                 onClick={() => handleViewWebsite(placeDetails)}
-                className="!text-[0.75em] border-2 w-[35%] flex items-center gap-1 justify-center"
+                className="bg-white !text-[0.75em] !text-[#00005A] w-[35%] flex items-center gap-1 justify-center"
                 variant="primary"
                 size="sm"
               >

@@ -43,7 +43,6 @@ export const TripsPage = () => {
     if (!token) return;
     
     try {
-      console.log(token)
       const res = await axios.get("http://localhost:8000/api/v1/trip/", {
         headers: {
           Authorization: `token ${token}`,
@@ -54,11 +53,11 @@ export const TripsPage = () => {
       console.error("Error fetching trips:", err);
       setError("Failed to fetch trips. Please make sure you're logged in.");
     }
-    console.log(userTrips)
   };
 
   // Called when user confirms deletion in the modal
   const confirmDelete = async () => {
+    if(!token) return
     try {
       await axios.delete(
         `http://localhost:8000/api/v1/trip/${tripDelete.id}/`,
@@ -100,6 +99,7 @@ useEffect(() => {
   // Submit new trip to backend
   const handleTripCreation = () => {
     const trip = formatTrip(newTripData);
+    console.log(trip)
     createTrip(trip);
     setShowNewTripForm(false);
   };
@@ -126,6 +126,7 @@ useEffect(() => {
     }
   };
 
+  // this function will auto create an itinerary for Day #1 of the trip so that the user doesn't have to
   const createItineraries = async (newTrip) => {
     const tripId = newTrip.data.id
     const response = await axios.post("http://localhost:8000/api/v1/itinerary/", 
@@ -176,8 +177,6 @@ useEffect(() => {
     }
   };
 
-  // CREATING TRIP COMMENT FOR TIM TO SYNC UP
-
   const visitTripView = (trip) => {
     navigate(`/tripview/${trip.id}`, { replace: true });
   };
@@ -199,7 +198,7 @@ useEffect(() => {
               {userTrips.map((trip) => (
                 <div
                   key={trip.id}
-                  className="trip-card flex flex-col w-64 border border-gray-300 p-2 rounded-lg shadow-sm"
+                  className="trip-card bg-[#00005A] !text-white flex flex-col w-64 border border-gray-300 p-2 rounded-lg shadow-sm"
                 >
                   {editingTripId === trip.id ? (
                     <>
@@ -209,10 +208,11 @@ useEffect(() => {
                         onChange={(e) => setEditedTripName(e.target.value)}
                         className="border p-2 rounded"
                       />
-                      <div className="flex gap-2 mt-2">
+                      
+                      <div className="flex justify-center gap-2 mt-2">
                         <button
                           onClick={() => handleSaveEdit(trip.id)}
-                          className="px-4 py-2 bg-blue-500 text-white rounded"
+                          className="button-background px-4 py-2 bg-blue-500 text-white rounded"
                         >
                           Save
                         </button>
@@ -231,13 +231,13 @@ useEffect(() => {
                           onClick={() => startEditing(trip)}
                           className="edit-trip w-[15%] h-[100%] rounded flex items-center justify-center"
                         >
-                          <Pencil size={10} color="black"/>
+                          <Pencil size={10} color="white"/>
                         </button>
                         <button
                           onClick={() => handleDeleteClick(trip)}
                           className="del-trip w-[15%] h-[100%] mb-1 text-white text-sm rounded flex items-center justify-center"
                         >
-                          <Trash2 size={10} color="black"/>
+                          <Trash2 size={10} color="white"/>
                         </button>
                       </div>
                       <span className="trip-name text-center text-[1.75em] font-semibold">
@@ -295,11 +295,11 @@ useEffect(() => {
       {/* New Trip Form */}
       {showNewTripForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-md">
-            <h2 className="text-xl font-bold mb-4 text-center">Create New Trip</h2>
+          <div className="bg-[#00005A] p-6 rounded shadow-lg w-[90%] max-w-md">
+            <h2 className="text-xl text-white font-bold mb-4 text-center">Create New Trip</h2>
             <input
               type="text"
-              className="border w-full p-2 mb-3 rounded"
+              className="border w-full p-2 mb-3 bg-white"
               placeholder="Trip Name"
               value={newTripData.name}
               onChange={(e) => setNewTripData((prev) => ({ ...prev, name: e.target.value }))}
@@ -310,12 +310,11 @@ useEffect(() => {
             <div className="mb-3">
               <Calendar
                 value={newTripData.dates}
-                placeholder="Select Date Range"
-                selectionMode="range"
+                placeholder="Select a start date"
                 readOnlyInput
                 hideOnRangeSelection
                 onChange={(e) => setNewTripData((prev) => ({ ...prev, dates: e.value }))}
-                className="w-full"
+                className="w-full bg-white"
               />
             </div>
             <div className="flex justify-end gap-4 mt-4">

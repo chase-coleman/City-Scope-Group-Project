@@ -110,7 +110,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
               {user.username}
             </span>
           </div>
-          <div className="border-3 border-gray-800 rounded-3xl flex items-center justify-center m-auto bg-white h-[30vh] w-[65vh] overflow-hidden">
+          <div className="border-3 border-gray-800 rounded-3xl flex items-center justify-center m-auto bg-white h-[30vh] w-[450px] overflow-hidden">
             <div className="w-full h-full overflow-hidden relative">
               <div className="flex flex-col h-full -rotate-30 scale-125 absolute -left-20 bottom-50">
                 <div className="flex h-[25.25vh]">

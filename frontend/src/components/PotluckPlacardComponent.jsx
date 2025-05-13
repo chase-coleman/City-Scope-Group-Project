@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react';
+import { Trash2, ExternalLink } from 'lucide-react';
 
 
 export default function PotluckPlacardComponent({
@@ -20,9 +20,9 @@ export default function PotluckPlacardComponent({
               href={
                 activityObject.link ? activityObject.link : activityObject.url
               }
-              className="text-[#4151B3] hover:text-[#091A55]"
+              className="text-[#4151B3] hover:text-[#091A55] flex items-center"
             >
-              Link to place
+              Website<ExternalLink size={12}/>
             </a>
           </div>
           <div className="flex flex-col items-center justify-center text-center shrink-0 ml-auto">

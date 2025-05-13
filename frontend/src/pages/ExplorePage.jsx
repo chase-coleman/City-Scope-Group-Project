@@ -17,7 +17,7 @@ import { grabLocID } from "../utilities/TripAdvisorUtils";
 import MapComponent from "../components/MapComponent";
 import { Button, Card } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 import "../App.css";
 import axios from "axios";
 
@@ -124,9 +124,9 @@ export const ExplorePage = () => {
 
   return (
     <>
-      <div className="explore-page-container  h-[calc(100vh-56px)] bg-red-500 flex">
-        <div className="left-side bg-blue-500 w-[20%]">
-          <h1>Filters</h1>
+      <div className="explore-page-container  h-[calc(100vh-56px)] flex">
+        <div className="left-side w-[20%]">
+          <h1 className="!text-[#00005A] text-center ">Filters</h1>
           <div className="card flex justify-center">
             <div className="flex flex-column gap-1">
               {categoryFilters.map((category) => (
@@ -159,8 +159,8 @@ export const ExplorePage = () => {
             </div>
           </div>
         </div>
-        <div className="right-side relative flex flex-col items-center bg-pink-500 w-[80%]">
-          <div className="right-container bg-purple-200 w-[75%] h-[95%] flex flex-col">
+        <div className="right-side relative flex flex-col items-center w-[80%]">
+          <div className="right-container w-[75%] h-[95%] flex flex-col">
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider
                 value={{
@@ -177,7 +177,7 @@ export const ExplorePage = () => {
                   getPlaceDetails,
                 }}
               >
-                <div className="autocomplete-container w-[100%] h-[30%] border-2 bg-blue-500 p-1">
+                <div className="autocomplete-container w-[100%] h-[30%] p-1">
                   {placeDetails ? (
                     <LocationCard
                       placeDetails={placeDetails}
@@ -367,22 +367,22 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
 
   return (
     <>
-      <Card style={{ width: "18rem" }} className="border-2 !w-[100%] !h-[100%]">
+      <Card style={{ width: "18rem" }} className="!bg-[#00005A] !w-[100%] !h-[100%]">
         <Card.Body>
-          <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row justify-between items-center text-white ">
             <Card.Title>{placeDetails.name}</Card.Title>
-            <Button size="sm" onClick={() => setPlaceDetails(null)}>
-              X
-            </Button>
+            <button className="button-background !rounded-none w-5 h-5 flex items-center justify-center" onClick={() => setPlaceDetails(null)}>
+              <X color="white" size={15}/>
+            </button>
           </div>
-          <Card.Subtitle className="mb-2 text-muted !text-[.75em]">
+          <Card.Subtitle className="mb-2 text-white !text-[.75em]">
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">
             {/* token - is user logged in? trip_id - is user editing a specific trip? */}
             {token ? (
                 <button
-                  className="add-to_trip_btn border-2"
+                  className="button-background"
                   onClick={addToTrip}
                   disabled={isDisabled}
                   style={{
@@ -395,14 +395,14 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
                 </button>
             ) : (
               // if token is null (not logged in)
-              <button className="border-2" onClick={redirectToLogin}>
+              <button className="button-background" onClick={redirectToLogin}>
                 You have to login to add this to a trip!
               </button>
             )}
             <div className="location-links flex flex-row gap-1 justify-center">
               <button
                 onClick={() => handleViewOnGoogle(placeDetails)}
-                className="!text-[0.75em] border-2 w-[35%] flex items-center gap-1 justify-center"
+                className="button-background !text-[0.75em] text-white w-[35%] flex items-center gap-1 justify-center"
                 variant="primary"
                 size="sm"
               >
@@ -410,7 +410,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
               </button>
               <button
                 onClick={() => handleViewWebsite(placeDetails)}
-                className="!text-[0.75em] border-2 w-[35%] flex items-center gap-1 justify-center"
+                className="button-background !text-[0.75em] text-white w-[35%] flex items-center gap-1 justify-center"
                 variant="primary"
                 size="sm"
               >

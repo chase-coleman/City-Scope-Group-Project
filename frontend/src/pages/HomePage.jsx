@@ -4,12 +4,14 @@ import {grabLocID} from '../utilities/TripAdvisorUtils'
 import sample from '../utilities/sampleObject.json'
 import TripAdvisorComponent from "../components/tripAdvisorSearchComponent";
 import {photoarr} from '../utilities/photoarr'
+import "../App.css"
 const HomePage = () => {
 
   const [logError, setLogError] = useState("");
   const [results,setResults] = useState([sample]);
   const [photoArr,setPhotoArr] = useState([])
   const {user} = useOutletContext()
+  const navigate = useNavigate()
 
   const shuffleArray = (array) => {
     const shuffled = array.slice(); // create a copy to avoid mutating original
@@ -33,6 +35,14 @@ const HomePage = () => {
       return () => clearTimeout(timeout);
     }, [logError]);
 
+  const loginOrSignup = () => {
+    navigate('/login')
+  }
+
+  const startExploring = () => {
+    navigate('/trips')
+  }
+
   return (
 
 <>
@@ -44,11 +54,16 @@ const HomePage = () => {
         {/* Left Column */}
         <div className="flex flex-1">
           <div className="flex flex-col gap-6 items-center mt-[20vh] mx-auto">
-            <h1 className="text-4xl font-semibold">City Scope</h1>
+            <div>
+            <h1 className="!text-[#00005A] !text-[3em] text-center font-semibold">City Scope</h1>
+            <h5 className="!text-[#00005A] text-center">The <span className="text-purple-600">World</span> is Waiting...</h5>
+            </div>
             <div className="flex gap-2">
              {user== false?(
-              <a href="/login">Login or Register</a>
-             ):<a href='/explore'>Start Exploring</a>}
+              <button className="button-background p-1 text-center text-white" onClick={loginOrSignup}>
+              Login or Register
+              </button>
+             ):<button className="button-background p-1 text-white" onClick={startExploring}>Start Exploring</button>}
             </div>
           </div>
         </div>

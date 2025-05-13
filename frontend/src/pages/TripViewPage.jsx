@@ -368,7 +368,7 @@ export default function TripViewPage() {
               {trip.name}
             </div>
             <div className="h-1/4">
-            <button className="button-background text-center border-2 border-black text-white p-1 hover:bg-[#091A55] transition">
+            <button  onClick={handleRedirect} className="button-background text-center border-2 border-black text-white p-1 hover:bg-[#091A55] transition">
             Explore {trip.city}
             </button>
             </div>

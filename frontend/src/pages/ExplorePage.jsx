@@ -101,13 +101,13 @@ export const ExplorePage = () => {
     });
   };
 
+  // fetchTrip is in TripViewPageUtils file
   useEffect(() => {
-    console.log(trip_id)
     fetchTrip(trip_id, setError, setTrip)
   }, [trip_id])
 
+  // update the map's center when the trip data is returned from the backend
   useEffect(() => {
-    console.log(trip)
     if (!trip) return;
     updateMapLocation()
   }, [trip])
@@ -149,6 +149,7 @@ export const ExplorePage = () => {
     );
   };
 
+  // sends user back to that Trips information page (TripView)
   const returnToTrip = () => {
     navigate(`/tripview/${trip_id}`);
   };
@@ -163,6 +164,7 @@ export const ExplorePage = () => {
     }
   };
 
+  // handles selecting a location from the filters, calls the getPlaceDetails function
   useEffect(() => {
     if (!selected) return;
     getPlaceDetails(
@@ -177,14 +179,6 @@ export const ExplorePage = () => {
     <>
       <div className="explore-page-container h-[calc(100vh-56px)] flex pr-3 pl-3">
         <div className="left-side w-[30%] h-full overflow-hidden">
-          {/* <div className="w-full flex justify-center">
-            <button
-              className="button-background text-white w-1/2 h-/5"
-              onClick={returnToTrip}
-            >
-              Return to Trip
-            </button>
-          </div> */}
           <h1 className="!text-[#00005A] text-center">Filters</h1>
           <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">

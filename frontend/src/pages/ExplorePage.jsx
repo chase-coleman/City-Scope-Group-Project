@@ -56,8 +56,8 @@ export const ExploreContext = createContext({
 export const ExplorePage = () => {
   const { trip_id } = useParams();
   const navigate = useNavigate();
-  const [mapInst, setMapInst] = useState(null)
-  const [selected, setSelected] = useState(null)
+  const [mapInst, setMapInst] = useState(null);
+  const [selected, setSelected] = useState(null);
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
@@ -74,7 +74,7 @@ export const ExplorePage = () => {
   const [hotels, setHotels] = useState([]);
   const [attractions, setAttractions] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
-  const [activeAccordion, setActiveAccordion] = useState(null)
+  const [activeAccordion, setActiveAccordion] = useState(null);
 
   useEffect(() => {
     if (!place) return;
@@ -132,27 +132,44 @@ export const ExplorePage = () => {
 
   // handles the state for the selected location in the accordion dropdown
   const selectedSetter = (selectedLoc) => {
-    if (selected === selectedLoc){
-      setSelected(null)
-      setPlaceDetails(null)
-    } else if (!selected || selected){
-      setSelected(selectedLoc)
+    if (selected === selectedLoc) {
+      setSelected(null);
+      setPlaceDetails(null);
+    } else if (!selected || selected) {
+      setSelected(selectedLoc);
     }
   };
 
-useEffect(() => {
-  if (!selected) return;
-  getPlaceDetails(selected.place_id, selected.geometry.location.lat(), selected.geometry.location.lng(), mapInst)
-}, [selected]);
+  useEffect(() => {
+    if (!selected) return;
+    getPlaceDetails(
+      selected.place_id,
+      selected.geometry.location.lat(),
+      selected.geometry.location.lng(),
+      mapInst
+    );
+  }, [selected]);
 
   return (
     <>
       <div className="explore-page-container h-[calc(100vh-56px)] flex pr-3 pl-3">
         <div className="left-side w-[30%] h-full overflow-hidden">
+          {/* <div className="w-full flex justify-center">
+            <button
+              className="button-background text-white w-1/2 h-/5"
+              onClick={returnToTrip}
+            >
+              Return to Trip
+            </button>
+          </div> */}
           <h1 className="!text-[#00005A] text-center">Filters</h1>
           <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">
-              <Accordion flush activeKey={activeAccordion} onSelect={(key) => setActiveAccordion(key)}>
+              <Accordion
+                flush
+                activeKey={activeAccordion}
+                onSelect={(key) => setActiveAccordion(key)}
+              >
                 {categoryFilters.map((category) => (
                   <Accordion.Item eventKey={category.key}>
                     <div key={category.key} className="flex items-center">
@@ -189,47 +206,54 @@ useEffect(() => {
                       {/* checking if restaurants filter is selected */}
                       {category.key === "R" && restaurants
                         ? restaurants.map((restaurant) => (
-                            <div className={`border-b-1 rounded-md p-1 ${
-                              selected === restaurant
-                              ? "bg-[#00005A] text-white"
-                              : null
-                            }`}
+                            <div
+                              className={`border-b-1 rounded-md p-1 ${
+                                selected === restaurant
+                                  ? "bg-[#00005A] text-white"
+                                  : null
+                              }`}
                               onClick={() => selectedSetter(restaurant)}
                               key={restaurant.name}
-                              >
+                            >
                               <span className="!text-[.75em]">
                                 {restaurant.name}
                               </span>
                             </div>
                           ))
                         : null}
-                        {/* checking if attractions filter is selected */}
+                      {/* checking if attractions filter is selected */}
                       {category.key === "A" && attractions
                         ? attractions.map((attraction) => (
-                            <div className={`border-b-1 rounded-md p-1 ${
-                              selected === attraction
-                              ? "bg-[#00005A] text-white"
-                              : null
-                            }`}
+                            <div
+                              className={`border-b-1 rounded-md p-1 ${
+                                selected === attraction
+                                  ? "bg-[#00005A] text-white"
+                                  : null
+                              }`}
                               onClick={() => selectedSetter(attraction)}
                               key={attraction.name}
-                              >
-                              <span className="!text-[.75em]">{attraction.name}</span>
+                            >
+                              <span className="!text-[.75em]">
+                                {attraction.name}
+                              </span>
                             </div>
                           ))
                         : null}
                       {/* checking if hotels filter is selected */}
                       {category.key === "H" && hotels
                         ? hotels.map((hotel) => (
-                            <div className={`border-b-1 rounded-md p-1 ${
-                              selected === hotel
-                              ? "bg-[#00005A] text-white"
-                              : null
-                            }`}
+                            <div
+                              className={`border-b-1 rounded-md p-1 ${
+                                selected === hotel
+                                  ? "bg-[#00005A] text-white"
+                                  : null
+                              }`}
                               onClick={() => selectedSetter(hotel)}
                               key={hotel.name}
-                              >
-                              <span className="!text-[.75em]">{hotel.name}</span>
+                            >
+                              <span className="!text-[.75em]">
+                                {hotel.name}
+                              </span>
                             </div>
                           ))
                         : null}
@@ -259,23 +283,22 @@ useEffect(() => {
                   getPlaceDetails,
                 }}
               >
-                <div className="w-full flex justify-center p-1">
-                  <button
-                    className="button-background text-white w-1/4 h-full"
-                    onClick={returnToTrip}
-                  >
-                    Return to Trip
-                  </button>
-                </div>
-                <div className="autocomplete-explore w-full h-1/10 p-1">
+                <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
                   {placeDetails ? (
                     <LocationCard
                       placeDetails={placeDetails}
                       setPlaceDetails={setPlaceDetails}
                     />
                   ) : (
-                    // {!isAdding ? <Grid size="50" speed="1.5" color="black" /> : null}
-                    <AutocompleteComponent />
+                    <>
+                      <button
+                        className="button-background text-white w-1/4 h-/5"
+                        onClick={returnToTrip}
+                      >
+                        Return to Trip
+                      </button>
+                      <AutocompleteComponent />
+                    </>
                   )}
                 </div>
                 <div className="map-container border-2 h-[80%] w-full mt-3">
@@ -459,12 +482,9 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
 
   return (
     <>
-      <Card
-        style={{ width: "18rem" }}
-        className="!bg-[#00005A] !w-[100%] !h-[100%]"
-      >
-        <Card.Body>
-          <div className="flex flex-row justify-between items-center text-white ">
+      <Card className="!bg-[#00005A] !w-[100%] !h-[100%] ">
+        <Card.Body className="p-1">
+          <div className="h-1/3 flex flex-row justify-between items-center text-white">
             <Card.Title>{placeDetails.name}</Card.Title>
             <button
               className="bg-white !rounded-none w-5 h-5 flex items-center justify-center"
@@ -473,7 +493,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
               <X color="black" size={15} />
             </button>
           </div>
-          <Card.Subtitle className="mb-2 text-white !text-[.75em]">
+          <Card.Subtitle className="text-white !text-[.75em]">
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">

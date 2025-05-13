@@ -45,9 +45,9 @@
   max-height: 300px;
   overflow-y: auto;
   background-color: white;
-  border-left: solid black 1px;
+  /* border-left: solid black 1px;
   border-right: solid black 1px;
-  border-bottom: solid black 1px;
+  border-bottom: solid black 1px; */
   width: 69%;
   max-width: 500px;
   z-index: 50;

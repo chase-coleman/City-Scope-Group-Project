@@ -74,6 +74,7 @@ export const ExplorePage = () => {
   const [hotels, setHotels] = useState([]);
   const [attractions, setAttractions] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
+  const [activeAccordion, setActiveAccordion] = useState(null)
 
   useEffect(() => {
     if (!place) return;
@@ -151,7 +152,7 @@ useEffect(() => {
           <h1 className="!text-[#00005A] text-center">Filters</h1>
           <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">
-              <Accordion flush>
+              <Accordion flush activeKey={activeAccordion} onSelect={(key) => setActiveAccordion(key)}>
                 {categoryFilters.map((category) => (
                   <Accordion.Item eventKey={category.key}>
                     <div key={category.key} className="flex items-center">
@@ -170,7 +171,8 @@ useEffect(() => {
                               setHotels,
                               setAttractions,
                               placeDetails,
-                              setPlaceDetails
+                              setPlaceDetails,
+                              setActiveAccordion
                             )
                           }
                           checked={selectedFilters.some(

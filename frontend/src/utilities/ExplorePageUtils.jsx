@@ -59,11 +59,12 @@ export const handleViewWebsite = (placeDetails) => {
 };
 
 // handling the change of selected filters for the google map
-export const onCategoryChange = (e, category, selectedFilters, setSelectedFilters, setRestaurants, setHotels, setAttractions, placeDetails, setPlaceDetails) => {
+export const onCategoryChange = (e, category, selectedFilters, setSelectedFilters, setRestaurants, setHotels, setAttractions, placeDetails, setPlaceDetails, setActiveAccordion) => {
   let _currentFilters = [...selectedFilters]; // retrieve the current selectedFilters
   if (e.checked) {
     _currentFilters.push(category); // add the newly checked category to the current selected filters
     setSelectedFilters(_currentFilters); // set the state
+    setActiveAccordion(category.key)
   } else { // if we're unselecting a filter, remove it 
     clearResults(category.key, setRestaurants, setHotels, setAttractions)
     _currentFilters = _currentFilters.filter(
@@ -72,6 +73,7 @@ export const onCategoryChange = (e, category, selectedFilters, setSelectedFilter
     if (placeDetails){
       setPlaceDetails(null)
     }
+    setActiveAccordion(null)
     setSelectedFilters(_currentFilters);
   }
 };

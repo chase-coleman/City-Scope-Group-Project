@@ -17,7 +17,6 @@ export const fetchTrip = async (trip_id, setError, setTrip) => {
       throw new Error("failed to retrieve Trip");
     }
     const data = await response.json();
-    console.log(data);
     setTrip(data);
   } catch (err) {
     setError(err.message);

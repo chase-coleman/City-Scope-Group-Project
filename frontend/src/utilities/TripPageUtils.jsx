@@ -20,6 +20,8 @@ export const formatTrip = (tripData) => {
     city: tripData.location.split(",")[0], // get the city 
     country: tripData.location.split(",")[lastIndex-1], // get the country
     duration: 1, // get the total amount of days 
+    lat: tripData.geometry.lat,
+    lng: tripData.geometry.lng,
     start_date: tripData.dates.toISOString().split("T")[0], // format dates for django models.DateField
   }
   // delete unneeded fields now

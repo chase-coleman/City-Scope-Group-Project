@@ -22,6 +22,7 @@ import "../App.css";
 import axios from "axios";
 import { Grid } from "ldrs/react";
 import "ldrs/react/Grid.css";
+import { fetchTrip } from "../utilities/TripViewPageUtils";
 // .env variables
 const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 // logged in user's token
@@ -56,6 +57,8 @@ export const ExploreContext = createContext({
 export const ExplorePage = () => {
   const { trip_id } = useParams();
   const navigate = useNavigate();
+  const [trip, setTrip] = useState(null)
+  const [error, setError] = useState(null);
   const [mapInst, setMapInst] = useState(null);
   const [selected, setSelected] = useState(null);
   const [address, setAddress] = useState("");
@@ -84,10 +87,21 @@ export const ExplorePage = () => {
   // update the center location of the map
   const updateMapLocation = () => {
     setCoords({
-      lat: place.geometry.location.lat,
-      lng: place.geometry.location.lng,
+      lat: place?.geometry?.location?.lat || trip.lat,
+      lng: place?.geometry?.location?.lng || trip.lng
     });
   };
+
+  useEffect(() => {
+    console.log(trip_id)
+    fetchTrip(trip_id, setError, setTrip)
+  }, [trip_id])
+
+  useEffect(() => {
+    console.log(trip)
+    if (!trip) return;
+    updateMapLocation()
+  }, [trip])
 
   // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
   const getPlaceDetails = (placeId, lat, lng, map) => {
@@ -171,7 +185,7 @@ export const ExplorePage = () => {
                 onSelect={(key) => setActiveAccordion(key)}
               >
                 {categoryFilters.map((category) => (
-                  <Accordion.Item eventKey={category.key} >
+                  <Accordion.Item eventKey={category.key} key={category.key}>
                     <div key={category.key} className="flex items-center">
                       <div className="w-6 flex-shrink-0 flex justify-center">
                         <Checkbox

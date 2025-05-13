@@ -36,7 +36,10 @@ export default function TripViewPage() {
   // Mini note is for activities and stay adders
   const [miniNote, setMiniNote] = useState(null);
 
-
+  // useEffect(() => {
+  //   console.log(trip)
+  // }, [trip])
+  
   async function fetchItineraries() {
     const response = await fetch(
       `http://localhost:8000/api/v1/itinerary/all/${trip_id}/`,
@@ -64,8 +67,7 @@ export default function TripViewPage() {
     // Sort itinerary days by date lowest => highest
     data = data.sort((a, b) => a.date.localeCompare(b.date));
     setItineraries(data);
-    console.log(data);
-  }
+  };
 
   // Fetch activities and stays for potluck stuff(top triple bar)
   async function fetchAll() {

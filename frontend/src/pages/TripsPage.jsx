@@ -28,6 +28,7 @@ export const TripsPage = () => {
     name: "",
     location: "",
     dates: "",
+    geometry:{}
   });
 
   // State for trip deletion
@@ -99,13 +100,11 @@ useEffect(() => {
   // Submit new trip to backend
   const handleTripCreation = () => {
     const trip = formatTrip(newTripData);
-    console.log(trip)
     createTrip(trip);
     setShowNewTripForm(false);
   };
 
   const createTrip = async (newTrip) => {
-    console.log(token);
     try {
       const response = await axios.post(
         "http://localhost:8000/api/v1/trip/",

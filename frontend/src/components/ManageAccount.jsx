@@ -6,6 +6,7 @@ import { useOutletContext } from "react-router-dom";
 import { Card } from "react-bootstrap";
 import axios from "axios";
 import { userLogin } from "../utilities/LoginPageUtils";
+import { photoarr } from "../utilities/photoarr";
 
 export const user_api = axios.create({
   baseURL: "http://127.0.0.1:8000/api/v1/user/",
@@ -17,9 +18,19 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
   const [last, setLast] = useState("");
   const [pass, setPass] = useState("");
   const [userInfo, setUserInfo] = useState([]);
+  const [photoArr, setPhotoArr] = useState([]);
+
+  const shuffleArray = (array) => {
+    const shuffled = array.slice(); // create a copy to avoid mutating original
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
 
   const grabinfo = async () => {
-    if(user == false) return
+    if (user == false) return;
     let token = localStorage.getItem("token");
     if (token) {
       user_api.defaults.headers.common["Authorization"] = `token ${token}`;
@@ -27,6 +38,11 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
       return response;
     }
   };
+
+  useEffect(() => {
+    const shuffledPhotos = shuffleArray(photoarr);
+    setPhotoArr(shuffledPhotos);
+  }, [isOpen]);
 
   useEffect(() => {
     const grabData = async () => {
@@ -37,7 +53,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
       // console.log(data)
     };
     grabData();
-  }, []);
+  }, [isOpen, user]);
 
   const handleUpdate = async (e, info) => {
     e.preventDefault();
@@ -69,9 +85,12 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800/60 z-50">
+
+    <div className="border-8 border-[#091A55] m-0 p-0">
+
       <Card
         style={{ width: "30rem" }}
-        className="relative flex flex-col border border-gray-300 rounded-lg shadow-sm bg-white transition-transform duration-300"
+        className="relative flex flex-col border-2 border-[#091A55] rounded-lg shadow-sm bg-white transition-transform duration-300"
       >
         <button
           className="absolute right-1 top-0 bg-blue-600 hover:bg-blue-700 hover:scale-110 text-white font-bold py-2 z-10 px-3 rounded shadow-md transition duration-300"
@@ -80,22 +99,86 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
           X
         </button>
 
-        <div className="relative w-full h-40">
-          <span className="block break-words text-center font-bold text-blue-700">
-            {user.username}
-          </span>
-          <Card.Img
-            variant="top"
-            src="https://upload.wikimedia.org/wikipedia/commons/0/0f/Kew_Gardens_Pagoda.jpg"
-            className="w-full h-52 object-contain hover:cursor-pointer"
-          />
+        <div className="relative w-full h-40 mb-3">
+          <div className="relative bg-[#091A55] h-12 mb-1 ">
+            <img
+              src="Logo.png"
+              className="w-10 p-0 m-0 absolute top-1 left-1 hover:scale-125"
+              alt="City Scope Logo"
+            />
+            <span className="block break-words text-center font-bold text-white text-3xl absolute bottom-1 right-[25%]">
+              {user.username}
+            </span>
+          </div>
+          <div className="border-3 border-gray-800 rounded-3xl flex items-center justify-center m-auto bg-white h-[30vh] w-[65vh] overflow-hidden">
+            <div className="w-full h-full overflow-hidden relative">
+              <div className="flex flex-col h-full -rotate-30 scale-125 absolute -left-20 bottom-50">
+                <div className="flex h-[25.25vh]">
+                  <div className="border-2 border-white flex-1 overflow-hidden">
+                    <img
+                      src={photoArr[0]}
+                      alt="Image 1"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="border-2 border-white flex-1 overflow-hidden">
+                    <img
+                      src={photoArr[1]}
+                      alt="Image 2"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex h-[26.5vh]">
+                  <div className="border-2 border-white flex-1 overflow-hidden">
+                    <img
+                      src={photoArr[2]}
+                      alt="Image 3"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="border-2 border-white flex-1 overflow-hidden">
+                    <img
+                      src={photoArr[3]}
+                      alt="Image 4"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="border-2 border-white flex-1 overflow-hidden">
+                    <img
+                      src={photoArr[4]}
+                      alt="Image 5"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex h-[23.25vh]">
+                  <div className="border-2 border-white flex-1 overflow-hidden">
+                    <img
+                      src={photoArr[5]}
+                      alt="Image 6"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="border-2 border-white flex-1 overflow-hidden">
+                    <img
+                      src={photoArr[6]}
+                      alt="Image 7"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <Card.Body className="flex flex-col gap-6 p-4">
           <br />
           <br />
 
-          {/* Name Update Form */}
           <form onSubmit={handleUpdate} className="flex flex-col gap-4">
             <div>
               <label className="font-semibold block mb-1 text-gray-700">
@@ -126,7 +209,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
             <Button
               type="submit"
               variant="primary"
-              className="w-fit text-sm self-end bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-fit text-sm self-end bg-[#091A55] hover:bg-blue-700 text-white"
             >
               Update Info
             </Button>
@@ -140,7 +223,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
             <div className="flex gap-2">
               <input
                 type="password"
-                className="border-2 border-blue-500 flex-grow p-2 rounded"
+                className="border-2 border-[#091A55] flex-grow p-2 rounded"
                 value={pass}
                 onChange={(e) => setPass(e.target.value)}
                 maxLength={255}
@@ -148,7 +231,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
               />
               <Button
                 variant="secondary"
-                className="text-sm bg-blue-500 hover:bg-blue-600 text-white"
+                className="text-sm bg-[#091A55] hover:bg-blue-600 text-white"
                 onClick={handleChangePassword}
               >
                 Update
@@ -157,6 +240,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
           </div>
         </Card.Body>
       </Card>
+      </div>  
     </div>
   );
 }

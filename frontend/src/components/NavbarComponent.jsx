@@ -25,7 +25,10 @@ export const NavbarComponent = ({user, setUser}) => {
 
   return (<>
     <Navbar className="bg-[#091A55] rounded-b-2xl">
-    <Container>
+    <Container className="relative">
+ 
+    <img src="Logo.png" className="w-[55px] absolute bottom-1 -left-[10vh]" /> 
+ 
       <Navbar.Brand as={Link} to="/" className="text-white">City Scope</Navbar.Brand>
       <Nav className="me-auto">
 
@@ -38,25 +41,25 @@ export const NavbarComponent = ({user, setUser}) => {
         </>
         ):""}
       </Nav>
-
-      <Dropdown align='end' className="w-48">
+<div className="relative">
+      <Dropdown className="w-48 absolute -bottom-3">
         <Dropdown.Toggle
           variant="link"
           className="text-gray-900 no-underline shadow-none"
         >
 
-<div className="flex flex-col items-center w-[150px]">
-  <img src="Logo.png" className="w-[75px]" />
-  <div className="text-white text-center font-mono">
+<div className="flex flex-col items-center w-[150px] !p-0 !m-0">
+  {/* <img src="Logo.png" className="w-[45px]" /> */}
+  <div className="text-white text-center font-mono no-underline">
     {user ? (
-      <span className="inline-block w-[130px]">
+      <span className="inline-block w-[150px]">
         | {user.username.length > 11 
             ? user.username.substring(0, 11) 
             : user.username.padEnd(11, " ")} |
       </span>
     ) : (
-      <Link to="/login" className="text-white no-underline inline-block w-[130px]">
-        |    Login    |
+      <Link to="/login" className="text-white text-decoration-none inline-block w-[130px]">
+        |&nbsp;&nbsp;&nbsp;&nbsp;Login&nbsp;&nbsp;&nbsp;&nbsp;|
       </Link>
     )}
   </div>
@@ -88,6 +91,7 @@ export const NavbarComponent = ({user, setUser}) => {
         </Dropdown.Menu>):""
 }
       </Dropdown>
+      </div>
 
     </Container>
 

@@ -179,6 +179,24 @@ export const ExplorePage = () => {
     <>
       <div className="explore-page-container h-[calc(100vh-56px)] flex pr-3 pl-3">
         <div className="left-side w-[30%] h-full overflow-hidden">
+          <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
+                  {placeDetails ? (
+                    <LocationCard
+                      placeDetails={placeDetails}
+                      setPlaceDetails={setPlaceDetails}
+                    />
+                  ) : (
+                    <>
+                      <button
+                        className="button-background text-white w-1/2 h-/5"
+                        onClick={returnToTrip}
+                      >
+                        Return to Trip
+                      </button>
+                      <AutocompleteComponent />
+                    </>
+                  )}
+                </div>
           <h1 className="!text-[#00005A] text-center">Filters</h1>
           <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">
@@ -215,9 +233,6 @@ export const ExplorePage = () => {
                         />
                       </div>
                       <Accordion.Header>{category.name}</Accordion.Header>
-                      {/* <label htmlFor={category.key} className="ml-2 text-white p-1">
-                    {category.name}
-                  </label> */}
                     </div>
                     <Accordion.Body className="!max-h-1/2 overflow-y-auto !p-5">
                       {/* checking if restaurants filter is selected */}
@@ -300,7 +315,7 @@ export const ExplorePage = () => {
                   getPlaceDetails,
                 }}
               >
-                <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
+                {/* <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
                   {placeDetails ? (
                     <LocationCard
                       placeDetails={placeDetails}
@@ -317,8 +332,8 @@ export const ExplorePage = () => {
                       <AutocompleteComponent />
                     </>
                   )}
-                </div>
-                <div className="map-container border-2 h-[80%] w-full mt-3">
+                </div> */}
+                <div className="map-container border-2 h-[90%] w-full mt-3">
                   <MapComponent
                     setRestaurants={setRestaurants}
                     setHotels={setHotels}

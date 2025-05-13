@@ -1,6 +1,6 @@
 import { createCallback, createNearbySearch } from "../utilities/ExplorePageUtils";
 import { Map, useMap, AdvancedMarker } from "@vis.gl/react-google-maps";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { use, useContext, useEffect, useRef, useState } from "react";
 import { ExploreContext } from "../pages/ExplorePage";
 
 
@@ -8,7 +8,7 @@ import { ExploreContext } from "../pages/ExplorePage";
 const mapId = import.meta.env.VITE_MAP_ID_V1;
 
 const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
-  const { coords, getPlaceDetails, setPlaceDetails, selectedFilters, restaurants, hotels, attractions } =
+  const { setMapInst, coords, getPlaceDetails, setPlaceDetails, selectedFilters, restaurants, hotels, attractions } =
     useContext(ExploreContext);
   const map = useMap();
   const mapRef = useRef(null);
@@ -21,6 +21,16 @@ const MapComponent = ({ setRestaurants, setHotels, setAttractions }) => {
       map.setCenter(coords);
     }
   };
+
+  const updateMapState = () => {
+    setMapInst(map)
+  }
+
+  useEffect(() => {
+    if (!map) return;
+    updateMapState()
+  }, [map]) 
+
 
   // using a high-order function in the ExplorePageUtils file to avoid repeating
   const restaurantCallback = createCallback(setRestaurants)

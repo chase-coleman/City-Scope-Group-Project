@@ -47,6 +47,7 @@ export const ExploreContext = createContext({
   setPlaceDetails: () => {},
   handleViewOnGoogle: () => {},
   handleViewWebsite: () => {},
+  setMapInst: () => {},
   restaurants: [],
   hotels: [],
   attractions: [],
@@ -55,6 +56,7 @@ export const ExploreContext = createContext({
 export const ExplorePage = () => {
   const { trip_id } = useParams();
   const navigate = useNavigate();
+  const [mapInst, setMapInst] = useState(null)
   const [selected, setSelected] = useState(null)
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
@@ -140,6 +142,7 @@ useEffect(() => {
   if (!selected) return;
   // placeId, lat, lng, map
   console.log(selected);
+  
 }, [selected]);
 
   return (
@@ -248,6 +251,7 @@ useEffect(() => {
                   selectedFilters,
                   setPlace,
                   setAddress,
+                  setMapInst,
                   setPlaceDetails,
                   getPlaceDetails,
                 }}

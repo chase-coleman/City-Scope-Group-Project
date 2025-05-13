@@ -60,7 +60,7 @@ export const AutocompleteComponent = () => {
 
   return (
     <>
-      <div className="autocomplete-container p-0">
+      <div className="autocomplete-container-full p-0">
         <div className="autocomplete-container p-2">
           {/* search input box */}
           <input

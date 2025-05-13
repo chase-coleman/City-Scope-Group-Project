@@ -259,15 +259,15 @@ useEffect(() => {
                   getPlaceDetails,
                 }}
               >
-                <div className="w-1/2">
+                <div className="w-full flex justify-center p-1">
                   <button
-                    className="button-background text-white w-1/2 h-full"
+                    className="button-background text-white w-1/4 h-full"
                     onClick={returnToTrip}
                   >
                     Return to Trip
                   </button>
                 </div>
-                <div className="autocomplete-container w-[100%] h-[30%] p-1">
+                <div className="autocomplete-explore w-[100%] h-[30%] p-1">
                   {placeDetails ? (
                     <LocationCard
                       placeDetails={placeDetails}

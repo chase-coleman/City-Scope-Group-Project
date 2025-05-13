@@ -91,9 +91,9 @@ return (
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </FloatingLabel>
-                  <Button variant="secondary" type="submit">
+                  <button className="button-background p-1 text-white" type="submit">
                     Log me in!
-                  </Button>
+                  </button>
                   <p style={{ color: "red" }}>{logError}</p>
                 </Form>
               </Tab>
@@ -150,9 +150,9 @@ return (
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </FloatingLabel>
-                  <Button variant="secondary" type="submit">
+                  <button className="button-background p-1 text-white" type="submit">
                     Register me!
-                  </Button>
+                  </button>
                   <p style={{ color: "red" }}>{logError}</p>
                 </Form>
               </Tab>

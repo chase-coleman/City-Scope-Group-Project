@@ -15,7 +15,7 @@ import { useNavigate, useParams, useOutletContext } from "react-router-dom";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { grabLocID } from "../utilities/TripAdvisorUtils";
 import MapComponent from "../components/MapComponent";
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, Accordion } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
 import { ExternalLink, X } from "lucide-react";
 import "../App.css";
@@ -133,53 +133,73 @@ export const ExplorePage = () => {
   return (
     <>
       <div className="explore-page-container  h-[calc(100vh-56px)] flex">
-        <div className="left-side w-[20%] h-full pl-3 overflow-hidden">
+        <div className="left-side w-[30%] h-full pl-3 overflow-hidden">
           <h1 className="!text-[#00005A] text-center">Filters</h1>
-          <div className="card !bg-[#00005A]">
+          <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">
-              {categoryFilters.map((category) => (
-                <div key={category.key} className="flex items-center">
-                  <div className="w-6 flex-shrink-0 flex justify-center">
-                    <Checkbox
-                      inputId={category.id}
-                      name="category"
-                      value={category.key}
-                      onChange={(e) =>
-                        onCategoryChange(
-                          e,
-                          category,
-                          selectedFilters,
-                          setSelectedFilters,
-                          setRestaurants,
-                          setHotels,
-                          setAttractions
-                        )
-                      }
-                      checked={selectedFilters.some(
-                        (item) => item.key === category.key
-                      )}
-                    />
-                  </div>
-                  <label htmlFor={category.key} className="ml-2 text-white p-1">
+              <Accordion flush>
+                {categoryFilters.map((category) => (
+                  <Accordion.Item eventKey={category.key}>
+                    <div key={category.key} className="flex items-center">
+                      <div className="w-6 flex-shrink-0 flex justify-center">
+                        <Checkbox
+                          inputId={category.id}
+                          name="category"
+                          value={category.key}
+                          onChange={(e) =>
+                            onCategoryChange(
+                              e,
+                              category,
+                              selectedFilters,
+                              setSelectedFilters,
+                              setRestaurants,
+                              setHotels,
+                              setAttractions
+                            )
+                          }
+                          checked={selectedFilters.some(
+                            (item) => item.key === category.key
+                          )}
+                        />
+                      </div>
+                      <Accordion.Header>{category.name}</Accordion.Header>
+                      {/* <label htmlFor={category.key} className="ml-2 text-white p-1">
                     {category.name}
-                  </label>
-                </div>
-              ))}
+                  </label> */}
+                    </div>
+                    <Accordion.Body>
+                      {category.key === "R" && restaurants
+                        ? restaurants.map((restaurant) => (
+                            <div className="border-b-1">
+                              <span className="!text-[.75em]">
+                                {restaurant.name}
+                              </span>
+                            </div>
+                          ))
+                        : null}
+                      {category.key === "A" && attractions
+                        ? attractions.map((attraction) => (
+                            <div className="border-b-1">
+                              <span className="!text-[.75em]">{attraction.name}</span>
+                            </div>
+                          ))
+                        : null}
+                      {category.key === "H" && hotels
+                        ? hotels.map((hotel) => (
+                            <div className="border-b-1">
+                              <span className="!text-[.75em]">{hotel.name}</span>
+                            </div>
+                          ))
+                        : null}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
             </div>
           </div>
-          <div className="results-container border-2 w-full h-full">
-              {restaurants ? 
-              restaurants.map((restaurant) => (
-              <div className="">
-                <span>{restaurant.name}</span>
-              </div> 
-              ))
-              : null
-              }
-          </div>
         </div>
-        <div className="right-side relative flex flex-col items-center w-[80%]">
-          <div className="right-container w-[75%] h-[95%] flex flex-col justify-center">
+        <div className="right-side relative flex flex-col items-center w-[70%]">
+          <div className="right-container w-[100%] h-[95%] flex flex-col justify-center">
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider
                 value={{
@@ -210,8 +230,8 @@ export const ExplorePage = () => {
                       placeDetails={placeDetails}
                       setPlaceDetails={setPlaceDetails}
                     />
-                    // {!isAdding ? <Grid size="50" speed="1.5" color="black" /> : null}
                   ) : (
+                    // {!isAdding ? <Grid size="50" speed="1.5" color="black" /> : null}
                     <AutocompleteComponent />
                   )}
                 </div>
@@ -430,7 +450,10 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
               </button>
             ) : (
               // if token is null (not logged in)
-              <button className="bg-white text-[#00005A]" onClick={redirectToLogin}>
+              <button
+                className="bg-white text-[#00005A]"
+                onClick={redirectToLogin}
+              >
                 You have to login to add this to a trip!
               </button>
             )}

@@ -15,7 +15,7 @@ import { useNavigate, useParams, useOutletContext } from "react-router-dom";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { grabLocID } from "../utilities/TripAdvisorUtils";
 import MapComponent from "../components/MapComponent";
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, Accordion } from "react-bootstrap";
 import { Checkbox } from "primereact/checkbox";
 import { ExternalLink, X } from "lucide-react";
 import "../App.css";
@@ -47,6 +47,7 @@ export const ExploreContext = createContext({
   setPlaceDetails: () => {},
   handleViewOnGoogle: () => {},
   handleViewWebsite: () => {},
+  setMapInst: () => {},
   restaurants: [],
   hotels: [],
   attractions: [],
@@ -55,6 +56,8 @@ export const ExploreContext = createContext({
 export const ExplorePage = () => {
   const { trip_id } = useParams();
   const navigate = useNavigate();
+  const [mapInst, setMapInst] = useState(null);
+  const [selected, setSelected] = useState(null);
   const [address, setAddress] = useState("");
   const [place, setPlace] = useState("");
   const [coords, setCoords] = useState({ lat: 41.88167, lng: -87.62861 }); // default = Code Platoon
@@ -71,6 +74,7 @@ export const ExplorePage = () => {
   const [hotels, setHotels] = useState([]);
   const [attractions, setAttractions] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
+  const [activeAccordion, setActiveAccordion] = useState(null);
 
   useEffect(() => {
     if (!place) return;
@@ -84,10 +88,6 @@ export const ExplorePage = () => {
       lng: place.geometry.location.lng,
     });
   };
-
-  useEffect(() => {
-    console.log(selectedFilters);
-  }, [selectedFilters]);
 
   // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
   const getPlaceDetails = (placeId, lat, lng, map) => {
@@ -130,56 +130,142 @@ export const ExplorePage = () => {
     navigate(`/tripview/${trip_id}`);
   };
 
+  // handles the state for the selected location in the accordion dropdown
+  const selectedSetter = (selectedLoc) => {
+    if (selected === selectedLoc) {
+      setSelected(null);
+      setPlaceDetails(null);
+    } else if (!selected || selected) {
+      setSelected(selectedLoc);
+    }
+  };
+
+  useEffect(() => {
+    if (!selected) return;
+    getPlaceDetails(
+      selected.place_id,
+      selected.geometry.location.lat(),
+      selected.geometry.location.lng(),
+      mapInst
+    );
+  }, [selected]);
+
   return (
     <>
-      <div className="explore-page-container  h-[calc(100vh-56px)] flex">
-        <div className="left-side w-[20%] h-full pl-3 overflow-hidden">
+      <div className="explore-page-container h-[calc(100vh-56px)] flex pr-3 pl-3">
+        <div className="left-side w-[30%] h-full overflow-hidden">
+          {/* <div className="w-full flex justify-center">
+            <button
+              className="button-background text-white w-1/2 h-/5"
+              onClick={returnToTrip}
+            >
+              Return to Trip
+            </button>
+          </div> */}
           <h1 className="!text-[#00005A] text-center">Filters</h1>
-          <div className="card !bg-[#00005A]">
+          <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">
-              {categoryFilters.map((category) => (
-                <div key={category.key} className="flex items-center">
-                  <div className="w-6 flex-shrink-0 flex justify-center">
-                    <Checkbox
-                      inputId={category.id}
-                      name="category"
-                      value={category.key}
-                      onChange={(e) =>
-                        onCategoryChange(
-                          e,
-                          category,
-                          selectedFilters,
-                          setSelectedFilters,
-                          setRestaurants,
-                          setHotels,
-                          setAttractions
-                        )
-                      }
-                      checked={selectedFilters.some(
-                        (item) => item.key === category.key
-                      )}
-                    />
-                  </div>
-                  <label htmlFor={category.key} className="ml-2 text-white p-1">
+              <Accordion
+                flush
+                activeKey={activeAccordion}
+                onSelect={(key) => setActiveAccordion(key)}
+              >
+                {categoryFilters.map((category) => (
+                  <Accordion.Item eventKey={category.key}>
+                    <div key={category.key} className="flex items-center">
+                      <div className="w-6 flex-shrink-0 flex justify-center">
+                        <Checkbox
+                          inputId={category.id}
+                          name="category"
+                          value={category.key}
+                          onChange={(e) =>
+                            onCategoryChange(
+                              e,
+                              category,
+                              selectedFilters,
+                              setSelectedFilters,
+                              setRestaurants,
+                              setHotels,
+                              setAttractions,
+                              placeDetails,
+                              setPlaceDetails,
+                              setActiveAccordion
+                            )
+                          }
+                          checked={selectedFilters.some(
+                            (item) => item.key === category.key
+                          )}
+                        />
+                      </div>
+                      <Accordion.Header>{category.name}</Accordion.Header>
+                      {/* <label htmlFor={category.key} className="ml-2 text-white p-1">
                     {category.name}
-                  </label>
-                </div>
-              ))}
+                  </label> */}
+                    </div>
+                    <Accordion.Body className="!max-h-1/2 overflow-y-auto !p-5">
+                      {/* checking if restaurants filter is selected */}
+                      {category.key === "R" && restaurants
+                        ? restaurants.map((restaurant) => (
+                            <div
+                              className={`border-b-1 rounded-md p-1 ${
+                                selected === restaurant
+                                  ? "bg-[#00005A] text-white"
+                                  : null
+                              }`}
+                              onClick={() => selectedSetter(restaurant)}
+                              key={restaurant.name}
+                            >
+                              <span className="!text-[.75em]">
+                                {restaurant.name}
+                              </span>
+                            </div>
+                          ))
+                        : null}
+                      {/* checking if attractions filter is selected */}
+                      {category.key === "A" && attractions
+                        ? attractions.map((attraction) => (
+                            <div
+                              className={`border-b-1 rounded-md p-1 ${
+                                selected === attraction
+                                  ? "bg-[#00005A] text-white"
+                                  : null
+                              }`}
+                              onClick={() => selectedSetter(attraction)}
+                              key={attraction.name}
+                            >
+                              <span className="!text-[.75em]">
+                                {attraction.name}
+                              </span>
+                            </div>
+                          ))
+                        : null}
+                      {/* checking if hotels filter is selected */}
+                      {category.key === "H" && hotels
+                        ? hotels.map((hotel) => (
+                            <div
+                              className={`border-b-1 rounded-md p-1 ${
+                                selected === hotel
+                                  ? "bg-[#00005A] text-white"
+                                  : null
+                              }`}
+                              onClick={() => selectedSetter(hotel)}
+                              key={hotel.name}
+                            >
+                              <span className="!text-[.75em]">
+                                {hotel.name}
+                              </span>
+                            </div>
+                          ))
+                        : null}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
             </div>
           </div>
-          <div className="results-container border-2 w-full h-full">
-              {restaurants ? 
-              restaurants.map((restaurant) => (
-              <div className="">
-                <span>{restaurant.name}</span>
-              </div> 
-              ))
-              : null
-              }
-          </div>
         </div>
-        <div className="right-side relative flex flex-col items-center w-[80%]">
-          <div className="right-container w-[75%] h-[95%] flex flex-col justify-center">
+        <div className="right-side relative flex flex-col items-center w-[70%]">
+          <div className="right-container w-[100%] h-[95%] flex flex-col justify-center">
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider
                 value={{
@@ -192,30 +278,30 @@ export const ExplorePage = () => {
                   selectedFilters,
                   setPlace,
                   setAddress,
+                  setMapInst,
                   setPlaceDetails,
                   getPlaceDetails,
                 }}
               >
-                <div className="w-1/2">
-                  <button
-                    className="button-background text-white w-1/2 h-full"
-                    onClick={returnToTrip}
-                  >
-                    Return to Trip
-                  </button>
-                </div>
-                <div className="autocomplete-container w-[100%] h-[30%] p-1">
+                <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
                   {placeDetails ? (
                     <LocationCard
                       placeDetails={placeDetails}
                       setPlaceDetails={setPlaceDetails}
                     />
-                    // {!isAdding ? <Grid size="50" speed="1.5" color="black" /> : null}
                   ) : (
-                    <AutocompleteComponent />
+                    <>
+                      <button
+                        className="button-background text-white w-1/4 h-/5"
+                        onClick={returnToTrip}
+                      >
+                        Return to Trip
+                      </button>
+                      <AutocompleteComponent />
+                    </>
                   )}
                 </div>
-                <div className="map-container border-2 h-[80%] w-full">
+                <div className="map-container border-2 h-[80%] w-full mt-3">
                   <MapComponent
                     setRestaurants={setRestaurants}
                     setHotels={setHotels}
@@ -396,12 +482,9 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
 
   return (
     <>
-      <Card
-        style={{ width: "18rem" }}
-        className="!bg-[#00005A] !w-[100%] !h-[100%]"
-      >
-        <Card.Body>
-          <div className="flex flex-row justify-between items-center text-white ">
+      <Card className="!bg-[#00005A] !w-[100%] !h-[100%] ">
+        <Card.Body className="p-1">
+          <div className="h-1/3 flex flex-row justify-between items-center text-white">
             <Card.Title>{placeDetails.name}</Card.Title>
             <button
               className="bg-white !rounded-none w-5 h-5 flex items-center justify-center"
@@ -410,7 +493,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
               <X color="black" size={15} />
             </button>
           </div>
-          <Card.Subtitle className="mb-2 text-white !text-[.75em]">
+          <Card.Subtitle className="text-white !text-[.75em]">
             {placeDetails.formatted_address}
           </Card.Subtitle>
           <div className="flex flex-col gap-1">
@@ -430,7 +513,10 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
               </button>
             ) : (
               // if token is null (not logged in)
-              <button className="bg-white text-[#00005A]" onClick={redirectToLogin}>
+              <button
+                className="bg-white text-[#00005A]"
+                onClick={redirectToLogin}
+              >
                 You have to login to add this to a trip!
               </button>
             )}

@@ -25,18 +25,22 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <LoginPage />,
+        loader: confirmUser,
       },
       {
         path: '/tripview/:trip_id',
-        element: <TripViewPage />
+        element: <TripViewPage />,
+        loader: confirmUser,
       },
       {
         path: "/explore/:trip_id",
-        element: <ExplorePage />
+        element: <ExplorePage />,
+        loader: confirmUser,
       },
       {
         path: '/trips',
-        element: <TripsPage />
+        element: <TripsPage />,
+        loader: confirmUser,
       }
     ],
   },

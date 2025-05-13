@@ -90,6 +90,20 @@ const clearResults = (category, setRestaurants, setHotels, setAttractions) => {
   }
 }
 
+// selects a random photo from the two arrays beneath it
+// the photos are in the public directory
+const getRandomImage = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const defaultActivityPhotos = [
+  '/activities/gymclass.jpg', '/activities/hikers-top.jpg', '/activitiesoutdoorsphoto.jpg', '/activities/yoga.jpg', '/activities/badminton.jpg', '/activities/bike.jpg'
+]
+const defaultRestaurantPhotos = [
+  '/restaurants/restaurant.jpg', '/restaurants/restaurant2.jpg', '/restaurants/restaurant3.jpg', '/restaurants/restaurant4.jpg', '/restaurants/restaurant5.jpg', '/restaurants/restaurant6.jpg'
+]
+const defaulHotelPhotos = [
+  '/hotels/genericHotel.jpg', '/hotels/hotel2.jpg', '/hotels/hotel3.jpg', '/hotels/hotel4.jpg', '/hotels/hotel5.jpg', '/hotels/hotel6.jpg'
+]
+
+
 // formatting data for the backend
 export const formatStayData = (
   tripAdvisorMatch = null, 
@@ -101,8 +115,8 @@ export const formatStayData = (
      || `${placeDetails.address_components[3].long_name}, ${placeDetails.address_components[6].long_name}`,
     "link": tripAdvisorMatch?.details?.web_url || placeDetails.website,
     "trip": trip_id,
-    "image_thumb": tripAdvisorMatch?.photos?.data[0].images.thumbnail.url || "genericHote.jpg", 
-    "image_main": tripAdvisorMatch?.photos?.data[0].images.large.url || "genericHotel.jpg",
+    "image_thumb": tripAdvisorMatch?.photos?.data[0]?.images?.thumbnail?.url || getRandomImage(defaulHotelPhotos), 
+    "image_main": tripAdvisorMatch?.photos?.data[0]?.images?.large?.url || getRandomImage(defaulHotelPhotos),
     "location_id": tripAdvisorMatch?.details?.location_id || null
   }
   return stayData
@@ -115,6 +129,13 @@ export const formatActivityData = (
   noMatchType = '',
   trip_id = null
 ) => {
+  // checking if the category of the location is a restaurant or attraction
+  // so that we can display a default image of roughly the same type
+  const category = tripAdvisorMatch?.details?.category?.name || noMatchType
+  const isRestaurant = category === "restaurant"
+
+  const fallbackImg = isRestaurant ? getRandomImage(defaultRestaurantPhotos) : getRandomImage(defaultActivityPhotos)
+
   const activityData = {
     name: tripAdvisorMatch?.details?.name || placeDetails.name,
     location:
@@ -130,12 +151,11 @@ export const formatActivityData = (
     url: tripAdvisorMatch?.details?.web_url || placeDetails.website,
     trip: trip_id,
     image_thumb:
-      tripAdvisorMatch?.photos?.data?.[0]?.images?.thumbnail?.url || null,
+      tripAdvisorMatch?.photos?.data?.[0]?.images?.thumbnail?.url || fallbackImg,
     image_main:
-      tripAdvisorMatch?.photos?.data?.[0]?.images?.large?.url || null,
+      tripAdvisorMatch?.photos?.data?.[0]?.images?.large?.url || fallbackImg,
     location_id: tripAdvisorMatch?.details?.location_id || null,
   };
-  console.log(activityData)
   return activityData;
 };
 

@@ -36,10 +36,6 @@ export default function TripViewPage() {
   // Mini note is for activities and stay adders
   const [miniNote, setMiniNote] = useState(null);
 
-  // useEffect(() => {
-  //   console.log(trip)
-  // }, [trip])
-  
   async function fetchItineraries() {
     const response = await fetch(
       `http://localhost:8000/api/v1/itinerary/all/${trip_id}/`,

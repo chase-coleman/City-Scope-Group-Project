@@ -60,7 +60,6 @@ export const AutocompleteComponent = () => {
 
   return (
     <>
-      <div className="autocomplete-container p-0">
         <div className="autocomplete-container p-2">
           {/* search input box */}
           <input
@@ -71,7 +70,9 @@ export const AutocompleteComponent = () => {
             placeholder="Enter a location"
           />
           {/* search results */}
-          <div className="autocomplete-dropdown">
+          <div className={`autocomplete-dropdown ${
+            status === "OK" && data?.length > 0 ? "border-1 !border-t-0" : "border-none"
+          }`}>
             {status === "OK" &&
               data.map((suggestion) => (
                 <div
@@ -84,7 +85,6 @@ export const AutocompleteComponent = () => {
               ))}
           </div>
         </div>
-      </div>
     </>
   );
 };

@@ -17,28 +17,26 @@
 
 
 /* google maps autocomplete api stuff */
+
 .autocomplete-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
   width: 100%;
   position: relative;
   min-height: 10%;
   box-sizing: border-box;
-  border: solid black 1px;
 }
 
 .autocomplete-input {
   width: 80%;
-  height: 60%;
+  height: 100%;
   background-color: white;
   border: solid black 1px;
   max-width: 500px;
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
-  margin-bottom: 20px;
 }
 
 .autocomplete-dropdown {
@@ -47,9 +45,9 @@
   max-height: 300px;
   overflow-y: auto;
   background-color: white;
-  border-left: solid black 1px;
+  /* border-left: solid black 1px;
   border-right: solid black 1px;
-  border-bottom: solid black 1px;
+  border-bottom: solid black 1px; */
   width: 69%;
   max-width: 500px;
   z-index: 50;
@@ -120,6 +118,15 @@
   transition: filter 0.3s ease;
 }
 
+.add-sub-button:hover {
+  background-image: linear-gradient(90deg, rgb(0, 55, 235) -26.47%, rgb(120, 80, 250) 97.77%);
+  border-radius: 50px;
+  transition: filter 0.3s ease;
+}
+
+.bttn {
+  border-radius: 50px;
+}
 .button-background:hover {
   filter: brightness(1.25);
 }

@@ -5,7 +5,7 @@ export default function ItineraryTicketComponent({
   setMiniError,
   setMiniNote,
 }) {
-  async function stayRemover() {
+  async function stayDeleter() {
     setMiniError(null);
     setMiniNote(null);
 
@@ -42,7 +42,7 @@ export default function ItineraryTicketComponent({
     }
   }
 
-  async function activityRemover(activityObject) {
+  async function activityDeleter(activityObject) {
     setMiniError(null);
     setMiniNote(null);
 
@@ -93,14 +93,14 @@ export default function ItineraryTicketComponent({
     }
   }
   return (
-    <div className="flex flex-col bg-[#00005A] h-full items-center w-36 overflow-y-auto border-2 border-[#B2A9CF]">
-      <div className="text-white">{ticket.date}</div>
+    <div className="flex flex-col bg-[#00005A] h-full items-center w-36 overflow-y-auto rounded-lg gap-1 px-1">
+      <div className="text-white text-xl">{ticket.date}</div>
       {ticket.stay ? (
         <div className="text-white">
           {ticket.stay.name}
           <button
             onClick={(e) => {
-              e.stopPropagation(), stayRemover();
+              e.stopPropagation(), stayDeleter();
             }}
             className="text-red-500"
           >
@@ -110,15 +110,17 @@ export default function ItineraryTicketComponent({
       ) : (
         <div className="text-white">Choose a stay</div>
       )}
-      <div className="text-white">Activities Planned:</div>
-      {ticket.activities ? (
+      <div className="flex flex-col items-center justify-center text-white">Activities Planned:</div>
+      {ticket.activities.length ? (
         ticket.activities.map((item) => {
           return (
-            <div key={item.uuid} className="text-white">
-              {item.name}
+            <div key={item.uuid} className="flex items-center w-full justify-center text-white border-1 rounded-lg p-1">
+              <div className="text-center">
+                {item.name}
+              </div>
               <button
                 onClick={(e) => {
-                  e.stopPropagation(), activityRemover(item);
+                  e.stopPropagation(), activityDeleter(item);
                 }}
                 className="text-red-500"
               >
@@ -128,7 +130,7 @@ export default function ItineraryTicketComponent({
           );
         })
       ) : (
-        <p className="text-[#091A55]">No activities planned</p>
+        <div className="text-center text-white border-1 border-red-500 rounded-md">No activities planned</div>
       )}
     </div>
   );

@@ -234,7 +234,7 @@ export const ExplorePage = () => {
                       </div>
                       <Accordion.Header>{category.name}</Accordion.Header>
                     </div>
-                    <Accordion.Body className="!max-h-1/2 overflow-y-auto !p-5">
+                    <Accordion.Body className="max-h-64 overflow-y-auto !p-5">
                       {/* checking if restaurants filter is selected */}
                       {category.key === "R" && restaurants
                         ? restaurants.map((restaurant) => (

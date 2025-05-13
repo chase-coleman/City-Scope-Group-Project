@@ -9,7 +9,6 @@ import { formatTrip } from "../utilities/TripPageUtils";
 import { Pencil, Trash2 } from "lucide-react";
 
 // Get the user's auth token from localStorage
-const token = localStorage.getItem("token");
 
 export const TripsPage = () => {
   const token = localStorage.getItem("token");

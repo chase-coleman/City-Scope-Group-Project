@@ -244,6 +244,105 @@ export default function TripViewPage() {
     }
   }
 
+  async function stayDeleter(stayObject) {
+    setMiniError(null);
+    setMiniNote(null);
+    console.log(stayObject)
+    itineraries.forEach((itin) => {
+      if(itin.stay && stayObject.id === itin.stay.id) {
+        setMiniError("Cannot delete this item as its tied to an itinerary")
+        throw new Error("Failed to delete as stay is associated with an itinerary")
+      }
+    })
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/stay/${stayObject.id}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      if(!response.ok) {
+        throw new Error("Failed to api call to delete stay from trip")
+      }
+      let tempStays = stays.filter((stay) => {
+        return stay.id !== stayObject.id
+      })
+
+      setMiniNote("Sucessfully deleted stay")
+      setStays(tempStays)
+    } catch(err) {
+      setMiniError(err.message)
+      console.log(err)
+    }
+  }
+
+  async function activityDeleter(activityObject) {
+    setMiniError(null);
+    setMiniNote(null);
+    for(const itinerary of itineraries) {
+      const activities = itinerary.activities || []
+      const found = activities.find(activity => activity.id === activityObject.id)
+      if(found) {
+        setMiniError("Cannot delete this item as its tied to an itinerary")
+        throw new Error("Failed to delete as activity is associated with an itinerary")
+      } 
+    }
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/activity/${activityObject.id}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      if(!response.ok) {
+        throw new Error("Failed to api call to delete stay from trip")
+      }
+      let tempActivities = activities.filter((activity) => {
+        return activity.id !== activityObject.id
+      })
+      setMiniNote("Sucessfully deleted activity")
+      setActivities(tempActivities)
+    } catch(err) {
+      setMiniError(err.message)
+      console.log(err)
+    }
+  }
+
+  async function restaurantDeleter(activityObject) {
+    setMiniError(null);
+    setMiniNote(null);
+    for(const itinerary of itineraries) {
+      const activities = itinerary.activities || []
+      const found = activities.find(activity => activity.id === activityObject.id)
+      if(found) {
+        setMiniError("Cannot delete this item as its tied to an itinerary")
+        throw new Error("Failed to delete as activity is associated with an itinerary")
+      } 
+    }
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/activity/${activityObject.id}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      if(!response.ok) {
+        throw new Error("Failed to api call to delete stay from trip")
+      }
+      let tempRestaurants = restaurants.filter((rest) => {
+        return rest.id !== activityObject.id
+      })
+      setMiniNote("Sucessfully deleted rest")
+      setRestaurants(tempRestaurants)
+    } catch(err) {
+      setMiniError(err.message)
+      console.log(err)
+    }
+  }
+
   async function dayAdder() {
     setMiniError(null);
     setMiniNote(null);
@@ -356,33 +455,35 @@ export default function TripViewPage() {
   }, []);
 
   return (
-    <div className="flex flex-col h-dvh items-center justify-center p-4 mb-0 select-none text-[#010219]">
+    <div className="flex flex-col h-dvh items-center justify-center px-2 select-none text-[#00005A]">
       {isLoading ? (
         <Grid size="75" speed="1.5" color="black" />
       ) : error ? (
         <div>{error}</div>
       ) : (
         <>
-          <div className="flex flex-col items-center justify-center h-2/16">
-            <div className="rounded-xl h-1/2 text-4xl px-4 py-1 bg-white text-[#00005A]">
-              {trip.name}
+          <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex items-center justify-center rounded-xl h-16 text-5xl bg-white text-[#00005A]">
+                {trip.name}
+              </div>
+              <div className="flex justify-center items-center h-10">
+                <button onClick={() => handleRedirect()} className="h-10 w-36 button-background text-center border-2 border-black text-white hover:bg-[#091A55] transition">
+                  <div className="flex justify-center items-center">Explore {trip.city}</div>
+                </button>
+              </div>
+              <div className="flex justify-center items-center h-8">
+                {miniError ? (
+                  <div className="text-red-400 mb-0">{miniError}</div>
+                ) : null}
+                {miniNote ? (
+                  <div className="text-green-400 mb-0">{miniNote}</div>
+                ) : null}
+              </div>
             </div>
-            <div className="h-1/4">
-            <button  onClick={handleRedirect} className="button-background text-center border-2 border-black text-white p-1 hover:bg-[#091A55] transition">
-            Explore {trip.city}
-            </button>
-            </div>
-            <div className="h-1/4">
-            {miniError ? (
-              <div className="text-red-400 mb-0">{miniError}</div>
-            ) : null}
-            {miniNote ? (
-              <div className="text-green-400 mb-0">{miniNote}</div>
-            ) : null}
           </div>
-          </div>
-          <div className=" flex items-center justify-center w-full h-7/16">
-            <div className="flex flex-col items-center h-full w-full border-2 border-[#B2A9CF] overflow-y-auto">
+          <div className=" flex items-center justify-center w-full h-84">
+            <div className="flex flex-col items-center h-full w-full border-l-4 border-t-4 border-b-4 border-[#B2A9CF] rounded-l-md overflow-y-auto">
               <div className="text-xl font-semibold text-[#00005A] border-b border-[#B2A9CF] mb-2">
                 Stays
               </div>
@@ -391,6 +492,7 @@ export default function TripViewPage() {
                   return (
                     <PotluckPlacardComponent
                       activityObject={stay}
+                      stayDeleter={stayDeleter}
                       key={stay.id}
                       stayAdder={stayAdder}
                     />
@@ -403,7 +505,7 @@ export default function TripViewPage() {
               )}
             </div>
 
-            <div className="flex flex-col items-center h-full w-full border-2 border-[#B2A9CF] overflow-y-auto">
+            <div className="flex flex-col items-center h-full w-full border-4 border-[#B2A9CF] overflow-y-auto">
               <div className="text-xl font-semibold text-[#00005A] border-b border-[#B2A9CF] mb-2">
                 Restaurants/Food
               </div>
@@ -413,6 +515,7 @@ export default function TripViewPage() {
                     <PotluckPlacardComponent
                       activityObject={restaurant}
                       activityAdder={activityAdder}
+                      activityDeleter={restaurantDeleter}
                       key={restaurant.uuid}
                     />
                   );
@@ -424,7 +527,7 @@ export default function TripViewPage() {
               )}
             </div>
 
-            <div className="flex flex-col items-center h-full w-full border-2 border-[#B2A9CF] overflow-y-auto">
+            <div className="flex flex-col items-center h-full w-full border-r-4 border-t-4 border-b-4 border-[#B2A9CF] rounded-r-md overflow-y-auto">
               <div className="text-xl font-semibold text-[#00005A] border-b border-[#B2A9CF] mb-2">
                 Activities
               </div>
@@ -434,6 +537,7 @@ export default function TripViewPage() {
                     <PotluckPlacardComponent
                       activityObject={activity}
                       activityAdder={activityAdder}
+                      activityDeleter={activityDeleter}
                       key={activity.uuid}
                     />
                   );
@@ -445,37 +549,41 @@ export default function TripViewPage() {
               )}
             </div>
           </div>
-          <div className="flex h-1/16 items-center justify-center">
+          <div className="flex h-16 items-center justify-center">
             {/* Day Remover button DISABLED when only 1 ticket left */}
             <button
               onClick={() => dayRemover()}
               disabled={itineraries.length > 1 ? false : true}
-              className="subtract-btn shrink-0 hover:cursor-pointer h-12 w-12"
+              className="flex items-center justify-center add-sub-button shrink-0 hover:cursor-pointer h-12 w-12"
             >
               <img
                 src="/subtractCircle.svg"
                 alt="circle"
-                className="button-background rounded-full h-12 w-12"
+                className="rounded-full h-12 w-12"
               />
             </button>
             <button
               onClick={() => dayAdder()}
-              className="shrink-0 hover:cursor-pointer h-full w-full"
+              className="flex items-center justify-center add-sub-button shrink-0 hover:cursor-pointer h-12 w-12"
             >
-              <img src="/addCircle.svg" alt="circle" className="h-full w-full" />
+              <img 
+                src="/addCircle.svg" 
+                alt="circle" 
+                className="rounded-full h-12 w-12" 
+              />
             </button>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-2 w-full h-6/16 border-1 rounded-md p-1 overflow-y-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2 w-full h-84 border-2 rounded-md p-1 border-[#B2A9CF] overflow-y-auto">
             {itineraries ? (
               <>
                 {itineraries.map((item) => {
                   return (
                     <div
-                      className={`border-2 rounded-md ${
+                      className={`border-3 rounded-xl ${
                         selected === item
-                          ? "border-[#7682B9] bg-[#B2A9CF]"
-                          : "border-[#B2A9CF]"
-                      } h-full`}
+                          ? "border-[#0DCAF0]"
+                          : "border-[#00005A]"
+                        } h-full`}
                       onClick={() => setterSelector(item)}
                       key={item.id}
                     >

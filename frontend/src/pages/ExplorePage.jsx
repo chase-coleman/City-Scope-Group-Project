@@ -442,6 +442,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
 
   // save the the Activity model in the backend
   const saveActivity = async (activity) => {
+    const token = localStorage.getItem("token");
     const response = await axios.post(
       `http://127.0.0.1:8000/api/v1/activity/all/${trip_id}/`,
       activity,
@@ -461,6 +462,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   };
 
   const saveStay = async (stay) => {
+    const token = localStorage.getItem("token");
     const response = await axios.post(
       `http://127.0.0.1:8000/api/v1/stay/all/${trip_id}/`,
       stay,

@@ -118,6 +118,15 @@
   transition: filter 0.3s ease;
 }
 
+.add-sub-button:hover {
+  background-image: linear-gradient(90deg, rgb(0, 55, 235) -26.47%, rgb(120, 80, 250) 97.77%);
+  border-radius: 50px;
+  transition: filter 0.3s ease;
+}
+
+.bttn {
+  border-radius: 50px;
+}
 .button-background:hover {
   filter: brightness(1.25);
 }

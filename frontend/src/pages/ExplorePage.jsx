@@ -138,13 +138,14 @@ export const ExplorePage = () => {
 
 useEffect(() => {
   if (!selected) return;
+  // placeId, lat, lng, map
   console.log(selected);
 }, [selected]);
 
   return (
     <>
-      <div className="explore-page-container  h-[calc(100vh-56px)] flex">
-        <div className="left-side w-[30%] h-full pl-3 overflow-hidden">
+      <div className="explore-page-container h-[calc(100vh-56px)] flex pr-3 pl-3">
+        <div className="left-side w-[30%] h-full overflow-hidden">
           <h1 className="!text-[#00005A] text-center">Filters</h1>
           <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">
@@ -178,9 +179,7 @@ useEffect(() => {
                     {category.name}
                   </label> */}
                     </div>
-                    <Accordion.Body>
-
-
+                    <Accordion.Body className="!max-h-1/2 overflow-y-auto !p-5">
                       {/* checking if restaurants filter is selected */}
                       {category.key === "R" && restaurants
                         ? restaurants.map((restaurant) => (
@@ -198,8 +197,6 @@ useEffect(() => {
                             </div>
                           ))
                         : null}
-
-
                         {/* checking if attractions filter is selected */}
                       {category.key === "A" && attractions
                         ? attractions.map((attraction) => (
@@ -215,7 +212,7 @@ useEffect(() => {
                             </div>
                           ))
                         : null}
-                        {/* checking if hotels filter is selected */}
+                      {/* checking if hotels filter is selected */}
                       {category.key === "H" && hotels
                         ? hotels.map((hotel) => (
                             <div className={`border-b-1 rounded-md p-1 ${

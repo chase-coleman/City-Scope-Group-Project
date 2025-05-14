@@ -21,7 +21,7 @@ City Scope is a full-stack travel planning app that lets users create accounts, 
 ## 👥 Contributors
 [**Chase Coleman**](https://github.com/chase-coleman) – Team Lead, Activity Model, Explore Page + related components, and Google Maps Integration
 
-[**Tim Adams**](https://github.com/timskillbridge) – Stay Model, Trip Advisor API integration, Login Page + related components
+[**Tim Adams**](https://github.com/timskillbridge) – Stay Model, Trip Advisor API integration, Login/Signup Page, User Account Management + related components
 
 [**Noah Ahn**](https://github.com/Poptaro) – Itinerary Model, Trip View Page + related components, CSS Guru
 
@@ -37,6 +37,8 @@ City Scope is a full-stack travel planning app that lets users create accounts, 
 ### Backend
 - ![Django](https://img.shields.io/badge/-Django-092E20?style=flat&logo=django&logoColor=white)
 - ![DRF](https://img.shields.io/badge/-Django%20Rest%20Framework-00796B?style=flat&logo=django&logoColor=white) 
+- ![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white)
+
 
 ### Third-Party APIs
 - Google Maps JavaScript API + Google Places Library
@@ -97,3 +99,8 @@ In your **Frontend** directory, create a `.env` file and add the following varia
 - `api/v1/loc/locID` - GET - calls the Trip Advisor API to get the location_id of somewhere
 - `api/v1/loc/apiUser` - POST - Creating a new user for the API
 - `api/v1/apiUsed/<str:api_key>` - GET/PUT - view/update a user's total API calls
+
+### Planning
+- ![**Schema**]('/backendschema.png')
+- ![**Frontend Design**]('/frontendroughdraft.png')
+- ![**Functionality Planning**]('/functionalityplanning.png')

@@ -438,7 +438,7 @@ export default function TripViewPage() {
     }, [miniNote, miniError]);
 
   return (
-    <div className="flex flex-col h-dvh items-center justify-center px-2 select-none text-[#00005A]">
+    <div className="flex flex-col h-full items-center justify-center px-2 select-none text-[#00005A]">
       {isLoading ? (
         <Grid size="75" speed="1.5" color="black" />
       ) : error ? (
@@ -557,7 +557,7 @@ export default function TripViewPage() {
               />
             </button>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-2 w-full h-84 border-2 rounded-md p-1 border-[#B2A9CF] overflow-y-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2 w-full h-84 border-4 rounded-md p-1 border-[#B2A9CF] overflow-y-auto">
             {itineraries ? (
               <>
                 {itineraries.map((item) => {

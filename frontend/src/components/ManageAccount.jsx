@@ -93,7 +93,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
         className="relative flex flex-col border-2 border-[#091A55] rounded-lg shadow-sm bg-white transition-transform duration-300"
       >
         <button
-          className="absolute right-1 top-0 bg-blue-600 hover:bg-blue-700 hover:scale-110 text-white font-bold py-2 z-10 px-3 rounded shadow-md transition duration-300"
+          className="absolute button-background right-1 top-0 bg-blue-600 hover:bg-blue-700 hover:scale-110 text-white font-bold py-2 z-10 px-3 rounded shadow-md transition duration-300"
           onClick={() => setIsOpen(false)}
         >
           X
@@ -102,7 +102,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
         <div className="relative w-full h-40 mb-3">
           <div className="relative bg-[#091A55] h-12 mb-1 ">
             <img
-              src="Logo.png"
+              src="/Logo.png"
               className="w-10 p-0 m-0 absolute top-1 left-1 hover:scale-125"
               alt="City Scope Logo"
             />
@@ -209,7 +209,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
             <Button
               type="submit"
               variant="primary"
-              className="w-fit text-sm self-end bg-[#091A55] hover:bg-blue-700 text-white"
+              className="w-fit text-sm self-end button-background bg-[#091A55] hover:bg-blue-700 text-white"
             >
               Update Info
             </Button>
@@ -231,7 +231,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
               />
               <Button
                 variant="secondary"
-                className="text-sm bg-[#091A55] hover:bg-blue-600 text-white"
+                className="text-sm button-background bg-[#091A55] hover:bg-blue-600 text-white"
                 onClick={handleChangePassword}
               >
                 Update

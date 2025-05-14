@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "../App.css"
 import ItineraryTicketComponent from "../components/ItineraryTicketComponent";
 import PotluckPlacardComponent from "../components/PotluckPlacardComponent";
 import { fetchTrip } from "../utilities/TripViewPageUtils";
 
+import { Toast } from 'primereact/toast';
 import { Grid } from "ldrs/react";
 import "ldrs/react/Grid.css";
+import "../App.css"
 
 export default function TripViewPage() {
   function addOneDay(dateString) {
@@ -425,18 +426,26 @@ export default function TripViewPage() {
       await Promise.all([fetchTrip(trip_id, setError, setTrip), fetchItineraries(), fetchAll()]);
       setIsLoading(false);
     };
-
     fetchAllData();
   }, []);
+    useEffect(() => {
+      console.log("yippee")
+      const timeout = setTimeout(() => {
+        setMiniNote(null);
+        setMiniError(null);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }, [miniNote, miniError]);
 
   return (
-    <div className="flex flex-col h-dvh items-center justify-center px-2 select-none text-[#00005A]">
+    <div className="flex flex-col h-full items-center justify-center px-2 select-none text-[#00005A]">
       {isLoading ? (
         <Grid size="75" speed="1.5" color="black" />
       ) : error ? (
         <div>{error}</div>
       ) : (
         <>
+          <Toast />
           <div className="flex flex-col items-center justify-center">
             <div className="flex flex-col items-center justify-center">
               <div className="flex items-center justify-center rounded-xl h-16 text-5xl bg-white text-[#00005A]">
@@ -548,7 +557,7 @@ export default function TripViewPage() {
               />
             </button>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-2 w-full h-84 border-2 rounded-md p-1 border-[#B2A9CF] overflow-y-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2 w-full h-84 border-4 rounded-md p-1 border-[#B2A9CF] overflow-y-auto">
             {itineraries ? (
               <>
                 {itineraries.map((item) => {

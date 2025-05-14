@@ -27,7 +27,7 @@ useEffect(() => {
 },[user])
 
   return (
-  
+  //asdf
     <>
 <Navbar className="bg-[#091A55] rounded-b-2xl h-[65px] px-4">
   <div className="flex items-center w-full">

@@ -102,7 +102,7 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
         <div className="relative w-full h-40 mb-3">
           <div className="relative bg-[#091A55] h-12 mb-1 ">
             <img
-              src="Logo.png"
+              src="/Logo.png"
               className="w-10 p-0 m-0 absolute top-1 left-1 hover:scale-125"
               alt="City Scope Logo"
             />

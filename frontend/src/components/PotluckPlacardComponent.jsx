@@ -20,6 +20,7 @@ export default function PotluckPlacardComponent({
               href={
                 activityObject.link ? activityObject.link : activityObject.url
               }
+              target="blank"
               className="text-[#4151B3] hover:text-[#091A55] flex items-center"
             >
               Website<ExternalLink size={12}/>

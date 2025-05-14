@@ -48,7 +48,7 @@ const HomePage = () => {
 <>
 
 <br />
-    <div className="h-1/3 p-6 flex flex-col bg-gray-50">
+    <div className="h-1/3 p-6 flex flex-col">
       {/* Main Content */}
       <div className="flex flex-col md:flex-row gap-8 w-full max-w-6xl mx-auto flex-1">
         {/* Left Column */}

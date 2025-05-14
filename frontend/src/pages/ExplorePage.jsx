@@ -58,7 +58,7 @@ export const ExplorePage = () => {
   const { trip_id } = useParams(); // id for the trip
   const navigate = useNavigate();
   // the current trip being viewed
-  const [trip, setTrip] = useState(null)
+  const [trip, setTrip] = useState(null);
   const [error, setError] = useState(null);
   // the MapComponent instance used for pins/viewing
   const [mapInst, setMapInst] = useState(null);
@@ -97,20 +97,20 @@ export const ExplorePage = () => {
   const updateMapLocation = () => {
     setCoords({
       lat: place?.geometry?.location?.lat || trip.lat,
-      lng: place?.geometry?.location?.lng || trip.lng
+      lng: place?.geometry?.location?.lng || trip.lng,
     });
   };
 
   // fetchTrip is in TripViewPageUtils file
   useEffect(() => {
-    fetchTrip(trip_id, setError, setTrip)
-  }, [trip_id])
+    fetchTrip(trip_id, setError, setTrip);
+  }, [trip_id]);
 
   // update the map's center when the trip data is returned from the backend
   useEffect(() => {
     if (!trip) return;
-    updateMapLocation()
-  }, [trip])
+    updateMapLocation();
+  }, [trip]);
 
   // GETS INFORMATION REGARDING THE MAP LOCATION THAT THE USER SELECTED
   const getPlaceDetails = (placeId, lat, lng, map) => {
@@ -180,23 +180,30 @@ export const ExplorePage = () => {
       <div className="explore-page-container h-[calc(100vh-56px)] flex flex-wrap pr-3 pl-3">
         <div className="left-side min-w-[100px] w-3/10 h-full overflow-hidden">
           <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
-                  {placeDetails ? (
-                    <LocationCard
-                      placeDetails={placeDetails}
-                      setPlaceDetails={setPlaceDetails}
-                    />
-                  ) : (
-                    <>
-                      <button
-                        className="button-background text-white w-1/2 h-/5"
-                        onClick={returnToTrip}
-                      >
-                        Return to Trip
-                      </button>
-                      <AutocompleteComponent />
-                    </>
-                  )}
+            {placeDetails ? (
+              isAdding ? (
+                <div className="w-full h-full bg-white flex justify-center items-center">
+                  <Grid color="#00005A" />
                 </div>
+              ) : (
+                <LocationCard
+                  placeDetails={placeDetails}
+                  setPlaceDetails={setPlaceDetails}
+                  setIsAdding={setIsAdding}
+                />
+              )
+            ) : (
+              <>
+                <button
+                  className="button-background text-white w-1/2 h-/5"
+                  onClick={returnToTrip}
+                >
+                  Return to Trip
+                </button>
+                <AutocompleteComponent />
+              </>
+            )}
+          </div>
           <h1 className="!text-[#00005A] text-center">Filters</h1>
           <div className="card !bg-[#00005A] w-9/10">
             <div className="flex flex-column gap-1">
@@ -350,12 +357,11 @@ export const ExplorePage = () => {
 };
 
 // card to be displayed if a user select's a location on the map.
-export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
+export const LocationCard = ({ placeDetails, setPlaceDetails, setIsAdding }) => {
   const token = localStorage.getItem("token");
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
   const navigate = useNavigate();
-  const [isAdding, setIsAdding] = useState(false);
 
   // STATE VARIABLES
   const [tripAdvisorMatch, setTripAdvisorMatch] = useState(null); // the trip advisor matching obj
@@ -390,7 +396,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails }) => {
   }, [placeDetails]);
 
   const addToTrip = () => {
-    console.log("adding to trip");
+    // setIsAdding(true)
     let category = setCategoryType(placeDetails.types);
     console.log(category);
     if (!category) return;

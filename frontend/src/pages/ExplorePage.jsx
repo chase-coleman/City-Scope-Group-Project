@@ -83,6 +83,7 @@ export const ExplorePage = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [attractions, setAttractions] = useState([]);
+  const [addConfirm, setAddConfirm] = useState(false)
   // handles the long wait time when a user adds a location to their trip
   const [isAdding, setIsAdding] = useState(false);
   // handles the Accordion opening/closing when a filter is selected
@@ -175,23 +176,28 @@ export const ExplorePage = () => {
     );
   }, [selected]);
 
+    useEffect(() => {
+    if (!addConfirm) return;
+    const timeout = setTimeout(() => {
+      setAddConfirm(false)
+    }, 2500);
+    return () => clearTimeout(timeout);
+  }, [addConfirm]);
+
+
   return (
     <>
       <div className="explore-page-container h-[calc(100vh-56px)] flex flex-wrap pr-3 pl-3">
         <div className="left-side min-w-[100px] w-3/10 h-full overflow-hidden">
           <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
             {placeDetails ? (
-              isAdding ? (
-                <div className="w-full h-full bg-white flex justify-center items-center">
-                  <Grid color="#00005A" />
-                </div>
-              ) : (
-                <LocationCard
-                  placeDetails={placeDetails}
-                  setPlaceDetails={setPlaceDetails}
-                  setIsAdding={setIsAdding}
-                />
-              )
+              <LocationCard
+                placeDetails={placeDetails}
+                setPlaceDetails={setPlaceDetails}
+                setIsAdding={setIsAdding}
+                isAdding={isAdding}
+                setAddConfirm={setAddConfirm}
+              />
             ) : (
               <>
                 <button
@@ -322,30 +328,26 @@ export const ExplorePage = () => {
                   getPlaceDetails,
                 }}
               >
-                {/* <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
-                  {placeDetails ? (
-                    <LocationCard
-                      placeDetails={placeDetails}
-                      setPlaceDetails={setPlaceDetails}
-                    />
-                  ) : (
-                    <>
-                      <button
-                        className="button-background text-white w-1/4 h-/5"
-                        onClick={returnToTrip}
-                      >
-                        Return to Trip
-                      </button>
-                      <AutocompleteComponent />
-                    </>
-                  )}
-                </div> */}
-                <div className="map-container border-2 h-[90%] w-full mt-3">
+                {addConfirm ?
+                <div className="add-confirm w-full h-1/10 flex items-center justify-center">
+                  <span className="text-green-400 mb-0"> Successfully added to trip! </span>
+                </div> :
+                // this keeps the rightside container from getting rearranged when that message pops up
+                <div className="add-confirm w-full h-1/10 ">
+                </div>
+                }
+                <div className="map-container border-2 h-[90%] w-full">
+                  {isAdding ? (
+                    <div className="w-full h-full bg-white flex justify-center items-center">
+                      <Grid color="#00005A" />
+                    </div>
+                  ) : 
                   <MapComponent
                     setRestaurants={setRestaurants}
                     setHotels={setHotels}
                     setAttractions={setAttractions}
                   />
+                }
                 </div>
               </ExploreContext.Provider>
             </APIProvider>
@@ -357,7 +359,13 @@ export const ExplorePage = () => {
 };
 
 // card to be displayed if a user select's a location on the map.
-export const LocationCard = ({ placeDetails, setPlaceDetails, setIsAdding }) => {
+export const LocationCard = ({
+  placeDetails,
+  setPlaceDetails,
+  setIsAdding,
+  isAdding,
+  setAddConfirm
+}) => {
   const token = localStorage.getItem("token");
   const { results, setLogError, setResults } = useOutletContext();
   const { trip_id } = useParams();
@@ -396,9 +404,8 @@ export const LocationCard = ({ placeDetails, setPlaceDetails, setIsAdding }) => 
   }, [placeDetails]);
 
   const addToTrip = () => {
-    // setIsAdding(true)
+    setIsAdding(true);
     let category = setCategoryType(placeDetails.types);
-    console.log(category);
     if (!category) return;
 
     // call the Trip Advisor API --> LOOK IN THE TripAdvisorUtils FILE !!
@@ -491,7 +498,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails, setIsAdding }) => 
       }
     );
     if (response.status === 201) {
-      alert("success");
+      setAddConfirm(true)
       setPlaceDetails(null); // removing the info for the selected place
       setResults([]); // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
@@ -500,6 +507,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails, setIsAdding }) => 
   };
 
   const saveStay = async (stay) => {
+    console.log("saving stay to database!");
     const token = localStorage.getItem("token");
     const response = await axios.post(
       `http://127.0.0.1:8000/api/v1/stay/all/${trip_id}/`,
@@ -510,15 +518,24 @@ export const LocationCard = ({ placeDetails, setPlaceDetails, setIsAdding }) => 
         },
       }
     );
-    // console.log(response)
+    console.log("response:", response);
     if (response.status === 201) {
-      alert("success!");
+      setAddConfirm(true)
       setPlaceDetails(null); // removing the info for the selected place
       setResults([]); // clearing the tripAdvisor results so that clicking somewhere doesn't auto-add it
     } else {
       console.warn("There was an issue adding this to your trip.");
     }
   };
+
+  useEffect(() => {
+    setIsAdding(false);
+  }, [results]);
+
+  useEffect(() => {
+    if (!isAdding) return;
+    setIsDisabled(true)
+  }, [isAdding])
 
   return (
     <>
@@ -545,7 +562,7 @@ export const LocationCard = ({ placeDetails, setPlaceDetails, setIsAdding }) => 
                 disabled={isDisabled}
                 style={{
                   backgroundColor: isDisabled ? "#ccc" : "#007bff",
-                  color: isDisabled ? "#666" : "white",
+                  color: isDisabled ? "#666" : "#d3d3d3",
                   cursor: isDisabled ? "not-allowed" : "pointer",
                 }}
               >

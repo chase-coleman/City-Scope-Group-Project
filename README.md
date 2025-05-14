@@ -1,5 +1,5 @@
 # City Scope - The World is Waiting...
-- ![title](./assets/title.png)
+![title](./assets/title.png)
 
 ## Description
 City Scope is a full-stack travel planning app that lets users create accounts, build personalized trips, add stays, activities, and restaurants, and organize everything into daily itineraries. With Google Maps integration, users can explore their destinations and plan with confidence.

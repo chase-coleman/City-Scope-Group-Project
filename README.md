@@ -20,6 +20,7 @@ City Scope is a full-stack travel planning app that lets users create accounts, 
 - Exploration with Google Maps integration
 
 ## 👥 Contributors
+![team](./assets/team.png)
 [**Chase Coleman**](https://github.com/chase-coleman) – Team Lead, Activity Model, Explore Page + related components, and Google Maps Integration
 
 [**Tim Adams**](https://github.com/timskillbridge) – Stay Model, Trip Advisor API integration, Login/Signup Page, User Account Management + related components

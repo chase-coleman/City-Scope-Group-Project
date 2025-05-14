@@ -50,7 +50,6 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
       setUserInfo(data);
       setFirst(data.first_name);
       setLast(data.last_name);
-      // console.log(data)
     };
     grabData();
   }, [isOpen, user]);
@@ -81,47 +80,51 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
       setIsOpen(false);
     }
   };
-//ASDF
+
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800/60 z-50">
-
-    <div className="border-8 border-[#091A55] m-0 p-0">
-
-      <Card
-        style={{ width: "30rem" }}
-        className="relative flex flex-col border-2 border-[#091A55] rounded-lg shadow-sm bg-white transition-transform duration-300"
-      >
-        <button
-          className="absolute button-background right-1 top-0 bg-blue-600 hover:bg-blue-700 hover:scale-110 text-white font-bold py-2 z-10 px-3 rounded shadow-md transition duration-300"
-          onClick={() => setIsOpen(false)}
+      <div className="border-4 border-[#091A55] m-0 p-0 h-auto">
+        <Card
+          className="w-[30rem] relative flex flex-col border-2 border-[#091A55] rounded-lg shadow-sm bg-white transition-transform duration-300"
         >
-          X
-        </button>
+          <button
+            className="absolute right-1 top-0 bg-blue-600 hover:bg-blue-700 hover:scale-110 text-white font-bold py-2 z-10 px-3 rounded shadow-md transition duration-300"
+            onClick={() => setIsOpen(false)}
+          >
+            X
+          </button>
 
-        <div className="relative w-full h-40 mb-3">
-          <div className="relative bg-[#091A55] h-12 mb-1 ">
+
+          <div className="relative bg-[#091A55] h-12 mb-1">
             <img
               src="/Logo.png"
               className="w-10 p-0 m-0 absolute top-1 left-1 hover:scale-125"
               alt="City Scope Logo"
             />
-            <span className="block break-words text-center font-bold text-white text-3xl absolute bottom-1 right-[25%]">
+            <span className="block break-words text-center font-bold text-white text-3xl absolute bottom-1 right-1/4">
               {user.username}
             </span>
           </div>
-          <div className="border-3 border-gray-800 rounded-3xl flex items-center justify-center m-auto bg-white h-[30vh] w-[450px] overflow-hidden">
-            <div className="w-full h-full overflow-hidden relative">
-              <div className="flex flex-col h-full -rotate-30 scale-125 absolute -left-20 bottom-50">
-                <div className="flex h-[25.25vh]">
-                  <div className="border-2 border-white flex-1 overflow-hidden">
+
+
+          <div className="w-full h-72 relative overflow-hidden bg-white">
+
+            <div className="absolute inset-0 flex items-center justify-center ">
+
+              <div 
+                className="w-full h-full border-2 border-[#091A55] absolute rotate-[-30deg] scale-[1.70] left-[-10%] bottom-[-8%] overflow-visible" 
+              >
+
+                <div className="flex h-1/3 mb-1">
+                  <div className="border-2 border-white flex-1 overflow-hidden mx-0.5">
                     <img
                       src={photoArr[0]}
                       alt="Image 1"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="border-2 border-white flex-1 overflow-hidden">
+                  <div className="border-2 border-white flex-1 overflow-hidden mx-0.5">
                     <img
                       src={photoArr[1]}
                       alt="Image 2"
@@ -130,22 +133,23 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
                   </div>
                 </div>
 
-                <div className="flex h-[26.5vh]">
-                  <div className="border-2 border-white flex-1 overflow-hidden">
+
+                <div className="flex h-1/3 mb-1">
+                  <div className="border-2 border-white flex-1 overflow-hidden mx-0.5">
                     <img
                       src={photoArr[2]}
                       alt="Image 3"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="border-2 border-white flex-1 overflow-hidden">
+                  <div className="border-2 border-white flex-1 overflow-hidden mx-0.5">
                     <img
                       src={photoArr[3]}
                       alt="Image 4"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="border-2 border-white flex-1 overflow-hidden">
+                  <div className="border-2 border-white flex-1 overflow-hidden mx-0.5">
                     <img
                       src={photoArr[4]}
                       alt="Image 5"
@@ -154,15 +158,16 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
                   </div>
                 </div>
 
-                <div className="flex h-[23.25vh]">
-                  <div className="border-2 border-white flex-1 overflow-hidden">
+
+                <div className="flex h-1/3">
+                  <div className="border-2 border-white flex-1 overflow-hidden mx-0.5">
                     <img
                       src={photoArr[5]}
                       alt="Image 6"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="border-2 border-white flex-1 overflow-hidden">
+                  <div className="border-2 border-white flex-1 overflow-hidden mx-0.5">
                     <img
                       src={photoArr[6]}
                       alt="Image 7"
@@ -173,74 +178,70 @@ export default function ManageAccount({ user, isOpen, setIsOpen }) {
               </div>
             </div>
           </div>
-        </div>
 
-        <Card.Body className="flex flex-col gap-6 p-4">
-          <br />
-          <br />
+          <Card.Body className="flex flex-col gap-6 p-4">
+            <form onSubmit={handleUpdate} className="flex flex-col gap-4">
+              <div>
+                <label className="font-semibold block mb-1 text-gray-700">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  className="border-2 border-blue-500 w-full p-2 rounded"
+                  value={first}
+                  onChange={(e) => setFirst(e.target.value)}
+                  placeholder={userInfo?.first_name || ""}
+                />
+              </div>
 
-          <form onSubmit={handleUpdate} className="flex flex-col gap-4">
-            <div>
-              <label className="font-semibold block mb-1 text-gray-700">
-                First Name
-              </label>
-              <input
-                type="text"
-                className="border-2 border-blue-500 w-full p-2 rounded"
-                value={first}
-                onChange={(e) => setFirst(e.target.value)}
-                placeholder={userInfo?.first_name || ""}
-              />
-            </div>
+              <div>
+                <label className="font-semibold block mb-1 text-gray-700">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  className="border-2 border-blue-500 w-full p-2 rounded"
+                  value={last}
+                  onChange={(e) => setLast(e.target.value)}
+                  placeholder={userInfo?.last_name || ""}
+                />
+              </div>
 
-            <div>
-              <label className="font-semibold block mb-1 text-gray-700">
-                Last Name
-              </label>
-              <input
-                type="text"
-                className="border-2 border-blue-500 w-full p-2 rounded"
-                value={last}
-                onChange={(e) => setLast(e.target.value)}
-                placeholder={userInfo?.last_name || ""}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              variant="primary"
-              className="w-fit text-sm self-end button-background bg-[#091A55] hover:bg-blue-700 text-white"
-            >
-              Update Info
-            </Button>
-          </form>
-
-          {/* Password Section (Separate) */}
-          <div className="border-t border-gray-300 pt-4">
-            <label className="font-semibold block mb-1 text-gray-700">
-              Change Password
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="password"
-                className="border-2 border-[#091A55] flex-grow p-2 rounded"
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                maxLength={255}
-                placeholder="Enter new password"
-              />
               <Button
-                variant="secondary"
-                className="text-sm button-background bg-[#091A55] hover:bg-blue-600 text-white"
-                onClick={handleChangePassword}
+                type="submit"
+                variant="primary"
+                className="w-fit text-sm self-end bg-[#091A55] hover:bg-blue-700 text-white"
               >
-                Update
+                Update Info
               </Button>
+            </form>
+
+
+            <div className="border-t border-gray-300 pt-4">
+              <label className="font-semibold block mb-1 text-gray-700">
+                Change Password
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="password"
+                  className="border-2 border-[#091A55] flex-grow p-2 rounded"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                  maxLength={255}
+                  placeholder="Enter new password"
+                />
+                <Button
+                  variant="secondary"
+                  className="text-sm bg-[#091A55] hover:bg-blue-600 text-white"
+                  onClick={handleChangePassword}
+                >
+                  Update
+                </Button>
+              </div>
             </div>
-          </div>
-        </Card.Body>
-      </Card>
-      </div>  
+          </Card.Body>
+        </Card>
+      </div>
     </div>
   );
 }

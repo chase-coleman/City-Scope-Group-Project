@@ -34,8 +34,8 @@ useEffect(() => {
     {/* Logo */}
     <div className="h-[65px]">
       <img
-        src="Logo.png"
-        className="w-full h-full object-contain"
+        src="/Logo.png"
+        className="w-full h-full"
         alt="Logo"
       />
     </div>

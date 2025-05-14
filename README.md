@@ -101,6 +101,6 @@ In your **Frontend** directory, create a `.env` file and add the following varia
 - `api/v1/apiUsed/<str:api_key>` - GET/PUT - view/update a user's total API calls
 
 ### Planning
-- ![Schema]("/backendschema.png")
-- ![Frontend Design]("/frontendroughdraft.png")
-- ![Functionality Planning]("/functionalityplanning.png")
+- ![Schema]("./assets/backendschema.png")
+- ![Frontend Design]("./assets/frontendroughdraft.png")
+- ![Functionality Planning]("./assets/functionalityplanning.png")

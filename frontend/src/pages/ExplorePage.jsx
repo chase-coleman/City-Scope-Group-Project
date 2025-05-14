@@ -177,8 +177,8 @@ export const ExplorePage = () => {
 
   return (
     <>
-      <div className="explore-page-container h-[calc(100vh-56px)] flex pr-3 pl-3">
-        <div className="left-side w-[30%] h-full overflow-hidden">
+      <div className="explore-page-container h-[calc(100vh-56px)] flex flex-wrap pr-3 pl-3">
+        <div className="left-side min-w-[100px] w-3/10 h-full overflow-hidden">
           <div className="autocomplete-explore w-full h-1/5 p-1 flex flex-col items-center">
                   {placeDetails ? (
                     <LocationCard
@@ -296,7 +296,7 @@ export const ExplorePage = () => {
             </div>
           </div>
         </div>
-        <div className="right-side relative flex flex-col items-center w-[70%]">
+        <div className="right-side relative flex flex-col items-center min-w-[100px] w-7/10 h-full">
           <div className="right-container w-[100%] h-[95%] flex flex-col justify-center">
             <APIProvider apiKey={googleApiKey}>
               <ExploreContext.Provider

@@ -6,7 +6,7 @@ City Scope is a full-stack travel planning app that lets users create accounts, 
 ## 📑 Table of Contents
 1. [Description](#description)
 2. [Features](#features)
-3. [👥 Contributors](#contributors)
+3. [Contributors](#contributors)
 4. [Tech Stack](#tech-stack)
 5. [Environment Variables](#environment-variables)
 

@@ -12,7 +12,7 @@ City Scope is a full-stack travel planning app that lets users create accounts, 
 5. [Environment Variables](#environment-variables)
 
 ## Features
-- OAuth authentication
+- Token Authentication
 - Autocomplete Location Search
 - Trip Creation
 - Itinerary Creation
@@ -101,6 +101,10 @@ In your **Frontend** directory, create a `.env` file and add the following varia
 - `api/v1/loc/locID` - GET - calls the Trip Advisor API to get the location_id of somewhere
 - `api/v1/loc/apiUser` - POST - Creating a new user for the API
 - `api/v1/apiUsed/<str:api_key>` - GET/PUT - view/update a user's total API calls
+
+### Stretch Goals
+- Creating multi-user trip planning so plan trips with friends
+- AI integration to generate smart itineraries
 
 ### Planning
 ![Schema](./assets/SchemaPlanning.png)
